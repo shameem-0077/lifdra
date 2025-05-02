@@ -1,0 +1,60 @@
+/* emoji picker starts */
+aside.emoji-picker-react {
+    width: 100% !important;
+    bottom: 0 !important;
+    background: #f8f9fd !important !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+.emoji-picker-react .emoji-group {
+    padding: 0 !important;
+}
+.emoji-picker-react .emoji-group:before {
+    padding: 0 16px !important;
+    background: #e0e0e0 !important;
+    font-size: 12px;
+    border-radius: 4px;
+    line-height: 40px !important;
+    color: #7d7d7d !important;
+}
+.emoji-picker-react input.emoji-search {
+    width: 100% !important;
+    margin-left: 0 !important;
+}
+.emoji-picker-react .emoji-categories button {
+    height: 45px !important;
+    width: 82px !important;
+}
+.emoji-picker-react .emoji-categories {
+    padding: 0 !important;
+}
+.emoji-picker-react .emoji-categories button.active {
+    border-bottom: 3px solid #4caf50 !important;
+}
+.emoji-picker-react .emoji-categories button.icn-smileys_people {
+    background-image: url("https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/smiley.svg") !important;
+}
+.emoji-picker-react .emoji-categories button.icn-animals_nature {
+    background-image: url("https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/animals.svg") !important;
+}
+.emoji-picker-react .emoji-categories button.icn-food_drink {
+    background-image: url("https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/food.svg") !important;
+}
+.emoji-picker-react .emoji-categories button.icn-travel_places {
+    background-image: url("https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/travel.svg") !important;
+}
+.emoji-picker-react .emoji-categories button.icn-activities {
+    background-image: url("https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/activity.svg") !important;
+}
+.emoji-picker-react .emoji-categories button.icn-objects {
+    background-image: url("https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/objects.svg") !important;
+}
+.emoji-picker-react .emoji-categories button.icn-symbols {
+    background-image: url("https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/symbols.svg") !important;
+}
+.emoji-picker-react .emoji-categories button.icn-flags {
+    background-image: url("https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/flags.svg") !important;
+}
+.emoji-picker-react .emoji button:hover {
+    background: unset;
+}

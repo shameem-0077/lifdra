@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="38.128" height="38.128" viewBox="0 0 38.128 38.128">
+  <g id="checked_1_" data-name="checked (1)" transform="translate(0.091 -0.349)">
+    <g id="Group_21216" data-name="Group 21216" transform="translate(-0.091 0.349)">
+      <g id="Group_21215" data-name="Group 21215">
+        <path id="Path_38340" data-name="Path 38340" d="M36.691,17.627a1.437,1.437,0,0,0-1.437,1.437,16.19,16.19,0,1,1-16.19-16.19,1.437,1.437,0,0,0,0-2.874A19.064,19.064,0,1,0,38.128,19.064a1.437,1.437,0,0,0-1.437-1.437Z" fill="#fc4545"/>
+      </g>
+    </g>
+    <g id="Layer_2" data-name="Layer 2" transform="translate(10.907 11.349)">
+      <g id="Close" transform="translate(0.002 0)">
+        <path id="Path_19084" data-name="Path 19084" d="M32.81,32.783a.867.867,0,0,1-1.214,0l-4.337-4.317-.607-.6a.858.858,0,0,1,1.214-1.209l.607.6,4.337,4.314A.858.858,0,0,1,32.81,32.783Z" transform="translate(-17.343 -17.38)" fill="#fc4545" stroke="#fc4545" stroke-width="1"/>
+        <path id="Path_19085" data-name="Path 19085" d="M15.466.249a.867.867,0,0,0-1.214,0l-6.4,6.367L1.465.249a.864.864,0,0,0-1.214,0,.858.858,0,0,0,0,1.209L6.642,7.826.251,14.193a.852.852,0,0,0,0,1.209.862.862,0,0,0,1.214,0l14-13.937a.855.855,0,0,0,0-1.209Z" transform="translate(0.001 0)" fill="#fc4545" stroke="#fc4545" stroke-width="1"/>
+      </g>
+    </g>
+  </g>
+</svg>

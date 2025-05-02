@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38">
+  <g id="Group_42190" data-name="Group 42190" transform="translate(-779 -427)">
+    <g id="Ellipse_4465" data-name="Ellipse 4465" transform="translate(779 427)" fill="#0fa76f" stroke="#fff" stroke-width="4">
+      <circle cx="19" cy="19" r="19" stroke="none"/>
+      <circle cx="19" cy="19" r="17" fill="none"/>
+    </g>
+    <path id="Icon_awesome-pen" data-name="Icon awesome-pen" d="M7.323,2.349l3.225,3.225-7,7L.67,12.894A.6.6,0,0,1,0,12.226l.32-2.877,7-7Zm5.219-.48L11.028.355a1.21,1.21,0,0,0-1.711,0L7.893,1.779,11.118,5,12.542,3.58a1.21,1.21,0,0,0,0-1.711Z" transform="translate(792.344 439.551)" fill="#fff"/>
+  </g>
+</svg>

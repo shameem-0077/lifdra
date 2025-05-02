@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="53" height="51" viewBox="0 0 53 51">
+  <g id="Tech_Schooling" data-name="Tech Schooling" transform="translate(-152 -1458)">
+    <rect id="Rectangle_14744" data-name="Rectangle 14744" width="53" height="51" rx="6" transform="translate(152 1458)" fill="#fff4df"/>
+    <g id="Layer_2" data-name="Layer 2" transform="translate(165.999 1471)">
+      <g id="Menu" transform="translate(0 0)">
+        <path id="Path_94146" data-name="Path 94146" d="M20.962,0H4.04A4.04,4.04,0,0,0,0,4.04V20.962A4.04,4.04,0,0,0,4.04,25H20.962A4.04,4.04,0,0,0,25,20.962V4.04A4.04,4.04,0,0,0,20.962,0ZM22.5,20.962a1.54,1.54,0,0,1-1.54,1.54H4.04a1.54,1.54,0,0,1-1.54-1.54V4.04A1.54,1.54,0,0,1,4.04,2.5H20.962A1.54,1.54,0,0,1,22.5,4.04Z" fill="#ffab00"/>
+        <path id="Path_94147" data-name="Path 94147" d="M23.751,12H11.25a1.25,1.25,0,1,0,0,2.5h12.5a1.25,1.25,0,0,0,0-2.5Zm0,5.5H11.25a1.25,1.25,0,1,0,0,2.5h12.5a1.25,1.25,0,1,0,0-2.5Z" transform="translate(-5 -6)" fill="#ffab00"/>
+        <rect id="Rectangle_15025" data-name="Rectangle 15025" width="13" height="3" rx="1.5" transform="translate(4.949 16.949)" fill="#ffab00"/>
+      </g>
+    </g>
+  </g>
+</svg>
