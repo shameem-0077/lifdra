@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import { Link, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useAuthStore } from "../../../../store/authStore";
 
 const Footer = (isSchool) => {
-  const { user_profile } = useSelector((state) => state);
+  const { user_profile } = useAuthStore();
   const location = useLocation();
   // const programs = [
   //   { id: 1, name: "Tech Schooling", link: "/explore/tech-schooling/" },

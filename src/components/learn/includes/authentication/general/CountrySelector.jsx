@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import styled from "styled-components";
 import { accountsConfig } from "../../../../../axiosConfig";
+import { useAuthStore } from "../../../../../store/authStore";
 
 export default function CountrySelector({
     handleClick,
@@ -11,7 +11,7 @@ export default function CountrySelector({
     selectedCountry,
     selectedwebCode,
 }) {
-    const user_data = useSelector((state) => state.user_data);
+    const { user_data } = useAuthStore();
 
     //outside click
     function useOutsideAlerter(ref) {
@@ -73,12 +73,14 @@ export default function CountrySelector({
                         let selected_country = data.find(
                             (item) => item.web_code === selected_country_code
                         );
-                        onSelectHandler(selected_country);
+                        if (selected_country && onSelectHandler) {
+                            onSelectHandler(selected_country);
+                        }
                     }
                 });
         };
         fetchCountries();
-    }, [selectedwebCode]);
+    }, [selectedwebCode, user_data, onSelectHandler]);
 
     //maping countries
     const renderCountries = searchResults.map((item, index) => (
@@ -91,7 +93,9 @@ export default function CountrySelector({
             }}
             onClick={() => {
                 handleClick();
-                onSelectHandler(item);
+                if (onSelectHandler) {
+                    onSelectHandler(item);
+                }
                 setSearchTerm("");
             }}
         >

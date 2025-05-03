@@ -4,7 +4,6 @@ import "../../../assets/css/fancybox.min.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import auth from "../auth";
-import { useSelector, useDispatch } from "react-redux";
 import { Routes, Route, Navigate } from "react-router-dom";
 import RouteLoading from "../RouteLoading";
 import { AuthRoute } from "../AuthRoute";
@@ -41,8 +40,6 @@ const DynamicProgramPlans = lazy(() =>
 );
 
 export default function WebRouter() {
-  const dispatch = useDispatch();
-
   return (
     <Suspense fallback={<RouteLoading />}>
       <Routes>

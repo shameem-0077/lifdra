@@ -1,46 +1,41 @@
 import React, { Suspense, lazy, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import "../../../assets/css/Style.css";
 import PrimeProgramStore from "../../contexts/stores/PrimeProgramStore";
 import SupportEngineerStore from "../../contexts/stores/SupportEngineerStore";
 import RouteLoading from "../RouteLoading";
+import { useAuthStore } from "../../../store/authStore";
+import { useSubscriptionStore } from "../../../store/subscriptionStore";
 
 const StudentRouter = lazy(() => import("./StudentRouter"));
 const Error404 = lazy(() => import("../../error-pages/Error404"));
 
 export default function LearnRouter(props) {
-  const user_profile = useSelector((state) => state.user_profile) || {};
+  const { user_profile } = useAuthStore();
+  const { setSubscriptionType } = useSubscriptionStore();
   const subscription_data = user_profile?.subscription_data || {};
-
-  const dispatch = useDispatch();
-  const [subscriptionType, setSubscriptionType] = useState("");
+  const [subscriptionType, setLocalSubscriptionType] = useState("");
 
   useEffect(() => {
-    if (
-      subscription_data?.has_active_subscription
-    ) {
+    if (subscription_data?.has_active_subscription) {
       if (!subscription_data?.expired_subscription) {
         if (subscription_data?.is_paid_subscription) {
-          setSubscriptionType("paid_subscription");
+          setLocalSubscriptionType("paid_subscription");
         } else {
-          setSubscriptionType("trial_active");
+          setLocalSubscriptionType("trial_active");
         }
       } else {
         if (subscription_data?.is_paid_subscription) {
-          setSubscriptionType("expired_subscription");
+          setLocalSubscriptionType("expired_subscription");
         } else {
-          setSubscriptionType("trial_end");
+          setLocalSubscriptionType("trial_end");
         }
       }
     }
   }, [subscription_data?.end_timestamp]);
 
   useEffect(() => {
-    dispatch({
-      type: "UPDATE_SUBSCRIPTION_TYPE",
-      userSubscriptionType: subscriptionType,
-    });
+    setSubscriptionType(subscriptionType);
   }, [subscriptionType]);
 
   return (

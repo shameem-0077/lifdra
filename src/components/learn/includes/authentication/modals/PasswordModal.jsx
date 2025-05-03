@@ -5,40 +5,18 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import RequestLoader from "../general/RequestLoader";
 import { accountsConfig } from "../../../../../axiosConfig";
 import auth from "../../../../routing/auth";
-import { connect } from "react-redux";
 import ReCAPTCHA from "react-google-recaptcha";
 import { Timestamp, setDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db, auth as firebaseAuth } from "../../../../../firebase";
 import { signInWithCustomToken } from "firebase/auth";
 import CampusModal from "./CampusModal";
+import { useAuthStore } from "../../../../../store/authStore";
 
-// Function used to update values from redux react
-function mapDispatchtoProps(dispatch) {
-    return {
-        updateUserData: (user_data) =>
-            dispatch({
-                type: "UPDATE_USER_DATA",
-                user_data: user_data,
-            }),
-        updateUserProfile: (user_profile) =>
-            dispatch({
-                type: "UPDATE_USER_PROFILE",
-                user_profile: user_profile,
-            }),
-    };
-}
-
-// Function used to get values from redux react
-function mapStatetoProps(state) {
-    return {
-        user_data: state.user_data,
-    };
-}
-
-function PasswordModal(props) {
+function PasswordModal() {
     const navigate = useNavigate();
     const location = useLocation();
     const recaptchaRef = useRef(null);
+    const { user_data, updateUserData, updateUserProfile } = useAuthStore();
 
     const [error, setError] = useState(false);
     const [error_message, setErrorMessage] = useState("");
@@ -59,7 +37,7 @@ function PasswordModal(props) {
         }
     };
 
-    //access_token and refresh_token will be saved in the redux store
+    //access_token and refresh_token will be saved in the store
     const setUserDetails = (data) => {
         let user_data = {
             access_token: data.response.access_token,
@@ -73,7 +51,7 @@ function PasswordModal(props) {
             pk: data.id,
         };
         fetchProfile(data.response.access_token);
-        props.updateUserData(user_data);
+        updateUserData(user_data);
         firebaseAuthenticate(
             user_data,
             data.name,
@@ -95,7 +73,7 @@ function PasswordModal(props) {
             .then((response) => {
                 const { StatusCode, data } = response.data;
                 if (StatusCode === 6000) {
-                    props.updateUserProfile(data);
+                    updateUserProfile(data);
                 } else {
                 }
             })
@@ -126,7 +104,7 @@ function PasswordModal(props) {
                             roomId: roomId,
                         };
 
-                        props.updateUserData(data);
+                        updateUserData(data);
 
                         async function getUser() {
                             const currentToken =
@@ -173,8 +151,6 @@ function PasswordModal(props) {
         if (e) {
             e.preventDefault();
         }
-        //Phone number is taken as user data from redux store
-        let { user_data } = props;
         if (user_data.phone) {
             if (password) {
                 //After submission of userdata loading will starts.
@@ -198,58 +174,35 @@ function PasswordModal(props) {
                                 setTimeout(() => {
                                     window.location.href = `https://${
                                         data.redirect_url
-                                    }?phone=${data?.phone ? data?.phone : ""}`;
-                                }, 3000);
+                                    }`;
+                                }, 1000);
                             } else {
-                                navigate(location.pathname, { replace: true });
-
-                                //When status code reads true it will redirect to the next page.
-                                auth.login(() => {
-                                    return "Success";
-                                });
-
-                                await setUserDetails(response.data);
-                                setLoading(false);
-
-                                if (props.nextPath) {
-                                    navigate(props.nextPath);
-                                } else {
-                                    navigate("/feed/");
-                                }
+                                setUserDetails(data);
+                                auth.login(data.response.access_token);
+                                navigate("/feed/");
                             }
-                        } else if (StatusCode === 6001) {
-                            setErrorMessage(message);
-
+                        } else {
                             setLoading(false);
                             setError(true);
+                            setErrorMessage(message);
                         }
                     })
                     .catch((error) => {
-                        //Saved error message will be shown.
                         setLoading(false);
                         setError(true);
                         setErrorMessage(
-                            "An error occurred, please try again later"
+                            error.response?.data?.message ||
+                                "Something went wrong"
                         );
                     });
             } else {
                 setError(true);
-                setErrorMessage("This field cannot be left blank");
+                setErrorMessage("Please enter password");
             }
-        } else {
-            setError(true);
-            setErrorMessage("Phone is missing, redirecting");
-            setTimeout(() => {
-                navigate({
-                    pathname: location.pathname,
-                    search: `action=login`,
-                });
-            }, 1100);
         }
     };
 
     const loginWithOtp = async () => {
-        let { user_data } = props;
         setLoading(true);
 
         const token = await recaptchaRef.current.executeAsync();
@@ -266,7 +219,7 @@ function PasswordModal(props) {
                 const { StatusCode, message } = response.data;
                 if (StatusCode === 6000) {
                     setLoading(false);
-                    navigate(`${location.pathname}?action=otp${props.nextPath ? `&next=${props.nextPath}` : ""}`);
+                    navigate(`${location.pathname}?action=otp`);
                     //When status code reads true it will redirect to the next page.
                 } else if (StatusCode === 6001) {
                     //When status is invalid error message will be saved in setState.
@@ -291,10 +244,10 @@ function PasswordModal(props) {
                     <CloseIcon
                         title="Close"
                         className="las la-times-circle"
-                        onClick={props.closeModal}
+                        onClick={() => navigate(-1)}
                     ></CloseIcon>
                     <ItemContainer>
-                        {props.action === "password" && (
+                        {location.search.includes("action=password") && (
                             <>
                                 <Content>
                                     <Shape
@@ -404,7 +357,7 @@ function PasswordModal(props) {
     );
 }
 
-export default connect(mapStatetoProps, mapDispatchtoProps)(PasswordModal);
+export default PasswordModal;
 
 const Container = styled.div`
     position: fixed;

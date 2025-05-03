@@ -1,8 +1,9 @@
 import React, { Suspense, lazy, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route } from "react-router-dom";
 import styled from "styled-components";
 import RouteLoading from "./RouteLoading";
+import { useAuthStore } from "../../store/authStore";
+import { useTidioStore } from "../../store/tidioStore";
 
 // const WebRouter = lazy(() => import("./web/WebRouter"));
 const WebRouter = lazy(() => import("./web/WebRouter"));
@@ -24,17 +25,12 @@ const LandingPageStories = lazy(() =>
 );
 
 function AppRouter() {
-  const dispatch = useDispatch();
-  const { tidioSettings, user_profile } = useSelector((state) => state);
+  const { user_profile } = useAuthStore();
+  const { tidioSettings, updateTidioSettings } = useTidioStore();
   const [isToast, setToast] = useState(false);
 
   const handleTidioClick = (bool) => {
-    dispatch({
-      type: "UPDATE_TIDIO_SETTINGS",
-      tidioSettings: {
-        isOpened: bool,
-      },
-    });
+    updateTidioSettings(bool);
   };
 
   useEffect(() => {
@@ -49,45 +45,45 @@ function AppRouter() {
       });
 
       document.tidioIdentify = {
-        distinct_id: user_profile.user_id, // Unique visitor ID in your system
+        distinct_id: user_profile?.user_id, // Unique visitor ID in your system
         email: user_profile?.email, // visitor email
-        name: user_profile.name, // Visitor name
-        phone: `+91 ${user_profile.phone}`, //Visitor phone
+        name: user_profile?.name, // Visitor name
+        phone: user_profile?.phone ? `+91 ${user_profile.phone}` : undefined, //Visitor phone
       };
 
       window.tidioChatApi.setContactProperties({
-        user_id: user_profile.user_id,
-        program: user_profile.program?.name,
-        rm: user_profile.rm_name,
+        user_id: user_profile?.user_id,
+        program: user_profile?.program?.name,
+        rm: user_profile?.rm_name,
       });
 
       window.tidioChatApi.setVisitorData({
-        distinct_id: user_profile.user_id, // Unique visitor ID in your system
+        distinct_id: user_profile?.user_id, // Unique visitor ID in your system
         email: user_profile?.email, // visitor email
-        name: user_profile.name, // Visitor name
-        phone: `+91 ${user_profile.phone}`, //Visitor phone
+        name: user_profile?.name, // Visitor name
+        phone: user_profile?.phone ? `+91 ${user_profile.phone}` : undefined, //Visitor phone
       });
     } else {
       document.addEventListener("tidioChat-ready", () => {
         setToast(true);
         document.tidioIdentify = {
-          distinct_id: user_profile.user_id, // Unique visitor ID in your system
+          distinct_id: user_profile?.user_id, // Unique visitor ID in your system
           email: user_profile?.email, // visitor email
-          name: user_profile.name, // Visitor name
-          phone: `+91 ${user_profile.phone}`, //Visitor phone
+          name: user_profile?.name, // Visitor name
+          phone: user_profile?.phone ? `+91 ${user_profile.phone}` : undefined, //Visitor phone
         };
 
         window.tidioChatApi.setContactProperties({
-          user_id: user_profile.user_id,
-          program: user_profile.program?.name,
-          rm: user_profile.rm_name,
+          user_id: user_profile?.user_id,
+          program: user_profile?.program?.name,
+          rm: user_profile?.rm_name,
         });
 
         window.tidioChatApi.setVisitorData({
-          distinct_id: user_profile.user_id, // Unique visitor ID in your system
+          distinct_id: user_profile?.user_id, // Unique visitor ID in your system
           email: user_profile?.email, // visitor email
-          name: user_profile.name, // Visitor name
-          phone: `+91 ${user_profile.phone}`, //Visitor phone
+          name: user_profile?.name, // Visitor name
+          phone: user_profile?.phone ? `+91 ${user_profile.phone}` : undefined, //Visitor phone
         });
       });
     }

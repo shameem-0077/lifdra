@@ -43,7 +43,8 @@
     "react-toastify": "^11.0.5",
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.17",
-    "video-react": "^0.16.0"
+    "video-react": "^0.16.0",
+    "zustand": "^5.0.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",

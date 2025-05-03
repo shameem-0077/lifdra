@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "./assets/css/LineAwesome.css";
-import { useDispatch, useSelector, Provider } from "react-redux";
 import { accountsConfig, notificationsConfig } from "./axiosConfig";
 import AppRouter from "./components/routing/AppRouter";
 import auth from "./components/routing/auth";
@@ -12,7 +11,9 @@ import queryString from "query-string";
 import { useNavigate, useLocation, BrowserRouter } from "react-router-dom";
 import { db } from "./firebase";
 import { doc, getDoc, Timestamp, updateDoc } from "firebase/firestore";
-import store from "./store";
+import { useAuthStore } from "./store/authStore";
+import { useUIStore } from "./store/uiStore";
+import { useNotificationStore } from "./store/notificationStore";
 
 let hidden = null;
 let visibilityChange = null;
@@ -30,11 +31,9 @@ if (typeof document.hidden !== "undefined") {
 
 function App() {
   return (
-    <Provider store={store}>
-      <BrowserRouter>
-        <MainApp />
-      </BrowserRouter>
-    </Provider>
+    <BrowserRouter>
+      <MainApp />
+    </BrowserRouter>
   );
 }
 
@@ -44,9 +43,10 @@ const MainApp = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { user_data, playerSettings, user_profile, subscribed } = useSelector(
-    (state) => state
-  );
+  // Get state and actions from Zustand stores
+  const { user_data, user_profile, setUserData, setUserProfile } = useAuthStore();
+  const { setMenuType } = useUIStore();
+  const { setNotifications } = useNotificationStore();
 
   const [nextPath, setNextPath] = useState("");
   const [cnextPath, setCnextPath] = useState("");
@@ -62,9 +62,8 @@ const MainApp = (props) => {
   }, []);
 
   useEffect(() => {
-    // Detect platform and store it in Redux and localStorage
+    // Detect platform and store it in localStorage
     const platform = navigator.platform.toLowerCase();
-    // Store the device type in localStorage
     localStorage.setItem("device_type", platform);
   }, []);
 
@@ -80,8 +79,6 @@ const MainApp = (props) => {
       window.localStorage.removeItem("c");
     }
   }, [nextPath, cnextPath]);
-
-  const dispatch = useDispatch();
 
   async function updateStatus(type) {
     const docRef = doc(db, "users", user_data.uid);
@@ -108,24 +105,6 @@ const MainApp = (props) => {
   };
 
   useEffect(() => {
-    dispatch({
-      type: "UPDATE_PRIME_PROGRAM_PLAN",
-      primeSubscriptionPlan: user_profile?.prime_program_subscription || null,
-    });
-  }, [user_profile]);
-
-  // useEffect(() => {
-  //   if (
-  //     user_profile?.is_old_student === true &&
-  //     user_profile.subscription_data.has_active_subscription === true &&
-  //     user_profile.subscription_data.expired_subscription === true &&
-  //     user_profile?.is_sat_approval_status === "not_applied"
-  //   ) {
-  //     history.push("/subscription/");
-  //   }
-  // }, []);
-
-  useEffect(() => {
     document.addEventListener(visibilityChange, handleVisibilityChange, false);
 
     return () =>
@@ -142,10 +121,7 @@ const MainApp = (props) => {
       } else {
         menu_type = "normal";
       }
-      dispatch({
-        type: "MENU_TYPE",
-        menu_type: menu_type,
-      });
+      setMenuType(menu_type);
     }
 
     async function fetchTidioSettings() {
@@ -156,12 +132,7 @@ const MainApp = (props) => {
         } else {
           tidioSettings = { isOpened: false };
         }
-
-        dispatch({
-          type: "UPDATE_TIDIO_SETTINGS",
-          tidioSettings: tidioSettings,
-        });
-
+        // TODO: Add tidio settings to Zustand store if needed
         setTimeout(() => {
           resolve("done!");
         }, 500);
@@ -192,10 +163,7 @@ const MainApp = (props) => {
           .then((response) => {
             let { StatusCode, data } = response.data;
             if (StatusCode === 6000) {
-              dispatch({
-                type: "UPDATE_USER_DATA",
-                user_data: data,
-              });
+              setUserData(data);
               fetchUserProfileData(data);
               navigate("/tech-schooling/");
             } else if (StatusCode === 6001) {
@@ -213,10 +181,7 @@ const MainApp = (props) => {
         }
 
         let signup_data_value = JSON.parse(signup_data_stored);
-        dispatch({
-          type: "UPDATE_SIGNUP_DATA",
-          signup_data: signup_data_value,
-        });
+        // TODO: Add signup data to Zustand store if needed
 
         fetchUserProfileData(user_data_value);
       }
@@ -229,112 +194,6 @@ const MainApp = (props) => {
       window.removeEventListener("resize", updateDimensions);
     };
   }, [auth.isAuthenticated()]);
-
-  useEffect(() => {
-    const fetchSchoolScientistData = () => {
-      let schoolScientistData = localStorage.getItem("school_scientist_data");
-      if (schoolScientistData) {
-        schoolScientistData = JSON.parse(schoolScientistData);
-        dispatch({
-          type: "UPDATE_SCHOOL_SCIENTIST_DATA",
-          school_scientist_data: schoolScientistData,
-        });
-      }
-    };
-
-    const fetchOneCreatorScholarshipData = () => {
-      let oneCreatorScholarshipData = localStorage.getItem("one_creator_data");
-      if (oneCreatorScholarshipData) {
-        oneCreatorScholarshipData = JSON.parse(oneCreatorScholarshipData);
-        dispatch({
-          type: "UPDATE_ONE_CREATOR_DATA",
-          one_creator_data: oneCreatorScholarshipData,
-        });
-      }
-    };
-
-    const fetchMsfScholarshipData = () => {
-      let msfcholarshipData = localStorage.getItem("msf_scholarship_data");
-      if (msfcholarshipData) {
-        msfcholarshipData = JSON.parse(msfcholarshipData);
-        dispatch({
-          type: "UPDATE_MSF_SCHOLARSHIP_DATA",
-          msf_scholarship_data: msfcholarshipData,
-        });
-      }
-    };
-
-    const fetchOneCreatorScholarshipExamData = () => {
-      let scholarshipExamData = localStorage.getItem("one_creator_exam_data");
-      if (scholarshipExamData) {
-        scholarshipExamData = JSON.parse(scholarshipExamData);
-        dispatch({
-          type: "UPDATE_ONE_CREATOR_EXAM_DATA",
-          dispatchValue: scholarshipExamData,
-        });
-      }
-    };
-
-    const fetchMsfScholarshipExamData = () => {
-      let MsfScholarshipExamData = localStorage.getItem(
-        "msf_scholarship_exam_data"
-      );
-      if (MsfScholarshipExamData) {
-        MsfScholarshipExamData = JSON.parse(MsfScholarshipExamData);
-        dispatch({
-          type: "UPDATE_MSF_SCHOLARSHIP_EXAM_DATA",
-          dispatchValue: MsfScholarshipExamData,
-        });
-      }
-    };
-
-    const fetchGreenovationExamData = () => {
-      let GreenovationExamData = localStorage.getItem(
-        "greenovation_scholarship_exam_data"
-      );
-      if (GreenovationExamData) {
-        GreenovationExamData = JSON.parse(GreenovationExamData);
-        dispatch({
-          type: "UPDATE_GREENOVATION_SCHOLARSHIP_EXAM_DATA",
-          dispatchValue: GreenovationExamData,
-        });
-      }
-    };
-
-    const fetchScholarshipExamLanguage = () => {
-      let scholarshipExamLanguage = localStorage.getItem(
-        "scholarshipExamLanguage"
-      );
-      if (scholarshipExamLanguage) {
-        scholarshipExamLanguage = JSON.parse(scholarshipExamLanguage);
-        dispatch({
-          type: "UPDATE_SCHOLARSHIP_LANGUAGE",
-          scholarshipExamLanguage: scholarshipExamLanguage,
-        });
-      }
-    };
-
-    const fetchEntranceExamData = () => {
-      let scholarshipEntranceExamData =
-        localStorage.getItem("entrance_exam_data");
-      if (scholarshipEntranceExamData) {
-        scholarshipEntranceExamData = JSON.parse(scholarshipEntranceExamData);
-        dispatch({
-          type: "UPDATE_ENTRANCE_EXAM_DATA",
-          dispatchValue: scholarshipEntranceExamData,
-        });
-      }
-    };
-
-    fetchSchoolScientistData();
-    fetchOneCreatorScholarshipData();
-    fetchMsfScholarshipData();
-    fetchOneCreatorScholarshipExamData();
-    fetchMsfScholarshipExamData();
-    fetchGreenovationExamData();
-    fetchScholarshipExamLanguage();
-    fetchEntranceExamData();
-  }, []);
 
   const refreshToken = () => {
     let { access_token, refresh_token } = user_data;
@@ -365,13 +224,10 @@ const MainApp = (props) => {
               setLoading(false);
             }, 500);
           } else {
-            dispatch({
-              type: "UPDATE_USER_DATA",
-              user_data: {
-                ...user_data,
-                access_token: "32ijz2OGEoIXV3wGmqY6mxiBl1Smri",
-                refresh_token: "aspKCIrDTwcv5OEeGE874ht5N3JxA1",
-              },
+            setUserData({
+              ...user_data,
+              access_token: "32ijz2OGEoIXV3wGmqY6mxiBl1Smri",
+              refresh_token: "aspKCIrDTwcv5OEeGE874ht5N3JxA1",
             });
             setTimeout(() => {
               fetchUserProfileData();
@@ -393,26 +249,6 @@ const MainApp = (props) => {
         }, 500);
       });
   };
-
-  const { is_profile_update } = useSelector((state) => state);
-
-  // useEffect(() => {
-  //     fetchUserProfileData();
-  // }, [is_profile_update]);
-
-  useEffect(() => {
-    const { access_token } = user_data || {};
-    if (!access_token) {
-      let userdata = localStorage.getItem("user_data");
-      if (userdata) {
-        userdata = JSON.parse(userdata);
-        dispatch({
-          type: "UPDATE_USER_DATA",
-          user_data: userdata,
-        });
-      }
-    }
-  }, []);
 
   const fetchUserProfileData = (data) => {
     let user = data ? data : user_data;
@@ -443,39 +279,26 @@ const MainApp = (props) => {
             if (StatusCode === 6000) {
               let { subscription_data } = data;
               if (subscription_data.has_active_subscription) {
-                dispatch({
-                  type: "UPDATE_USER_DATA",
-                  user_data: {
-                    ...user,
-                    has_active_subscription:
-                      subscription_data.has_active_subscription,
-                    name: data.name,
-                    phone: data.phone,
-                    signup_type: data.signup_type,
-                    pk: data.id,
-                  },
+                setUserData({
+                  ...user,
+                  has_active_subscription: subscription_data.has_active_subscription,
+                  name: data.name,
+                  phone: data.phone,
+                  signup_type: data.signup_type,
+                  pk: data.id,
                 });
               } else {
-                dispatch({
-                  type: "UPDATE_USER_DATA",
-                  user_data: {
-                    ...user,
-                    name: data.name,
-                    phone: data.phone,
-                    signup_type: data.signup_type,
-                    pk: data.id,
-                  },
+                setUserData({
+                  ...user,
+                  name: data.name,
+                  phone: data.phone,
+                  signup_type: data.signup_type,
+                  pk: data.id,
                 });
               }
 
-              dispatch({
-                type: "UPDATE_USER_PROFILE",
-                user_profile: data,
-              });
-              dispatch({
-                type: "UPDATE_PRIME_SUBSCRIPTION",
-                prime_subscription: data.primeSubscriptionPlan,
-              });
+              setUserProfile(data);
+              // TODO: Add prime subscription to Zustand store if needed
               setLoading(false);
             } else {
               setLoading(false);
@@ -510,11 +333,7 @@ const MainApp = (props) => {
         const { StatusCode, data, count } = response.data;
 
         if (StatusCode === 6000) {
-          dispatch({
-            type: "UPDATE_NOTIFICATIONS",
-            notifications: data,
-            notifications_count: count,
-          });
+          setNotifications(data, count);
         }
       })
       .catch((error) => {});

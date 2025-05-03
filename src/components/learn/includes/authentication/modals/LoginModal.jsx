@@ -5,30 +5,14 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import RequestLoader from "../general/RequestLoader";
 import FlagDropDown from "../general/FlagDropDown";
 import CountrySelector from "../general/CountrySelector";
-
 import { accountsConfig } from "../../../../../axiosConfig";
-import { connect } from "react-redux";
 import SignupLoader from "../../techschooling/general/loaders/SignupLoader";
+import { useAuthStore } from "../../../../../store/authStore";
 
-// Function used to update values from redux react
-function mapDispatchtoProps(dispatch) {
-  return {
-    updateUserData: (user_data) =>
-      dispatch({
-        type: "UPDATE_USER_DATA",
-        user_data: user_data,
-      }),
-    updateSignupData: (signup_data) =>
-      dispatch({
-        type: "UPDATE_SIGNUP_DATA",
-        signup_data: signup_data,
-      }),
-  };
-}
-
-function LoginModal(props) {
+function LoginModal() {
   const navigate = useNavigate();
   const location = useLocation();
+  const updateUserData = useAuthStore((state) => state.updateUserData);
 
   const [country_details] = useState([
     {
@@ -55,6 +39,12 @@ function LoginModal(props) {
     setCountryselector((prevValue) => !prevValue);
   };
 
+  const handleClose = () => {
+    // Remove the action=login from the URL and navigate back
+    const newPath = location.pathname;
+    navigate(newPath);
+  };
+
   //Preventing "Enter" key function
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -79,7 +69,6 @@ function LoginModal(props) {
             service: "learn",
           },
         })
-
         .then((response) => {
           const { StatusCode, message } = response.data;
           if (StatusCode === 6000) {
@@ -113,9 +102,9 @@ function LoginModal(props) {
         //From response.data the message and statuscode  will be taken.
         const { StatusCode, message } = response.data;
         if (StatusCode === 6000) {
-          navigate(`${location.pathname}?action=password${props.nextPath ? `&next=${props.nextPath}` : ""}`);
+          navigate(`${location.pathname}?action=password`);
           setLoading(false);
-          props.updateUserData({
+          updateUserData({
             phone,
             selectedCountry,
           });
@@ -124,7 +113,7 @@ function LoginModal(props) {
           setError(true);
           setErrorMessage(message);
           if (message === "User Not Exists") {
-            navigate(`${location.pathname}?action=phone${phone ? `&phone=${phone}` : ""}${props.nextPath ? `&next=${props.nextPath}` : ""}`);
+            navigate(`${location.pathname}?action=phone${phone ? `&phone=${phone}` : ""}`);
           }
         }
       })
@@ -147,7 +136,7 @@ function LoginModal(props) {
 
   const onSelectHandler = (selected) => {
     setSelectedCountry(selected);
-    props.updateUserData({ selectedCountry: selected });
+    updateUserData({ selectedCountry: selected });
   };
 
   return (
@@ -156,10 +145,10 @@ function LoginModal(props) {
         <CloseIcon
           title="Close"
           className="las la-times-circle"
-          onClick={props.closeModal}
+          onClick={handleClose}
         ></CloseIcon>
         <ItemContainer>
-          {props.action === "login" && (
+          {location.search.includes("action=login") && (
             <>
               <CountrySelector
                 show={countryselector}
@@ -198,39 +187,30 @@ function LoginModal(props) {
                         {`${selectedCountry.phone_code}`}
                         <InputField
                           autoFocus
-                          className="b-medium"
+                          type="text"
                           placeholder="Enter your phone number"
-                          onChange={onChange}
                           value={phone}
-                          type="tel"
+                          onChange={onChange}
                           onKeyDown={handleKeyDown}
-                          maxLength={selectedCountry.phone_number_length}
+                          maxLength={selectedCountry.number_length}
                         />
-                        {error && (
-                          <ErrorText className="g-medium">
-                            {error_message}
-                          </ErrorText>
-                        )}
                       </InputContainer>
                     </>
                   )}
                 </MiddleContainer>
+                {error && <ErrorText>{error_message}</ErrorText>}
                 <BottomButton
                   onClick={verifyService}
-                  to={`${location.pathname}?action=password`}
                   className="g-medium white"
                 >
-                  {isLoading ? <RequestLoader /> : "Next"}
+                  {isLoading ? <RequestLoader /> : "Continue"}
                 </BottomButton>
-                <BottomRow className="g-medium">
-                  New to Steyp?
-                  <RowItem
-                    to={`${location.pathname}?action=phone`}
-                    className="g-medium"
-                  >
-                    Create an account
-                  </RowItem>
-                </BottomRow>
+                <Forgot
+                  to={`${location.pathname}?action=signup`}
+                  className="g-medium"
+                >
+                  Don't have an account? Sign up
+                </Forgot>
               </Content>
               <TermsService />
             </>
@@ -241,7 +221,7 @@ function LoginModal(props) {
   );
 }
 
-export default connect(null, mapDispatchtoProps)(LoginModal);
+export default LoginModal;
 
 const Container = styled.div`
   position: fixed;
@@ -471,5 +451,13 @@ const BottomButton = styled(Link)`
   @media (max-width: 480px) {
     font-size: 15px;
     height: 44px;
+  }
+`;
+const Forgot = styled(Link)`
+  color: #5cc66a;
+  font-size: 14px;
+  margin-top: 14px;
+  @media (max-width: 480px) {
+    font-size: 13px;
   }
 `;

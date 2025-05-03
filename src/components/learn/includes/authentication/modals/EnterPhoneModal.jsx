@@ -9,6 +9,7 @@ import CountrySelector from "../general/CountrySelector";
 import { accountsConfig } from "../../../../../axiosConfig";
 import { connect } from "react-redux";
 import SignupLoader from "../../techschooling/general/loaders/SignupLoader";
+import { useAuthStore } from "../../../../../store/authStore";
 
 import ReCAPTCHA from "react-google-recaptcha";
 // Function used to fetch values from redux react
@@ -43,14 +44,22 @@ function EnterPhoneModal(props) {
   const navigate = useNavigate();
   const location = useLocation();
   const recaptchaRef = useRef(null);
+  const updateUserData = useAuthStore((state) => state.updateUserData);
+
   //storing selcted country to state
   const [selectedCountry, setSelectedCountry] = useState("");
   const [countryselector, setCountryselector] = useState(false);
   const [error, setError] = useState(false);
   const [error_message, setErrorMessage] = useState("");
+  
   const handleShow = () => {
     setCountryselector((prevValue) => !prevValue);
   };
+
+  const handleClose = () => {
+    navigate(-1);
+  };
+
   const [phone, setPhone] = useState("");
   const [selecteddistrict, setSelectedDistrict] = useState("");
   const [isLoading, setLoading] = useState(false);
@@ -127,7 +136,7 @@ function EnterPhoneModal(props) {
                 phone,
                 selectedCountry,
               };
-              props.updateUserData(user_data);
+              updateUserData(user_data);
               props.updateSignupData({
                 ...signup_data,
                 phone: phone,
@@ -161,7 +170,7 @@ function EnterPhoneModal(props) {
 
   const onSelectHandler = (selected) => {
     setSelectedCountry(selected);
-    props.updateUserData({ selectedCountry: selected });
+    updateUserData({ selectedCountry: selected });
   };
 
   return (
@@ -170,7 +179,7 @@ function EnterPhoneModal(props) {
         <CloseIcon
           title="Close"
           className="las la-times-circle"
-          onClick={props.closeModal}
+          onClick={handleClose}
         ></CloseIcon>
 
         <ItemContainer bg="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/decorator.svg">
