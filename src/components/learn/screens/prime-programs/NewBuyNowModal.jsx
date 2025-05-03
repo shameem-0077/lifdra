@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useAuthStore } from "../../../../store/authStore";
 import PaymentStatusModal from "./PaymentStatusModal";
 import loader from "../../../../assets/lotties/modal/buttonloader.json";
 import applyLoader from "../../../../assets/lotties/prime-progrmmes/voucherLoader.json";
@@ -14,15 +14,12 @@ import { useParams } from "react-router-dom";
 import { getDateStr } from "../../../helpers/functions";
 
 const NewBuyNowModal = (props) => {
-    const user_data = useSelector((state) => state.user_data);
-
-    const { primeProgramState, primeProgramDispatch } =
-        useContext(PrimeProgramContext);
+    const { user_data } = useAuthStore();
+    const { primeProgramState, primeProgramDispatch } = useContext(PrimeProgramContext);
 
     const [date, setDate] = useState(false);
     const [show, setShow] = useState(false);
     const [isVoucherModal, setVoucherModal] = useState(false);
-    const user_profile = useSelector((state) => state.user_profile);
     const [modalType, setModalType] = useState("");
     const [isButtonLoading, setButtonLoading] = useState(false);
     const [courseId, setCourseId] = useState("");
@@ -103,7 +100,7 @@ const NewBuyNowModal = (props) => {
                 setCourseDetails(data);
             }
         }
-    }, [courseId]);
+    }, [courseId, user_data, data]);
 
     useEffect(() => {
         if (props.action !== "buy-course") {
@@ -123,7 +120,7 @@ const NewBuyNowModal = (props) => {
         setCourseSlug(c);
         if (course_id) setCourseId(course_id);
         else setCourseId(c);
-    }, [props.location.search]);
+    }, [props.location.search, course_id]);
 
     const voucherValidation = () => {
         setApplyLoading(true);
@@ -167,6 +164,7 @@ const NewBuyNowModal = (props) => {
                 setApplyLoading(false);
             });
     };
+
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
             e.preventDefault();
@@ -183,18 +181,20 @@ const NewBuyNowModal = (props) => {
         }
 
         window.addEventListener("resize", handleResize);
-    });
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     useEffect(() => {
         if (props.action === "buy-course") {
             document.body.style.position = "fixed";
             document.body.style.top = `-${window.scrollY}px`;
 
-            // When the modal is hidden, we want to remain at the top of the scroll position
-            document.body.style.position = "";
-            document.body.style.top = "";
+            return () => {
+                document.body.style.position = "";
+                document.body.style.top = "";
+            };
         }
-    }, []);
+    }, [props.action]);
 
     useEffect(() => {
         let d = String(new window.Date());
@@ -365,13 +365,13 @@ const NewBuyNowModal = (props) => {
                                             </PurchaseTitle>
                                             <FloatingIcons
                                                 status={
-                                                    user_profile.total_purchased_coins ===
+                                                    user_data.total_purchased_coins ===
                                                     0
                                                         ? "active"
                                                         : "not"
                                                 }
                                                 onClick={() => {
-                                                    user_profile.total_purchased_coins >
+                                                    user_data.total_purchased_coins >
                                                     0
                                                         ? primeProgramDispatch({
                                                               type: "TOGGLE_IS_PURCHASED_COINS",
@@ -383,7 +383,7 @@ const NewBuyNowModal = (props) => {
                                                     <Circle
                                                         status={
                                                             primeProgramState.isUsedPurchasedCoins &&
-                                                            user_profile.total_purchased_coins >
+                                                            user_data.total_purchased_coins >
                                                                 0
                                                                 ? "active"
                                                                 : "not"
@@ -392,7 +392,7 @@ const NewBuyNowModal = (props) => {
                                                     <Span
                                                         status={
                                                             primeProgramState.isUsedPurchasedCoins &&
-                                                            user_profile.total_purchased_coins >
+                                                            user_data.total_purchased_coins >
                                                                 0
                                                                 ? "active"
                                                                 : "not"
@@ -413,7 +413,7 @@ const NewBuyNowModal = (props) => {
                                                     />
                                                     <Coin>
                                                         {
-                                                            user_profile.total_purchased_coins
+                                                            user_data.total_purchased_coins
                                                         }
                                                     </Coin>
                                                 </Coins>
@@ -526,7 +526,7 @@ const NewBuyNowModal = (props) => {
                 </Container>
                 {!isLoading &&
                     (primeProgramState.isUsedPurchasedCoins &&
-                    user_profile.total_purchased_coins > 0 ? (
+                    user_data.total_purchased_coins > 0 ? (
                         <Button
                             className="anim-fade"
                             onClick={() => {

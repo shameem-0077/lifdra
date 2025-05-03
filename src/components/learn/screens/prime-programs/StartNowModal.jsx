@@ -1,169 +1,184 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { useAuthStore } from "../../../../store/authStore";
 import { primeprogramsConfig } from "../../../../axiosConfig";
+import { useNavigate } from "react-router-dom";
+import loader from "../../../../assets/lotties/modal/buttonloader.json";
+import Lottie from "react-lottie";
 
-function StartNowModal({ isModal, setModal, course }) {
-    const history = useHistory();
-    const user_data = useSelector((state) => state.user_data);
-    const [isLoading, setLoading] = useState(false);
+const StartNowModal = ({ topicId, setTopicId, isStartNowModal, setStartNowModal }) => {
+    const { user_data } = useAuthStore();
+    const [isButtonLoading, setButtonLoading] = useState(false);
+    const navigate = useNavigate();
 
-    function StartCourse() {
-        setLoading(true);
-        primeprogramsConfig
-            .get(`learning/start-course/${course.id}/`, {
-                headers: {
-                    Authorization: `Bearer ${user_data?.access_token}`,
-                },
-            })
-            .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
-                    history.push(`/prime-programs/${course.first_topic}/`);
-                    setLoading(false);
-                    setModal(false);
-                } else if (StatusCode === 6001) {
-                    setLoading(false);
-                    setModal(false);
+    const lottieDefaultOptions = {
+        loop: false,
+        autoplay: true,
+        animationData: loader,
+        rendererSettings: {},
+    };
+
+    const startCourse = async () => {
+        setButtonLoading(true);
+        const { access_token } = user_data;
+        await primeprogramsConfig
+            .post(
+                `learning/start-course/${topicId}/`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${access_token}`,
+                    },
                 }
+            )
+            .then((response) => {
+                const { data } = response.data;
+                setButtonLoading(false);
+                setStartNowModal(false);
+                navigate(`/learn/prime-programs/topic/${data.id}`);
             })
             .catch((err) => {
                 console.log(err);
-                setLoading(false);
-                setModal(false);
+                setButtonLoading(false);
             });
-    }
+    };
+
     return (
-        <BackContainer style={{ transform: isModal && "scale(1,1)" }}>
-            <Overlay onClick={() => setModal(false)}>
-                <VoucherContainer>
-                    <ModalTop>
-                        <h2>Congratulations!</h2>
-                    </ModalTop>
-                    <ModalBottom>
-                        {/* <Label>Saving with this coupon</Label> */}
-                        <Description>
-                            Learning new things keeps your mind active and alert
-                        </Description>
-                    </ModalBottom>
-                    <VoucherButton onClick={StartCourse}>Next</VoucherButton>
-                </VoucherContainer>
-            </Overlay>
-        </BackContainer>
+        <>
+            <Overlay
+                show={isStartNowModal}
+                onClick={() => setStartNowModal(false)}
+            />
+            <ModalContainer show={isStartNowModal}>
+                <Container>
+                    <CloseButton onClick={() => setStartNowModal(false)}>
+                        <CloseIcon
+                            src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/close.png"
+                            alt="Arrow"
+                        />
+                    </CloseButton>
+                    <Bg>
+                        <BgImage
+                            src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/modalbg.svg"
+                            alt="Image"
+                        />
+                    </Bg>
+                    <Title>Start Course</Title>
+                    <Button
+                        onClick={startCourse}
+                        disabled={isButtonLoading}
+                    >
+                        {!isButtonLoading ? (
+                            "Start Now"
+                        ) : (
+                            <Lottie
+                                options={lottieDefaultOptions}
+                                height={45}
+                                width={45}
+                            />
+                        )}
+                    </Button>
+                </Container>
+            </ModalContainer>
+        </>
     );
-}
+};
 
 export default StartNowModal;
-const BackContainer = styled.div`
-    position: fixed;
-    transform: scale(0, 0);
-    transition: 0.3s;
-    width: 100%;
-    height: 100vh;
-    z-index: 1000;
-    left: 0;
-    top: 0px;
-    background: rgba(0, 0, 0, 0.397);
-`;
+
 const Overlay = styled.div`
     position: fixed;
     left: 0;
     top: 0px;
     width: 100%;
     height: 100vh;
+    background: rgba(0, 0, 0, 0.2);
+    display: ${(props) => (props.show ? "block" : "none")};
 `;
 
-const VoucherContainer = styled.div`
+const ModalContainer = styled.div`
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 600px;
+    width: 500px;
     transform: translate(-50%, -50%);
-
+    text-align: center;
     background-color: rgb(255, 255, 255);
-    padding: 40px;
+    padding: 55px 40px 40px;
     border: 1px solid rgb(230, 230, 230);
     border-radius: 5px;
     z-index: 1000;
-    @media (max-width: 640px) {
-        width: 500px;
-    }
+    transition: 0.3s;
+    display: ${(props) => (props.show ? "block" : "none")};
     @media (max-width: 560px) {
         width: 400px;
     }
     @media (max-width: 440px) {
         width: 370px;
-        padding: 25px 30px;
+        padding: 55px 25px 30px;
     }
+    @media (max-width: 385px) {
+        width: 340px;
+    }
+    @media (max-width: 385px) {
+        width: 300px;
+    }
+`;
 
-    @media (max-width: 385px) {
-        width: 310px;
-    }
-`;
-const ModalTop = styled.div`
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #7070704b;
-    h2 {
-        font-size: 24px;
-        font-family: "gordita_medium";
-        @media (max-width: 560px) {
-            font-size: 20px;
-        }
-        @media (max-width: 385px) {
-            font-size: 18px;
-        }
-    }
-`;
-const VoucherIcon = styled.span`
-    width: 30px;
-    display: block;
-    margin-right: 20px;
-    img {
-        width: 100%;
-        display: block;
-    }
-    @media (max-width: 385px) {
-        width: 25px;
-        margin-right: 10px;
-    }
-`;
-const ModalBottom = styled.div`
-    margin-top: 30px;
-`;
-const CouponDiscountPrice = styled.h3`
-    text-align: left;
-    font-family: "gordita_medium";
-    font-size: 32px;
-`;
-const Label = styled.p`
-    text-align: left;
-    color: #585858;
-    font-size: 14px;
-    font-family: "gordita_regular";
-    transform: translateY(-10px);
-`;
-const Description = styled.p`
-    text-align: left;
-    color: #585858;
-    font-family: "gordita_regular";
-`;
-const VoucherButton = styled.span`
+const Container = styled.div`
+    position: relative;
     width: 100%;
-    height: 50px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    margin-top: 30px;
+`;
+
+const CloseButton = styled.button`
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+`;
+
+const CloseIcon = styled.img`
+    width: 20px;
+`;
+
+const Bg = styled.div`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+`;
+
+const BgImage = styled.img`
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+`;
+
+const Title = styled.h4`
+    font-size: 26px;
+    margin-bottom: 10px;
+    font-family: "gordita_medium";
+    @media (max-width: 768px) {
+        font-size: 22px;
+    }
+`;
+
+const Button = styled.button`
     background-color: #15bf81;
-    color: #fff;
-    font-family: gordita_medium;
+    height: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 5px;
     cursor: pointer;
-    &:hover {
-        opacity: 0.8;
-    }
+    font-family: "gordita_medium";
+    color: #fff;
+    border: none;
 `;

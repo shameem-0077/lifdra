@@ -20,16 +20,16 @@ function NavMenu() {
       arrow_icon: null,
     },
     {
-      path: ["/nanodegree/"],
-      label: "NanoDegree",
+      path: ["/prime-programs/"],
+      label: "Courses",
       active_icon:
         "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/19-10-2024/activestate_hat.svg",
       icon: "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/14-10-2024/nanodegree.svg",
       arrow_icon: null,
     },
     {
-      path: ["/tech-updates/"],
-      label: "Tech Updates",
+      path: ["/feed/"],
+      label: "Explore",
       icon: "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/07-10-2024/explore_icon.svg",
       active_icon:
         "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/28-09-2024/compass-03.svg",

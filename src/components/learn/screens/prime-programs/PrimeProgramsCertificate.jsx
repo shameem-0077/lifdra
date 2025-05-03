@@ -3,334 +3,221 @@ import styled from "styled-components";
 import html2canvas from "html2canvas";
 import queryString from "query-string";
 import { primeprogramsConfig } from "../../../../axiosConfig";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { getDateStr } from "../../../helpers/functions";
 import TalropEdtechHelmet from "../../../helpers/TalropEdtechHelmet";
-import Loader from "../../includes/techschooling/general/loaders/Loader";
-import { useDispatch, useSelector } from "react-redux";
+import { useAuthStore } from "../../../../store/authStore";
+import SignupLoader from "../../includes/techschooling/general/loaders/SignupLoader";
 
-function PrimeProgramsCertificate() {
-  const history = useHistory();
-  const location = useLocation();
-  const [certId, setCertId] = useState(null);
-  const [certificateDetails, setCertificateDetails] = useState({});
-  const [isLoading, setLoading] = useState(true);
-  const [imageUrl, setImageUrl] = useState("");
-  const { divMainClass } = useSelector((state) => state);
-  const dispatch = useDispatch();
-  const ref = useRef(null);
+const PrimeProgramsCertificate = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [certId, setCertId] = useState(null);
+    const [certificateDetails, setCertificateDetails] = useState({});
+    const [isLoading, setLoading] = useState(true);
+    const [imageUrl, setImageUrl] = useState("");
+    const ref = useRef(null);
+    const { user_data } = useAuthStore();
+    const [certificates, setCertificates] = useState([]);
 
-  const updateActiveMenu = (active_menu) =>
-    dispatch({
-      type: "ACTIVE_MENU",
-      active_menu: active_menu,
-    });
-
-  const download = function () {
-    let link = document.createElement("a");
-    const kebabCase = (string) =>
-      string
-        .replace(/([a-z])([A-Z])/g, "$1-$2")
-        .replace(/\s+/g, "-")
-        .toLowerCase();
-    link.download = `${certificateDetails.student_name}-${certId}-${kebabCase(
-      certificateDetails.course_name
-    )}-certificate.png`;
-    link.href = imageUrl;
-    link.click();
-  };
-
-  const handleCopy = (elem_id) => {
-    const elem = document.getElementById(elem_id);
-    if (elem_id === "certificateURL")
-      elem.parentElement.parentElement.classList.add("show");
-    else elem.parentElement.classList.add("show");
-
-    elem.focus();
-    elem.setSelectionRange(0, 99999);
-    elem.select();
-    document.execCommand("copy");
-    setTimeout(function () {
-      if (elem_id === "certificateURL")
-        elem.parentElement.parentElement.classList.remove("show");
-      elem.parentElement.classList.remove("show");
-    }, 2000);
-  };
-
-  useEffect(() => {
-    const { search } = location;
-    const values = queryString.parse(search);
-    const id = values.id;
-    setCertId(id);
-    const getCertificateDetails = () => {
-      primeprogramsConfig
-        .get(`certifications/certificate/${id}/`)
-        .then((response) => {
-          setLoading(false);
-          const { data, StatusCode } = response.data;
-          if (StatusCode === 6000) {
-            setCertificateDetails(data);
-          } else {
-            history.push(`/prime-programs/`);
-          }
-        })
-        .catch((err) => {
-          setLoading(false);
-        });
+    const download = function () {
+        let link = document.createElement("a");
+        const kebabCase = (string) =>
+            string
+                .replace(/([a-z])([A-Z])/g, "$1-$2")
+                .replace(/\s+/g, "-")
+                .toLowerCase();
+        link.download = `${certificateDetails.student_name}-${certId}-${kebabCase(
+            certificateDetails.course_name
+        )}-certificate.png`;
+        link.href = imageUrl;
+        link.click();
     };
 
-    getCertificateDetails();
-    updateActiveMenu("prime-programs");
-  }, []);
+    const handleCopy = (elem_id) => {
+        const elem = document.getElementById(elem_id);
+        if (elem_id === "certificateURL")
+            elem.parentElement.parentElement.classList.add("show");
+        else elem.parentElement.classList.add("show");
 
-  useEffect(() => {
-    const generateLink = function () {
-      html2canvas(document.getElementById(`certificate`), {
-        scale: 8,
-        useCORS: true, //By passing this option in function Cross origin images will be rendered properly in the downloaded version of the PDF
-        ignoreElements: (element) => {
-          if (element.tagName === "svg") {
-            return true;
-          }
-          if (
-            element.tagName === "IMG" &&
-            !element.className.includes(`certificate-download-##`)
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        },
-      })
-        .then((canvas) => {
-          const link = canvas.toDataURL();
-          setImageUrl(link);
-        })
-        .catch((error) => {
-          console.log(error, "err");
-        });
+        elem.focus();
+        elem.setSelectionRange(0, 99999);
+        elem.select();
+        document.execCommand("copy");
+        setTimeout(function () {
+            if (elem_id === "certificateURL")
+                elem.parentElement.parentElement.classList.remove("show");
+            elem.parentElement.classList.remove("show");
+        }, 2000);
     };
 
-    if (!isLoading && Object.keys(certificateDetails).length > 0)
-      generateLink();
-  }, [isLoading, Object.keys(certificateDetails).length]);
-
-  return (
-    <div id="main" className={divMainClass}>
-      <TalropEdtechHelmet title="Certificate - Prime Programs" />
-      {isLoading ? (
-        <LoaderContainer>
-          <Loader />
-        </LoaderContainer>
-      ) : (
-        <MainContainer>
-          <Container>
-            <LeftContainer>
-              <Header>
-                <MainHeading>Certificate</MainHeading>
-                <Issue>
-                  Issued{" "}
-                  <IssueDate>
-                    {getDateStr(certificateDetails.issued_date)}
-                  </IssueDate>
-                </Issue>
-              </Header>
-              <Description>
-                You've completed the program{" "}
-                <span> '{certificateDetails.course_name}' </span> and have been
-                verified by
-                <span> Steyp </span> authorities.
-              </Description>
-              <CourseDetailsContainer>
-                <CourseLeft>
-                  <CourseLabel>Course</CourseLabel>
-                  <marquee behavior="" direction="horizontal">
-                    <CourseContent className="course-header">
-                      {certificateDetails.course_name}
-                    </CourseContent>
-                  </marquee>
-                </CourseLeft>
-                <CourseRight>
-                  <CourseLeftContainer>
-                    <CourseLabel>Started</CourseLabel>
-                    <CourseContent>
-                      {getDateStr(certificateDetails.start_date)}
-                    </CourseContent>
-                  </CourseLeftContainer>
-                  <CourseRightContainer>
-                    <CourseLabel>Completed</CourseLabel>
-                    <CourseContent>
-                      {getDateStr(certificateDetails.completed_date)}
-                    </CourseContent>
-                  </CourseRightContainer>
-                </CourseRight>
-              </CourseDetailsContainer>
-              <IdContainer>
-                <IdLabel>Certificate ID</IdLabel>
-                <IdUrlContainer>
-                  <Input id="certificateId" value={certId} readOnly />
-                  <CopyButton onClick={() => handleCopy("certificateId")}>
-                    <img
-                      // src={require("../../../../assets/images/prime-program/certificate/copy_icon.svg")}
-                      src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/04-08-2021/copy_icon.svg
-                                            "
-                      alt="Image"
-                    />
-                    <ButtonText>Copy ID</ButtonText>
-                    <ToolTipContainer x-placement="right">
-                      <ToolTip>Copied!</ToolTip>
-                    </ToolTipContainer>
-                  </CopyButton>
-                </IdUrlContainer>
-              </IdContainer>
-              <IdContainer>
-                <IdLabel>Certificate URL</IdLabel>
-                <UrlContainer>
-                  <UrlInput>
-                    <UrlImage>
-                      <img
-                        // src={require("../../../../assets/images/prime-program/certificate/Url_icon.svg")}
-                        src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/04-08-2021/Url_icon.svg
-                                                "
-                        alt="Url"
-                      />
-                    </UrlImage>
-                    <UrlText
-                      id="certificateURL"
-                      readOnly={true}
-                      type="url"
-                      value={window.location.href}
-                    />
-                  </UrlInput>
-                  <CopyButton onClick={() => handleCopy("certificateURL")}>
-                    <img
-                      // src={require("../../../../assets/images/prime-program/certificate/copy_icon.svg")}
-                      src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/04-08-2021/copy_icon.svg"
-                      alt="Copy"
-                    />
-                    <ButtonText>Copy Link</ButtonText>
-                    <ToolTipContainer x-placement="right">
-                      <ToolTip>Copied!</ToolTip>
-                    </ToolTipContainer>
-                  </CopyButton>
-                </UrlContainer>
-              </IdContainer>
-            </LeftContainer>
-            <RightContainer>
-              {/* {imageUrl ? (
-                                <CertWrapper>
-                                    <GenratedImage
-                                        src={imageUrl}
-                                        alt="Certificate"
-                                    />
-                                </CertWrapper>
-                            ) : ( */}
-              <Certificate
-                onmousedown="event.preventDefault ? event.preventDefault() : event.returnValue = false"
-                id="certificate"
-                className="certificate-download-##"
-              >
-                <RotatedData className="certificate-download-##">
-                  Issued on {getDateStr(certificateDetails.issued_date)} &nbsp;
-                  &nbsp; &nbsp; &nbsp;Certificate URL: {window.location.href}
-                </RotatedData>
-                <CertificateData className="certificate-download-##">
-                  <CertificateAchievement className="certificate-download-##">
-                    Certificate of Achievement
-                  </CertificateAchievement>
-                  <CertificateID className="certificate-download-##">
-                    Certificate ID: {certId}
-                  </CertificateID>
-                  <CertificateName className="certificate-download-##">
-                    {certificateDetails.student_name}
-                  </CertificateName>
-                  <CompletedText className="certificate-download-##">
-                    has completed the following program <br /> in
-                  </CompletedText>
-                  <CourseDetailsText className="certificate-download-##">
-                    {certificateDetails.course_name}
-                  </CourseDetailsText>
-                  <StudentDescription className="certificate-download-##">
-                    This is to certify that
-                    <span>
-                      &nbsp;
-                      {certificateDetails.student_name}
-                      &nbsp;
-                    </span>{" "}
-                    has successfully completed the program in
-                    <span>
-                      &nbsp;
-                      {certificateDetails.course_name}
-                      &nbsp;
-                    </span>
-                    started on
-                    <span>
-                      &nbsp;
-                      {getDateStr(certificateDetails.start_date)} &nbsp;
-                    </span>
-                    and completed on
-                    <span>
-                      &nbsp;
-                      {getDateStr(certificateDetails.completed_date)}
-                      .&nbsp;
-                    </span>
-                  </StudentDescription>
-                  <WishText className="certificate-download-##">
-                    We wish you the best of luck with your future endeavors.
-                  </WishText>
-                  <Signature
-                    className="certificate-download-##"
-                    src={require("../../../../assets/images/prime-program/certificate/signature.svg")}
-                    // src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/04-08-2021/signature.svg
-                    // "
-                    alt="Image"
-                  />
-                  <Seal
-                    className="certificate-download-##"
-                    src={require("../../../../assets/images/prime-program/certificate/steyp-seal.png")}
-                    alt="Image"
-                  />
-                  <CeoName className="certificate-download-##">Sobir N</CeoName>
-                  <Designation className="certificate-download-##">
-                    Founder & CEO, Steyp{" "}
-                  </Designation>
-                  <WebUrlSteyp className="certificate-download-##">
-                    www.steyp.com
-                  </WebUrlSteyp>
-                  <SteypLogo
-                    className="certificate-download-##"
-                    src={
-                      "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/23-11-2021/steyp-logo.svg"
+    useEffect(() => {
+        const { search } = location;
+        const values = queryString.parse(search);
+        const id = values.id;
+        setCertId(id);
+        const getCertificateDetails = () => {
+            primeprogramsConfig
+                .get(`certifications/certificate/${id}/`)
+                .then((response) => {
+                    setLoading(false);
+                    const { data, StatusCode } = response.data;
+                    if (StatusCode === 6000) {
+                        setCertificateDetails(data);
+                    } else {
+                        navigate(`/prime-programs/`);
                     }
-                    alt="Logo"
-                  />
-                </CertificateData>
+                })
+                .catch((err) => {
+                    setLoading(false);
+                });
+        };
 
-                <CertificateImage
-                  className="certificate-download-##"
-                  src={require("../../../../assets/images/prime-program/certificate/certificate.svg")}
-                  // src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/04-08-2021/certificate.svg
-                  // "
-                  alt="Image"
-                />
-              </Certificate>
-              {/* )} */}
-              {imageUrl && (
-                <DownloadButton onClick={download}>
-                  Download Certificate &nbsp;&nbsp;
-                  <img
-                    src={require("../../../../assets/images/prime-program/certificate/download_icon.svg")}
-                    alt="Image"
-                  />
-                </DownloadButton>
-              )}
-            </RightContainer>
-          </Container>
-        </MainContainer>
-      )}
-    </div>
-  );
-}
+        getCertificateDetails();
+    }, []);
+
+    useEffect(() => {
+        const generateLink = function () {
+            html2canvas(document.getElementById(`certificate`), {
+                scale: 8,
+                useCORS: true, //By passing this option in function Cross origin images will be rendered properly in the downloaded version of the PDF
+                ignoreElements: (element) => {
+                    if (element.tagName === "svg") {
+                        return true;
+                    }
+                    if (
+                        element.tagName === "IMG" &&
+                        !element.className.includes(`certificate-download-##`)
+                    ) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                },
+            })
+                .then((canvas) => {
+                    const link = canvas.toDataURL();
+                    setImageUrl(link);
+                })
+                .catch((error) => {
+                    console.log(error, "err");
+                });
+        };
+
+        if (!isLoading && Object.keys(certificateDetails).length > 0)
+            generateLink();
+    }, [isLoading, Object.keys(certificateDetails).length]);
+
+    useEffect(() => {
+        const { access_token } = user_data;
+        const fetchData = async () => {
+            await primeprogramsConfig
+                .get(`learning/certificates/`, {
+                    headers: {
+                        Authorization: `Bearer ${access_token}`,
+                    },
+                })
+                .then((response) => {
+                    const { data } = response.data;
+                    setLoading(false);
+                    setCertificates(data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                    setLoading(false);
+                });
+        };
+
+        fetchData();
+    }, []);
+
+    return (
+        <div id="main">
+            <TalropEdtechHelmet title="Certificate - Prime Programs" />
+            {isLoading ? (
+                <LoaderContainer>
+                    <SignupLoader />
+                </LoaderContainer>
+            ) : (
+                <MainContainer>
+                    <Container>
+                        <LeftContainer>
+                            <Header>
+                                <MainHeading>Certificate</MainHeading>
+                                <Issue>
+                                    Issued{" "}
+                                    <IssueDate>
+                                        {getDateStr(certificateDetails.issued_date)}
+                                    </IssueDate>
+                                </Issue>
+                            </Header>
+                            <Description>
+                                You've completed the program{" "}
+                                <span> '{certificateDetails.course_name}' </span> and have been
+                                verified by
+                                <span> Steyp </span> authorities.
+                            </Description>
+                            <CourseDetailsContainer>
+                                <CourseLeft>
+                                    <CourseLabel>Course</CourseLabel>
+                                    <marquee behavior="" direction="horizontal">
+                                        <CourseContent className="course-header">
+                                            {certificateDetails.course_name}
+                                        </CourseContent>
+                                    </marquee>
+                                </CourseLeft>
+                                <CourseRight>
+                                    <CourseLeftContainer>
+                                        <CourseLabel>Started</CourseLabel>
+                                        <CourseContent>
+                                            {getDateStr(certificateDetails.start_date)}
+                                        </CourseContent>
+                                    </CourseLeftContainer>
+                                    <CourseRightContainer>
+                                        <CourseLabel>Completed</CourseLabel>
+                                        <CourseContent>
+                                            {getDateStr(certificateDetails.completed_date)}
+                                        </CourseContent>
+                                    </CourseRightContainer>
+                                </CourseRight>
+                            </CourseDetailsContainer>
+                            <IdContainer>
+                                <IdLabel>Certificate ID</IdLabel>
+                                <IdUrlContainer>
+                                    <Input id="certificateId" value={certId} readOnly />
+                                    <CopyButton onClick={() => handleCopy("certificateId")}>
+                                        <img
+                                            src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/copy.svg"
+                                            alt="Copy"
+                                        />
+                                        <span>Copy</span>
+                                    </CopyButton>
+                                </IdUrlContainer>
+                            </IdContainer>
+                            <ButtonContainer>
+                                <Button onClick={download}>
+                                    <img
+                                        src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/download.svg"
+                                        alt="Download"
+                                    />
+                                    Download Certificate
+                                </Button>
+                            </ButtonContainer>
+                        </LeftContainer>
+                        <RightContainer>
+                            <CertificateContainer id="certificate">
+                                <CertificateImage
+                                    src={certificateDetails.certificate_image}
+                                    alt="Certificate"
+                                />
+                            </CertificateContainer>
+                        </RightContainer>
+                    </Container>
+                </MainContainer>
+            )}
+        </div>
+    );
+};
 
 export default PrimeProgramsCertificate;
 

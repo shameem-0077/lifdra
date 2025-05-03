@@ -6,48 +6,23 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-
-import { connect } from "react-redux";
+import { useAuthStore } from "../../../store/authStore";
 import "../../../assets/css/Style.css";
 import RouteLoading from "../RouteLoading";
 import Nav from "../../learn/screens/prime-programs/Nav";
 import { PrivateRoute } from "../PrivateRoute";
-import BuynowModal from "../../learn/screens/prime-programs/BuynowModal";
-import queryString from "query-string";
-import TalropEdtechHelmet from "../../helpers/TalropEdtechHelmet";
 import NewBuyNowModal from "../../learn/screens/prime-programs/NewBuyNowModal";
 import PrimeSubcribeModal from "../../web/explore-pages/prime-program/Modals/PrimeSubcribeModal";
-import PrimeLandingPage from "../../web/explore-pages/prime-program/screens/PrimeLandingPage";
-
-// const PrimeLandingPage = lazy(() =>
-//     import("../../web/explore-pages/prime-program/screens/PrimeLandingPage")
-// );
-
-const PrimeProgramsHome = lazy(() =>
-  import("../../learn/screens/prime-programs/PrimeProgramsHome")
-);
+import queryString from "query-string";
+import TalropEdtechHelmet from "../../helpers/TalropEdtechHelmet";
 
 const PrimeProgramsPurchasedList = lazy(() =>
   import("../../learn/screens/prime-programs/PrimeProgramsPurchasedList")
 );
 
-function mapStateToProps(state) {
-  return {
-    divMainClass: state.divMainClass,
-  };
-}
-
-function mapDispatchtoProps(dispatch) {
-  return {
-    updateActiveMenu: (active_menu) =>
-      dispatch({
-        type: "ACTIVE_MENU",
-        active_menu: active_menu,
-      }),
-  };
-}
-
-function PrimeProgramsRouter(props) {
+function PrimeProgramsRouter() {
+  const { user_data, updateUserData } = useAuthStore();
+  const divMainClass = user_data?.divMainClass;
   const location = useLocation();
   const [action, setAction] = useState("");
   const [days, setDays] = useState("");
@@ -70,18 +45,13 @@ function PrimeProgramsRouter(props) {
   }, [location.search]);
 
   useEffect(() => {
-    props.updateActiveMenu("prime-programs");
-  }, []);
+    updateUserData({ active_menu: "prime-programs" });
+  }, [updateUserData]);
 
   return (
     <>
       <TalropEdtechHelmet title="Prime Programs" />
-      <div id="main" className={props.divMainClass}>
-        {/* <BuynowModal
-                    location={props.location}
-                    action={action}
-                    closeModal={closeModal}
-                /> */}
+      <div id="main" className={divMainClass}>
         <NewBuyNowModal
           location={location}
           action={action}
@@ -96,17 +66,6 @@ function PrimeProgramsRouter(props) {
         <Nav />
         <Suspense fallback={<RouteLoading />}>
           <Routes>
-            {/* <Route
-                            exact
-                            path="/prime-programs/"
-                            component={PrimeLandingPage}
-                        /> */}
-
-            {/* <Route
-                            exact
-                            path="/prime-programs/courses/"
-                            component={PrimeProgramsHome}
-                        /> */}
             <Route path="/prime-programs/courses/" element={<Navigate to="/prime-programs/courses/purchased" replace />} />
             <Route
               path="/prime-programs/courses/purchased/"
@@ -122,7 +81,5 @@ function PrimeProgramsRouter(props) {
     </>
   );
 }
-export default connect(
-  mapStateToProps,
-  mapDispatchtoProps
-)(PrimeProgramsRouter);
+
+export default PrimeProgramsRouter;

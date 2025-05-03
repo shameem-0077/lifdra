@@ -1,12 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
-import auth from "../../../routing/auth";
+import { useAuthStore } from "../../../../store/authStore";
+import { Link } from "react-router-dom";
 import SubscriptionBanner from "./SubscriptionBanner";
-import { useSelector } from "react-redux";
 
-function Nav() {
-    const user_profile = useSelector((state) => state.user_profile);
+const Nav = () => {
+    const { user_data } = useAuthStore();
 
     return (
         <Main>
@@ -79,7 +78,7 @@ function Nav() {
 				) : null)} */}
         </Main>
     );
-}
+};
 
 export default Nav;
 
@@ -93,7 +92,7 @@ const NavMenu = styled.div`
     margin: 0 20px 0 20px;
     padding-bottom: 30px;
 `;
-const MenuItem = styled(NavLink)`
+const MenuItem = styled(Link)`
     position: relative;
     width: 100px;
     font-size: 17px;

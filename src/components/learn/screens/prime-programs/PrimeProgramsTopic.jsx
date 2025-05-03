@@ -3,7 +3,7 @@ import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PreviewModal from "./PreviewModal";
 import { primeprogramsConfig } from "../../../../axiosConfig";
-import { useSelector, useDispatch } from "react-redux";
+import { useAuthStore } from "../../../../store/authStore";
 import { numberWithCommas, secondsTohm } from "../../../helpers/functions";
 import Loader from "../../includes/techschooling/general/loaders/Loader";
 import BuynowModal from "./BuynowModal";
@@ -14,6 +14,8 @@ import CurriculamTabBars from "./CurriculamTabBars";
 import auth from "../../../routing/auth";
 import TalropEdtechHelmet from "../../../helpers/TalropEdtechHelmet";
 import StartNowModal from "./StartNowModal";
+import SignupLoader from "../../includes/techschooling/general/loaders/SignupLoader";
+import { useMediaQuery } from "react-responsive";
 
 const PrimeProgramsTopic = () => {
   const [isModal, setModal] = useState(false);
@@ -28,7 +30,7 @@ const PrimeProgramsTopic = () => {
   const [syllabus, setSyllabus] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [selected, setSelected] = useState({});
-  const user_data = useSelector((state) => state.user_data);
+  const { user_data } = useAuthStore();
   const [status, setStatus] = useState("");
   const [coupon, setCoupon] = useState("");
   const [show, setShow] = useState(false);
@@ -36,12 +38,15 @@ const PrimeProgramsTopic = () => {
   const [topicId, setTopicId] = useState("");
   const [purchaseType, setPurchaseType] = useState("");
   const [isStartModal, setStartModal] = useState(false);
+  const [isUsedPurchasedCoins, setIsUsedPurchasedCoins] = useState(false);
+  const [isBuyNowModal, setBuyNowModal] = useState(false);
+  const [isStartNowModal, setStartNowModal] = useState(false);
+  const [dimensions, setDimensions] = useState({
+    height: window.innerHeight,
+  });
 
   const location = useLocation();
-  const { is_expired, is_subscription } = useSelector(
-    (state) => state
-  ).user_profile;
-  const dispatch = useDispatch();
+  const { is_expired, is_subscription } = user_data;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -105,67 +110,45 @@ const PrimeProgramsTopic = () => {
         }
       );
 
-      await Promise.all([fetchSyllabus, fetchData])
-        .then(([syllabusResponse, courseResponse]) => {
-          const { StatusCode: syllabusStatus, data: syllabusData } =
-            syllabusResponse.data;
-          if (syllabusStatus === 6000) {
-            setSyllabus(syllabusData);
-          } else {
-          }
+      Promise.all([fetchSyllabus, fetchData])
+        .then(([syllabusRes, dataRes]) => {
+          const { StatusCode: syllabusStatusCode, data: syllabusData } = syllabusRes.data;
+          const { StatusCode: dataStatusCode, data: courseData } = dataRes.data;
 
-          const { StatusCode: courseStatus, data: courseData } =
-            courseResponse.data;
-          if (courseStatus === 6000) {
+          if (syllabusStatusCode === 6000 && dataStatusCode === 6000) {
             setTopics(courseData);
-            setPromoVideo({
-              playlist_url: courseData.promo_video_youtube_link,
-              id: courseData.id,
-              duration: courseData.promo_video_duration,
-              name: courseData.name,
-            });
-
-            setCourseDetails(courseData.course_details);
-            setPreviewVideos(courseData.preview_videos);
-            setCourseHighlights(courseData.course_highlights);
-            setCourseRequirements(courseData.course_requirements);
+            setSyllabus(syllabusData);
+            setLoading(false);
           } else {
+            setLoading(false);
           }
-          setLoading(false);
         })
         .catch((error) => {
-          dispatch({
-            type: "UPDATE_ERROR",
-            error: error,
-            errorMessage: "Server error please try again",
-          });
+          console.log(error);
           setLoading(false);
-          // console.log(error);
         });
     };
-    fetch();
-  }, []);
+
+    if (auth.isAuthenticated()) {
+      fetch();
+    }
+  }, [course_id, user_data?.access_token]);
+
+  useEffect(() => {
+    function handleResize() {
+      setDimensions({
+        height: window.innerHeight,
+        width: window.innerWidth,
+      });
+    }
+
+    window.addEventListener("resize", handleResize);
+  });
+
+  const isTabletOrMobile = useMediaQuery({ query: "(max-width: 1224px)" });
 
   const closeModal = () => {
     setAction("");
-    navigate({
-      pathname: location.pathname,
-      search: "",
-    });
-  };
-
-  useEffect(() => {
-    window.addEventListener("popstate", handleBack);
-    return () => {
-      window.removeEventListener("popstate", handleBack);
-    };
-  }, []);
-
-  const handleBack = () => {
-    navigate({
-      pathname: "/prime-programs/",
-      search: "",
-    });
   };
 
   let description = topics?.description?.replace(/\n/g, "<br />");
@@ -181,7 +164,7 @@ const PrimeProgramsTopic = () => {
       <TalropEdtechHelmet title={topics.name} />
       {isLoading ? (
         <LoaderContainer>
-          <Loader />
+          <SignupLoader />
         </LoaderContainer>
       ) : (
         <>
@@ -204,17 +187,6 @@ const PrimeProgramsTopic = () => {
             purchase_type={purchaseType}
           />
           <MainContainer>
-            {/* <BuynowModal
-                            location={location}
-                            action={action}
-                            closeModal={closeModal}
-                            setTopicId={setTopicId}
-                            isLoading={isLoading}
-                            setLoading={setLoading}
-                            setSelected={setSelected}
-                            selected={selected}
-                            data={topics}
-                        /> */}
             <NewBuyNowModal
               location={location}
               action={action}
@@ -280,298 +252,13 @@ const PrimeProgramsTopic = () => {
                 </TimeCont>
               </DivInfo>
             </Conatiner>
-            <OfferCard>
-              <OfferTopSection>
-                {topics.coins < topics.actual_coins ? (
-                  <Badge
-                    src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/badge.svg"
-                    alt="Image"
-                  />
-                ) : (
-                  <></>
-                )}
-                {topics.coins < topics.actual_coins ? (
-                  <Offer>
-                    {parseInt(100 - (topics.coins / topics.actual_coins) * 100)}
-                    % off
-                  </Offer>
-                ) : (
-                  <></>
-                )}
-                <ImageContainer
-                  length={previewVideos.length}
-                  onClick={() => {
-                    previewVideos.length > 0 && setModal(true);
-                  }}
-                >
-                  <VideoImage src={topics.cover_image} alt="Image" />
-                  {previewVideos.length > 0 && (
-                    <PlayContainer>
-                      <Play
-                        src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/roundedplay.svg"
-                        alt="Image"
-                      />
-                    </PlayContainer>
-                  )}
-                </ImageContainer>
-              </OfferTopSection>
-              <OfferCardBottomSection>
-                {courseDetails.map((data) => (
-                  <List>
-                    <CardImgContainer>
-                      <Image
-                        src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/tick.png"
-                        alt="Image"
-                      />
-                    </CardImgContainer>
-                    <CardText>{data.title}</CardText>
-                  </List>
-                ))}
-              </OfferCardBottomSection>
-            </OfferCard>
-            <Section>
-              <MiddleSection>
-                <Description>
-                  <About>About this course</About>
-                  <AboutPara dangerouslySetInnerHTML={markupText()} />
-                </Description>
-                <Card>
-                  <TopSection>
-                    {topics.coins < topics.actual_coins ? (
-                      <Badge
-                        src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/badge.svg"
-                        alt="Image"
-                      />
-                    ) : (
-                      <></>
-                    )}
-                    {topics.coins < topics.actual_coins ? (
-                      <Offer>
-                        {parseInt(
-                          100 - (topics.coins / topics.actual_coins) * 100
-                        )}
-                        % off
-                      </Offer>
-                    ) : (
-                      <></>
-                    )}
-                    <ImageContainer
-                      length={previewVideos.length}
-                      onClick={() => {
-                        previewVideos.length > 0 && setModal(true);
-                      }}
-                    >
-                      <VideoImage src={topics.cover_image} alt="Image" />
-                      {previewVideos.length > 0 && (
-                        <PlayContainer>
-                          <Play
-                            src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/roundedplay.svg"
-                            alt="Image"
-                          />
-                        </PlayContainer>
-                      )}
-                    </ImageContainer>
-                  </TopSection>
-                  <CardBottomSection>
-                    <CardMiddle>
-                      <Top>
-                        {courseDetails.map((data) => (
-                          <List>
-                            <CardImgContainer>
-                              <Image
-                                src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/tick.png"
-                                alt="Image"
-                              />
-                            </CardImgContainer>
-                            <CardText>{data.title}</CardText>
-                          </List>
-                        ))}
-                      </Top>
-                    </CardMiddle>
-                    {is_subscription && !is_expired ? (
-                      <CardBottom>
-                        <PriceContainer>
-                          <LowPrice>
-                            {topics.coins &&
-                              "₹" + numberWithCommas(topics.coins * 50)}
-                          </LowPrice>
-                          {topics.actual_coins > topics.coins ? (
-                            <HighPrice>
-                              {topics.actual_coins &&
-                                "₹" +
-                                  numberWithCommas(topics.actual_coins * 50)}
-                            </HighPrice>
-                          ) : (
-                            <></>
-                          )}
-                        </PriceContainer>
-                        {!topics.is_started ? (
-                          <StartButton onClick={() => setStartModal(true)}>
-                            Start Now
-                          </StartButton>
-                        ) : topics.is_purchased && topics.is_started ? (
-                          <BuyButton
-                            to={`/prime-programs/${topics.slug}/${topics.first_topic}/`}
-                          >
-                            Continue
-                          </BuyButton>
-                        ) : (
-                          <BuyButton
-                            onClick={(e) => {
-                              e.preventDefault();
-                              if (auth.isAuthenticated()) {
-                                navigate({
-                                  pathname: location.pathname,
-                                  search: `?action=buy-course&c=${topics.slug}`,
-                                });
-                              } else {
-                                navigate({
-                                  pathname: location.pathname,
-                                  search: `?action=login`,
-                                });
-                              }
-                            }}
-                          >
-                            Buy Now
-                          </BuyButton>
-                        )}
-                      </CardBottom>
-                    ) : (
-                      <CardBottom>
-                        <PriceContainer>
-                          <LowPrice>
-                            {topics.coins &&
-                              "₹" + numberWithCommas(topics.coins * 50)}
-                          </LowPrice>
-                          {topics.actual_coins > topics.coins ? (
-                            <HighPrice>
-                              {topics.actual_coins &&
-                                "₹" +
-                                  numberWithCommas(topics.actual_coins * 50)}
-                            </HighPrice>
-                          ) : (
-                            <></>
-                          )}
-                        </PriceContainer>
-                        {!topics.is_purchased ? (
-                          <BuyButtonSpan
-                            onClick={() => {
-                              if (auth.isAuthenticated()) {
-                                navigate({
-                                  pathname: location.pathname,
-                                  search: "?action=buy-course",
-                                });
-                              } else {
-                                navigate({
-                                  pathname: location.pathname,
-                                  search: `?action=login&next=${location.pathname}`,
-                                });
-                              }
-                            }}
-                          >
-                            Buy Now
-                          </BuyButtonSpan>
-                        ) : (
-                          <BuyButton
-                            to={`/prime-programs/${topics.slug}/${topics.first_topic}/`}
-                          >
-                            Continue
-                          </BuyButton>
-                        )}
-                      </CardBottom>
-                    )}
-                  </CardBottomSection>
-                </Card>
-              </MiddleSection>
-              {courseHighlights && courseRequirements ? (
-                <CourseContainer>
-                  {courseHighlights ? (
-                    <DivLeft>
-                      <CourseTitle>Course Highlights</CourseTitle>
-                      {courseHighlights.map((data) => (
-                        <List>
-                          <ImgContainer>
-                            <Image
-                              src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/tick.png"
-                              alt="Image"
-                            />
-                          </ImgContainer>
-                          <Text>{data.title}</Text>
-                        </List>
-                      ))}
-                    </DivLeft>
-                  ) : (
-                    <></>
-                  )}
-                  {courseRequirements.length > 0 ? (
-                    <DivRight>
-                      <CourseTitle>Course Requirements</CourseTitle>
-                      {courseRequirements.map((data) => (
-                        <List>
-                          <ImgContainer>
-                            <Image
-                              src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/tick.png"
-                              alt="Image"
-                            />
-                          </ImgContainer>
-                          <Text>{data.title}</Text>
-                        </List>
-                      ))}
-                    </DivRight>
-                  ) : (
-                    <></>
-                  )}
-                </CourseContainer>
-              ) : (
-                <></>
-              )}
-
-              <Curriculum>Curriculum</Curriculum>
-              <CurriculumLessons>
-                <CurriculamTabBars
-                  syllabus={syllabus}
-                  setSyllabus={setSyllabus}
-                  previewVideos={previewVideos}
-                  setPreviewVideos={setPreviewVideos}
-                  topicsname={topics.name}
-                  duration={topics.promo_video_duration}
-                  video={topics.promo_video_youtube_link}
-                />
-              </CurriculumLessons>
-              {!topics.is_purchased ? (
-                <FooterContainer>
-                  <Footer>
-                    <PriceContainerFooter>
-                      {topics.actual_coins > topics.coins ? (
-                        <HighPriceFooter>
-                          ₹ {topics.actual_coins * 50}
-                        </HighPriceFooter>
-                      ) : (
-                        <></>
-                      )}
-                      <LowPriceFooter>₹ {topics.coins * 50}</LowPriceFooter>
-                    </PriceContainerFooter>
-                    <BuyButtonFooter
-                      onClick={() => {
-                        if (auth.isAuthenticated()) {
-                          navigate({
-                            pathname: location.pathname,
-                            search: "?action=buy-course",
-                          });
-                        } else {
-                          navigate({
-                            pathname: location.pathname,
-                            search: "?action=login",
-                          });
-                        }
-                      }}
-                    >
-                      Buy Now
-                    </BuyButtonFooter>
-                  </Footer>
-                </FooterContainer>
-              ) : null}
-            </Section>
+            <CurriculamTabBars
+              topics={topics}
+              syllabus={syllabus}
+              setModal={setModal}
+              setPromoVideo={setPromoVideo}
+              setPreviewVideos={setPreviewVideos}
+            />
           </MainContainer>
         </>
       )}

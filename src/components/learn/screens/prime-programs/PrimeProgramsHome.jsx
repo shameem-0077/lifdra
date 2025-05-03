@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import PrimeProgramsCard from "./PrimeProgramsCard";
 import { primeprogramsConfig } from "../../../../axiosConfig";
-import { useSelector, useDispatch } from "react-redux";
+import { useAuthStore } from "../../../../store/authStore";
 import Loader from "../../includes/techschooling/general/loaders/Loader";
 import Pagination from "../../../helpers/Pagination";
 import queryString from "query-string";
@@ -13,7 +13,7 @@ import { useLocation } from "react-router-dom";
 
 const PrimeProgramsHome = () => {
     const location = useLocation();
-    const { user_data } = useSelector((state) => state);
+    const { user_data } = useAuthStore();
     const [isModal, setModal] = useState(false);
     const [selectedCourse, setSeletedCourse] = useState("");
     const [courses, setCourses] = useState([]);
@@ -21,8 +21,6 @@ const PrimeProgramsHome = () => {
     const [itemsPerPage] = useState(12);
     const [pagination, setPagination] = useState([]);
     const [currentPage, setCurrentPage] = useState("");
-
-    const dispatch = useDispatch();
 
     // get page
     const paginate = (pageNumber) => {
@@ -64,21 +62,12 @@ const PrimeProgramsHome = () => {
                         setCourses(data);
                         setPagination(pagination_data);
                         setLoading(false);
-                        // dispatch({
-                        //     type: "UPDATE_PRIME_SUBSCRIPTION",
-                        //     hasPrimeSubscription: has_active_subscription,
-                        // });
                     } else {
                         setLoading(false);
                     }
                 })
                 .catch((error) => {
-                    dispatch({
-                        type: "UPDATE_ERROR",
-                        error: error,
-                        errorMessage: "Server error please try again",
-                    });
-                    // console.log(error);
+                    console.log(error);
                     setLoading(false);
                 });
             setInitialSearch();
@@ -160,23 +149,21 @@ const Main = styled.section`
         margin-left: 0px;
     }
 `;
-
-const SectionBtm = styled.section`
-    padding-bottom: 30px;
+const SectionBtm = styled.div`
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-gap: 18px;
-    @media (max-width: 1325px) {
-        grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+    @media (max-width: 1500px) {
+        grid-template-columns: repeat(3, 1fr);
     }
-    @media (max-width: 1024px) {
-        grid-template-columns: 1fr 1fr;
+    @media (max-width: 1200px) {
+        grid-template-columns: repeat(2, 1fr);
     }
-    @media (max-width: 666px) {
-        grid-template-columns: 1fr;
+    @media (max-width: 768px) {
+        grid-template-columns: repeat(1, 1fr);
     }
 `;
-
 const FooterContainer = styled.div`
-    margin-bottom: 35px;
+    margin-top: 20px;
 `;

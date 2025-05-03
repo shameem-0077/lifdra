@@ -6,14 +6,13 @@ import curve_line from "../../../../assets/images/prime-explore/curve_line.svg";
 import arrow_right from "../../../../assets/images/prime-explore/arrow-right.svg";
 import auth from "../../../routing/auth";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useAuthStore } from "../../../../store/authStore";
 
 function SubscriptionBanner() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { prime_program_subscription } = useSelector(
-        (state) => state.user_profile
-    );
+    const { user_data } = useAuthStore();
+
     return (
         <Container
             onClick={(e) => {
@@ -25,91 +24,91 @@ function SubscriptionBanner() {
                 }
             }}
         >
-            {prime_program_subscription?.is_expired ? (
-                <>
-                    <Web
-                        src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/19-03-2022/desktop-renew.svg"
-                        alt="banner"
-                    />
-                    <Lap
-                        src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/19-03-2022/lap-renew.svg"
-                        alt="banner"
-                    />
-                    <Tab
-                        src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/19-03-2022/tap-renew.svg"
-                        alt="banner"
-                    />
-                    <Mobile
-                        src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/19-03-2022/mobile-renew.svg"
-                        alt="banner"
-                    />
-                </>
-            ) : (
-                <>
-                    <Web
-                        src={require("../../../../assets/images/prime-explore/desktop.svg")}
-                        alt="banner"
-                    />
-                    <Lap
-                        src={require("../../../../assets/images/prime-explore/lap.svg")}
-                        alt="banner"
-                    />
-                    <Tab
-                        src={require("../../../../assets/images/prime-explore/tab.svg")}
-                        alt="banner"
-                    />
-                    <Mobile
-                        src={require("../../../../assets/images/prime-explore/mobile.svg")}
-                        alt="banner"
-                    />
-                </>
-            )}
+            <LeftQuote src={left_quote} alt="Quote" />
+            <RightQuote src={right_quote} alt="Quote" />
+            <CurveLine src={curve_line} alt="Curve" />
+            <Content>
+                <Title>Get access to all courses</Title>
+                <Description>
+                    Subscribe to Prime Programs and get access to all courses
+                </Description>
+                <Button>
+                    <ButtonText>Subscribe Now</ButtonText>
+                    <ArrowRight src={arrow_right} alt="Arrow" />
+                </Button>
+            </Content>
         </Container>
     );
 }
 
 export default SubscriptionBanner;
 
-const Cover = styled.div`
-    background-color: #cdeccc;
-    border-radius: 10px;
-    cursor: pointer;
-`;
 const Container = styled.div`
+    position: relative;
+    background-color: #f9f9fb;
+    border-radius: 5px;
+    padding: 40px;
+    cursor: pointer;
+    margin-bottom: 20px;
+`;
+
+const LeftQuote = styled.img`
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 30px;
+`;
+
+const RightQuote = styled.img`
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 30px;
+`;
+
+const CurveLine = styled.img`
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    opacity: 0.1;
+`;
+
+const Content = styled.div`
+    position: relative;
+    z-index: 1;
+    text-align: center;
+`;
+
+const Title = styled.h3`
+    font-size: 24px;
+    font-family: "gordita_medium";
+    margin-bottom: 10px;
+`;
+
+const Description = styled.p`
+    font-size: 16px;
+    color: #585858;
+    margin-bottom: 20px;
+`;
+
+const Button = styled.div`
+    display: inline-flex;
+    align-items: center;
+    background-color: #15bf81;
+    padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
 `;
-const Web = styled.img`
-    display: block;
-    width: 100%;
-    cursor: pointer;
-    @media all and (max-width: 1280px) {
-        display: none;
-    }
+
+const ButtonText = styled.span`
+    font-size: 16px;
+    color: #fff;
+    font-family: "gordita_medium";
+    margin-right: 10px;
 `;
-const Lap = styled.img`
-    display: none;
-    width: 100%;
-    @media all and (max-width: 1280px) {
-        display: block;
-    }
-    @media all and (max-width: 768px) {
-        display: none;
-    }
-`;
-const Tab = styled.img`
-    display: none;
-    width: 100%;
-    @media all and (max-width: 768px) {
-        display: block;
-    }
-    @media all and (max-width: 360px) {
-        display: none;
-    }
-`;
-const Mobile = styled.img`
-    display: none;
-    width: 100%;
-    @media all and (max-width: 360px) {
-        display: block;
-    }
+
+const ArrowRight = styled.img`
+    width: 20px;
 `;

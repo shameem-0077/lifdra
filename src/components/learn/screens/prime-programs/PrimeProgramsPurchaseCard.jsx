@@ -1,21 +1,22 @@
 import React, { useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { secondsTohm } from "../../../helpers/functions";
 import loader from "../../../../assets/lotties/modal/buttonloader.json";
 import Lottie from "react-lottie";
-import { useSelector } from "react-redux";
+import { useAuthStore } from "../../../../store/authStore";
 import { primeprogramsConfig } from "../../../../axiosConfig";
 import PlaceHolder from "../../../general/PlaceHolder";
+import StartNowModal from "./StartNowModal";
 
 const PrimeProgramsPurchaseCard = ({ item, isButtonLoading }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isStartNowLoading, setStartNowLoading] = useState(false);
-  const { user_data } = useSelector((state) => state);
-  const { prime_program_subscription } = useSelector(
-    (state) => state.user_profile
-  );
+  const { user_data } = useAuthStore();
   const history = useHistory();
+  const navigate = useNavigate();
+  const [isStartNowModal, setStartNowModal] = useState(false);
+  const [topicId, setTopicId] = useState("");
 
   function StartCourse() {
     const access_token = user_data.access_token;
@@ -51,87 +52,94 @@ const PrimeProgramsPurchaseCard = ({ item, isButtonLoading }) => {
   function onLoad() {
     setIsLoading(false);
   }
-  return (
-    <StudCard>
-      <PlaceHolder isLoading={isLoading} paddingTop="55.34%" />
-      <CardTop style={{ display: isLoading ? "none" : "block" }}>
-        <CardImage onLoad={onLoad} src={item.cover_image} alt="Image" />
-      </CardTop>
 
-      <CardMiddle>
-        <Course>{item.name}</Course>
-        <LessonInfo>
-          <LessonCont>
-            <LessonIcon className="las la-layer-group"></LessonIcon>
-            <LessonText>{item.lessons_count} Lessons</LessonText>
-          </LessonCont>
-          <TimeCont>
-            <TimeIcon className="las la-clock"></TimeIcon>
-            <TimeText>{secondsTohm(item.duration)}</TimeText>
-          </TimeCont>
-        </LessonInfo>
-        <DivBtm>{item.short_description}</DivBtm>
-      </CardMiddle>
-      <CardBottom grid={item.certificate_id ? "1fr 1fr" : "1fr"}>
-        {item.certificate_id && (
-          <CertificateButton to={`/certificate/?id=${item.certificate_id}`}>
-            <ButtonText>Certificate</ButtonText>
-            <DownloadIcon
-              src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/04-08-2021/green-download.svg
+  const startCourse = async () => {
+    const { access_token } = user_data;
+    await primeprogramsConfig
+      .post(
+        `learning/start-course/${item.id}/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      )
+      .then((response) => {
+        const { data } = response.data;
+        navigate(`/learn/prime-programs/topic/${item.id}`);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  return (
+    <>
+      <StartNowModal
+        topicId={topicId}
+        setTopicId={setTopicId}
+        isStartNowModal={isStartNowModal}
+        setStartNowModal={setStartNowModal}
+      />
+      <StudCard>
+        <PlaceHolder isLoading={isLoading} paddingTop="55.34%" />
+        <CardTop style={{ display: isLoading ? "none" : "block" }}>
+          <CardImage onLoad={onLoad} src={item.cover_image} alt="Image" />
+        </CardTop>
+
+        <CardMiddle>
+          <Course>{item.name}</Course>
+          <LessonInfo>
+            <LessonCont>
+              <LessonIcon className="las la-layer-group"></LessonIcon>
+              <LessonText>{item.lessons_count} Lessons</LessonText>
+            </LessonCont>
+            <TimeCont>
+              <TimeIcon className="las la-clock"></TimeIcon>
+              <TimeText>{secondsTohm(item.duration)}</TimeText>
+            </TimeCont>
+          </LessonInfo>
+          <DivBtm>{item.short_description}</DivBtm>
+        </CardMiddle>
+        <CardBottom grid={item.certificate_id ? "1fr 1fr" : "1fr"}>
+          {item.certificate_id && (
+            <CertificateButton to={`/certificate/?id=${item.certificate_id}`}>
+              <ButtonText>Certificate</ButtonText>
+              <DownloadIcon
+                src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/04-08-2021/green-download.svg
                             "
-              alt="Download"
-            />
-          </CertificateButton>
-        )}
-        {prime_program_subscription?.is_subscription &&
-        !prime_program_subscription?.is_expired &&
-        !item.is_started ? (
-          <TextCont onClick={StartCourse}>
-            {isStartNowLoading ? (
-              <Lottie options={defaultOptions} height={45} width={45} />
-            ) : (
-              "Start"
-            )}
-          </TextCont>
-        ) : item.is_started && !item.is_completed ? (
-          <Button
-            to={`/prime-programs/${item.slug}/${
-              item.current_topic ? item.current_topic : item.first_topic
-            }/`}
-          >
-            {isStartNowLoading ? (
-              <Lottie options={defaultOptions} height={45} width={45} />
-            ) : (
-              "Continue"
-            )}
-          </Button>
-        ) : item.is_completed ? (
-          <Button
-            to={`/prime-programs/${item.slug}/${
-              item.current_topic ? item.current_topic : item.first_topic
-            }/`}
-          >
-            {isStartNowLoading ? (
-              <Lottie options={defaultOptions} height={45} width={45} />
-            ) : (
-              "Continue"
-            )}
-          </Button>
-        ) : (
-          <Button
-            to={`/prime-programs/${item.slug}/${
-              item.current_topic ? item.current_topic : item.first_topic
-            }/`}
-          >
-            {isStartNowLoading ? (
-              <Lottie options={defaultOptions} height={45} width={45} />
-            ) : (
-              "Continue"
-            )}
-          </Button>
-        )}
-      </CardBottom>
-    </StudCard>
+                alt="Download"
+              />
+            </CertificateButton>
+          )}
+          {item.is_started ? (
+            <Button
+              to={`/prime-programs/${item.slug}/${
+                item.current_topic ? item.current_topic : item.first_topic
+              }/`}
+            >
+              {isStartNowLoading ? (
+                <Lottie options={defaultOptions} height={45} width={45} />
+              ) : (
+                "Continue"
+              )}
+            </Button>
+          ) : (
+            <TextCont onClick={() => {
+              setTopicId(item.id);
+              setStartNowModal(true);
+            }}>
+              {isStartNowLoading ? (
+                <Lottie options={defaultOptions} height={45} width={45} />
+              ) : (
+                "Start"
+              )}
+            </TextCont>
+          )}
+        </CardBottom>
+      </StudCard>
+    </>
   );
 };
 

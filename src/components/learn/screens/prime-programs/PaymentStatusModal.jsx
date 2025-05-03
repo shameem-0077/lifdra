@@ -1,311 +1,159 @@
-import React, { useState, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
-import Lottie from "react-lottie";
-import loader from "../../../../assets/lotties/modal/buttonloader.json";
-import successData from "../../../../assets/lotties/modal/successtick.json";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import ConfirmationData from "../../../../assets/lotties/modal/questionmark.json";
-import failedData from "../../../../assets/lotties/modal/failed.json";
-import { useDispatch, useSelector } from "react-redux";
-import { PrimeProgramContext } from "../../../contexts/stores/PrimeProgramStore";
-import { accountsConfig, primeprogramsConfig } from "../../../../axiosConfig";
+import { useAuthStore } from "../../../../store/authStore";
+import { primeprogramsConfig } from "../../../../axiosConfig";
+import { useNavigate } from "react-router-dom";
+import { getDateStr } from "../../../helpers/functions";
+import loader from "../../../../assets/lotties/modal/buttonloader.json";
+import Lottie from "react-lottie";
 
-export default function PaymentStatusModal({
-    show,
-    setShow,
-    modalType,
-    setModalType,
-    course_id,
-    topicId,
-    couponId,
-    voucherCode,
-    purchase_type,
-    courseSlug,
-}) {
-    const user_data = useSelector((state) => state.user_data);
-    const state = useSelector((state) => state);
-
+const PaymentStatusModal = (props) => {
+    const { user_data, updateUserData } = useAuthStore();
+    const navigate = useNavigate();
     const [isButtonLoading, setButtonLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
-    const [nextId, setNextId] = useState("");
-    const dispatch = useDispatch();
+    const [date, setDate] = useState(false);
 
-    const { primeProgramState } = useContext(PrimeProgramContext);
-
-    useEffect(() => {
-        let user_data = localStorage.getItem("user_data");
-        let data = JSON.parse(user_data);
-        dispatch({
-            type: "UPDATE_USER_DATA",
-            user_data: data,
-        });
-    }, []);
-
-    const defaultOptions = {
+    const lottieDefaultOptions = {
         loop: false,
-        autoplay: true,
-        animationData:
-            modalType === "Confirmation"
-                ? ConfirmationData
-                : modalType === "success"
-                ? successData
-                : modalType === "failed"
-                ? failedData
-                : loader,
-        rendererSettings: {},
-    };
-    const loaderdefaultOptions = {
-        loop: true,
         autoplay: true,
         animationData: loader,
         rendererSettings: {},
     };
 
-    const fetchProfile = () => {
-        let { access_token } = user_data;
-        accountsConfig
-            .get("/api/v1/users/profile/", {
-                params: {
-                    response_type: "minimal",
-                },
-                headers: {
-                    Authorization: `Bearer ${access_token}`,
-                },
-            })
-            .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
-                    dispatch({
-                        type: "UPDATE_USER_PROFILE",
-                        user_profile: data,
-                    });
-                } else {
-                }
-            })
-            .catch((error) => {});
+    useEffect(() => {
+        let d = String(new window.Date());
+        let date = d.split(" ");
+        setDate(date[2] + " " + date[1] + " " + date[3]);
+    }, []);
+
+    const handleClose = () => {
+        props.setShow(false);
+        props.closeModal();
     };
 
-    const handlePayment = (e) => {
-        e.preventDefault();
+    const handleSuccess = () => {
         setButtonLoading(true);
-        const { access_token } = user_data;
-
+        let access_token = user_data.access_token;
         primeprogramsConfig
             .post(
-                `purchases/course-purchase/${course_id}/`,
+                `learning/course/${props.course_id}/purchase/`,
                 {
-                    purchase_type: purchase_type,
-                    is_use_purchased_coins: primeProgramState
-                        ? primeProgramState.isUsedPurchasedCoins
-                        : false,
-                    coupon_code: couponId ? couponId : "",
+                    coupon_id: props.couponId,
                 },
                 {
-                    headers: {
-                        Authorization: `Bearer ${access_token}`,
-                    },
+                    headers: { Authorization: `Bearer ${access_token}` },
                 }
             )
-            .then((response) => {
-                const { StatusCode, data } = response.data;
+            .then((res) => {
+                let { StatusCode, data } = res.data;
                 if (StatusCode === 6000) {
-                    setButtonLoading(false);
-                    setModalType("success");
-                    setShow(true);
-                    setNextId(data.new_student_topic);
-                    fetchProfile();
-                } else {
-                    if (data.payment_link) {
-                        window.location.href = data.payment_link;
-                    } else {
-                        setButtonLoading(false);
-                        setShow(true);
-                        setModalType("failed");
-                        setErrorMessage(data.message);
-                    }
+                    updateUserData({
+                        ...user_data,
+                        total_purchased_coins: data.total_purchased_coins,
+                    });
+                    props.setShow(false);
+                    props.closeModal();
+                    navigate(`/learn/prime-programs/${props.courseSlug}`);
                 }
             })
-            .catch((error) => {
+            .catch((err) => {
+                console.log(err);
                 setButtonLoading(false);
-                console.log(error);
             });
     };
 
     return (
-        <BackContainer style={{ transform: show && "scale(1,1)" }}>
-            <Overlay>
-                {modalType === "Confirmation" ? (
-                    <Container>
-                        <Circle>
-                            <LottieContainer>
-                                <Lottie
-                                    options={defaultOptions}
-                                    height={120}
-                                    width="90%"
-                                />
-                            </LottieContainer>
-                        </Circle>
-                        <Text>
-                            Are you sure you want to purchase this course?
-                        </Text>
-                        <ButtonContainer>
-                            <Button onClick={(e) => handlePayment(e)}>
-                                {!isButtonLoading ? (
-                                    "Yes"
-                                ) : (
-                                    <Lottie
-                                        options={loaderdefaultOptions}
-                                        height={45}
-                                        width={45}
-                                    />
-                                )}
-                            </Button>
-                            <Button
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    setShow(false);
-                                }}
-                                type="failed"
-                            >
-                                No
-                            </Button>
-                        </ButtonContainer>
-                    </Container>
-                ) : modalType === "PrimeSubscription" ? (
-                    <Container>
-                        <Circle>
-                            <LottieContainer>
-                                <Lottie
-                                    options={defaultOptions}
-                                    height={120}
-                                    width="90%"
-                                />
-                            </LottieContainer>
-                        </Circle>
-                        <Text>
-                            Are you sure wanna subscribe Prime Programs?
-                        </Text>
-                        <ButtonContainer>
-                            <Button onClick={(e) => handlePayment(e)}>
-                                {!isButtonLoading ? (
-                                    "Yes"
-                                ) : (
-                                    <Lottie
-                                        options={loaderdefaultOptions}
-                                        height={45}
-                                        width={45}
-                                    />
-                                )}
-                            </Button>
-                            <Button
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    setShow(false);
-                                }}
-                                type="failed"
-                            >
-                                No
-                            </Button>
-                        </ButtonContainer>
-                    </Container>
-                ) : modalType === "success" ? (
-                    <Container>
-                        <Circle>
-                            <LottieContainer>
-                                <Lottie
-                                    options={defaultOptions}
-                                    height={120}
-                                    width="90%"
-                                />
-                            </LottieContainer>
-                        </Circle>
-                        <Title>Success</Title>
-                        <Text>
-                            Your course has been successfully purchased, now you
-                            can access your course
-                        </Text>
-                        <Button
-                            to={`/prime-programs/${courseSlug}/${
-                                topicId ? topicId : nextId
-                            }/`}
-                            type="success"
-                        >
-                            {!isButtonLoading ? (
-                                "Continue"
-                            ) : (
-                                <Lottie
-                                    options={loaderdefaultOptions}
-                                    height={45}
-                                    width={45}
-                                />
-                            )}
-                        </Button>
-                    </Container>
-                ) : (
-                    <Container>
-                        <Circle>
-                            <LottieContainer>
-                                <Lottie
-                                    options={defaultOptions}
-                                    height={120}
-                                    width="90%"
-                                />
-                            </LottieContainer>
-                        </Circle>
-                        <Title>Sorry!</Title>
-                        <Text>
-                            {errorMessage
-                                ? errorMessage
-                                : " Your payment is failed, click below button to retry"}
-                        </Text>
-                        <ButtonContainer>
-                            <Button onClick={(e) => handlePayment(e)}>
-                                {!isButtonLoading ? (
-                                    "Retry"
-                                ) : (
-                                    <Lottie
-                                        options={loaderdefaultOptions}
-                                        height={45}
-                                        width={45}
-                                    />
-                                )}
-                            </Button>
-                            <Button
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    setShow(false);
-                                }}
-                                type="failed"
-                            >
-                                Close
-                            </Button>
-                        </ButtonContainer>
-                    </Container>
-                )}
-            </Overlay>
-        </BackContainer>
+        <>
+            <Overlay show={props.show} onClick={handleClose} />
+            <ModalContainer show={props.show}>
+                <Container>
+                    <CloseButton onClick={handleClose}>
+                        <CloseIcon
+                            src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/close.png"
+                            alt="Arrow"
+                        />
+                    </CloseButton>
+                    <Bg>
+                        <BgImage
+                            src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/modalbg.svg"
+                            alt="Image"
+                        />
+                    </Bg>
+                    <Heading>Order Confirmation</Heading>
+                    <CardContainer>
+                        <BgCover>
+                            <div>
+                                <Card>
+                                    <Left>
+                                        <Icon>
+                                            <img
+                                                src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/16-03-2022/basket.png"
+                                                alt="icon"
+                                            />
+                                        </Icon>
+                                        <Title>Course Purchase</Title>
+                                    </Left>
+                                    <Right>
+                                        <Label>Purchased on</Label>
+                                        <Date>{date}</Date>
+                                    </Right>
+                                </Card>
+                                <PriceConatiner>
+                                    <TopPrice>
+                                        <List>
+                                            <Pricee>Price</Pricee>
+                                            <Rate>₹{props.courseDetails?.coins * 50}</Rate>
+                                        </List>
+                                        <LeftSpan></LeftSpan>
+                                        <RightSpan></RightSpan>
+                                    </TopPrice>
+                                    <TotalPay>
+                                        <LeftTotal>
+                                            <Total>Total Payable</Total>
+                                            <TotalRate>₹{props.courseDetails?.coins * 50}</TotalRate>
+                                        </LeftTotal>
+                                        <RightTotal>
+                                            <ImageCover>
+                                                <img
+                                                    src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/16-03-2022/bill.svg"
+                                                    alt=""
+                                                />
+                                            </ImageCover>
+                                        </RightTotal>
+                                    </TotalPay>
+                                </PriceConatiner>
+                            </div>
+                        </BgCover>
+                    </CardContainer>
+                </Container>
+                <Button onClick={handleSuccess}>
+                    {!isButtonLoading ? (
+                        <ButtonSpan>Confirm Purchase</ButtonSpan>
+                    ) : (
+                        <Lottie
+                            options={lottieDefaultOptions}
+                            height={45}
+                            width={45}
+                        />
+                    )}
+                </Button>
+            </ModalContainer>
+        </>
     );
-}
+};
 
-const BackContainer = styled.div`
-    position: fixed;
-    transform: scale(0, 0);
-    transition: 0.3s;
-    width: 100%;
-    height: 100vh;
-    z-index: 9999;
-    left: 0;
-    top: 0px;
-    background: rgba(0, 0, 0, 0.2);
-`;
+export default PaymentStatusModal;
+
 const Overlay = styled.div`
     position: fixed;
     left: 0;
     top: 0px;
     width: 100%;
     height: 100vh;
+    background: rgba(0, 0, 0, 0.2);
 `;
-const Container = styled.div`
+
+const ModalContainer = styled.div`
     position: absolute;
     top: 50%;
     left: 50%;
@@ -332,30 +180,43 @@ const Container = styled.div`
         width: 300px;
     }
 `;
-const LottieContainer = styled.div`
-    width: 130px;
-    height: 130px;
-    position: absolute;
-    top: 1px;
-    left: 39px;
-    transform: translate(-45px, -3px);
-    margin: 0px auto;
-    @media (max-width: 560px) {
-        transform: translate(-45px, -8px);
-        width: 120px;
-        height: 120px;
-    }
-    @media (max-width: 440px) {
-        transform: translate(-44px, -18px);
-        width: 100px;
-        height: 100px;
-    }
-    @media (max-width: 385px) {
-        transform: translate(-44px, -23px);
-        width: 90px;
-    }
+
+const Container = styled.div`
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 `;
-const Title = styled.h4`
+
+const CloseButton = styled.button`
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+`;
+
+const CloseIcon = styled.img`
+    width: 20px;
+`;
+
+const Bg = styled.div`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+`;
+
+const BgImage = styled.img`
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+`;
+
+const Heading = styled.h4`
     font-size: 26px;
     margin-bottom: 10px;
     font-family: "gordita_medium";
@@ -363,163 +224,149 @@ const Title = styled.h4`
         font-size: 22px;
     }
 `;
-const Text = styled.p`
-    font-size: 16px;
-    color: #000;
+
+const CardContainer = styled.div`
     margin-bottom: 20px;
-    font-family: "gordita_medium";
 `;
-const Button = styled(Link)`
-    background-color: ${(props) =>
-        props.type === "failed" ? "#fff" : "#15bf81"};
-    height: 40px;
-    width: ${(props) => (props.type === "success" ? "100%" : "120px")};
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
+const BgCover = styled.div`
+    position: relative;
+    padding: 20px;
     border-radius: 5px;
-    cursor: pointer;
-    font-family: "gordita_medium";
-    border: 1px solid
-        ${(props) => (props.type === "failed" ? "#f9003a" : "#15bf81")};
-    color: ${(props) => (props.type === "failed" ? "#f9003a" : "white")};
-    @media (max-width: 440px) {
-        width: ${(props) => (props.type === "success" ? "100%" : "100px")};
-    }
-`;
-const Circle = styled.div`
     background-color: #fff;
-    padding: 10px;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    position: absolute;
-    top: -70px;
-    left: 150px;
-    transform: translate(40px, 0);
-    border: 1px solid rgb(250, 250, 250);
-    @media (max-width: 560px) {
-        transform: translate(-10px, 0);
-        width: 110px;
-        height: 110px;
-    }
-    @media (max-width: 440px) {
-        width: 90px;
-        height: 90px;
-        top: -40px;
-    }
-    @media (max-width: 385px) {
-        width: 80px;
-        height: 80px;
-        top: -40px;
-        transform: translate(-40px, -6px);
-    }
 `;
-const ButtonContainer = styled.div`
+
+const Card = styled.div`
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: 0 60px;
-    @media (max-width: 560px) {
-        padding: 0 20px;
-    }
-    @media (max-width: 440px) {
-        padding: 0 40px;
-    }
-    @media (max-width: 385px) {
-        padding: 0 10px;
-    }
-`;
-
-//voucher modal styles
-const VoucherModal = styled.div`
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 600px;
-    transform: translate(-50%, -50%);
-
-    background-color: rgb(255, 255, 255);
-    padding: 40px;
-    border: 1px solid rgb(230, 230, 230);
-    border-radius: 5px;
-    z-index: 1000;
-    @media (max-width: 640px) {
-        width: 500px;
-    }
-    @media (max-width: 560px) {
-        width: 400px;
-    }
-    @media (max-width: 440px) {
-        width: 370px;
-        padding: 55px 25px 30px;
-    }
-
-    @media (max-width: 385px) {
-        width: 310px;
-    }
-`;
-const ModalTop = styled.div`
-    display: flex;
-    justify-content: flex-start;
     align-items: center;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #7070704b;
-    h2 {
-        font-size: 24px;
-        font-family: "gordita_medium";
-        @media (max-width: 560px) {
-            font-size: 20px;
-        }
-        @media (max-width: 385px) {
-            font-size: 18px;
-        }
-    }
+    margin-bottom: 10px;
 `;
-const VoucherIcon = styled.span`
-    width: 30px;
-    display: block;
-    margin-right: 20px;
+
+const Left = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+const Icon = styled.div`
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
     img {
         width: 100%;
-        display: block;
-    }
-    @media (max-width: 385px) {
-        width: 25px;
-        margin-right: 10px;
+        height: 100%;
+        object-fit: cover;
     }
 `;
-const ModalBottom = styled.div`
-    margin-top: 30px;
-`;
-const CouponDiscountPrice = styled.h3`
-    text-align: left;
+
+const Title = styled.h5`
+    font-size: 18px;
     font-family: "gordita_medium";
-    font-size: 32px;
 `;
-const Label = styled.p`
-    text-align: left;
-    color: #585858;
-    font-size: 14px;
-    transform: translateY(-10px);
-`;
-const Description = styled.p`
-    text-align: left;
-    color: #585858;
-`;
-const VoucherButton = styled.span`
-    width: 100%;
-    height: 50px;
+
+const Right = styled.div`
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin-top: 30px;
+`;
+
+const Label = styled.p`
+    font-size: 14px;
+    color: #585858;
+    margin-right: 10px;
+`;
+
+const Date = styled.p`
+    font-size: 14px;
+    color: #585858;
+`;
+
+const PriceConatiner = styled.div`
+    margin-top: 10px;
+`;
+
+const TopPrice = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+`;
+
+const List = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+const Pricee = styled.p`
+    font-size: 14px;
+    color: #585858;
+    margin-right: 10px;
+`;
+
+const Rate = styled.p`
+    font-size: 14px;
+    color: #585858;
+`;
+
+const LeftSpan = styled.div`
+    flex-grow: 1;
+`;
+
+const RightSpan = styled.div`
+    flex-grow: 1;
+`;
+
+const TotalPay = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+`;
+
+const LeftTotal = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
+const Total = styled.p`
+    font-size: 14px;
+    color: #585858;
+    margin-bottom: 5px;
+`;
+
+const TotalRate = styled.p`
+    font-size: 14px;
+    color: #585858;
+`;
+
+const RightTotal = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+const ImageCover = styled.div`
+    width: 40px;
+    height: 40px;
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+`;
+
+const Button = styled.button`
     background-color: #15bf81;
-    color: #fff;
-    font-family: gordita_medium;
+    height: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 5px;
     cursor: pointer;
-    &:hover {
-        opacity: 0.8;
-    }
+    font-family: "gordita_medium";
+    color: #fff;
+    border: none;
+`;
+
+const ButtonSpan = styled.span`
+    font-size: 16px;
 `;

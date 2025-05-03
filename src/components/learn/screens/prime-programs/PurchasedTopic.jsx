@@ -3,7 +3,7 @@ import { useHistory, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { primeprogramsConfig } from "../../../../axiosConfig";
 import LessonBars from "./LessonBars";
-import { useDispatch, useSelector } from "react-redux";
+import { useAuthStore } from "../../../../store/authStore";
 import Loader from "../../includes/techschooling/general/loaders/Loader";
 import VideoPlayer from "../../../applications/video-player/src/VideoPlayer";
 import CertificateModal from "../techschooling/learning/CertificateModal";
@@ -11,6 +11,7 @@ import { formatBytes } from "../../../helpers/functions";
 import TalropEdtechHelmet from "../../../helpers/TalropEdtechHelmet";
 import Lottie from "react-lottie";
 import NextLoader from "../../../../assets/lotties/tech-schooling/play-next-button.json";
+import SignupLoader from "../../includes/techschooling/general/loaders/SignupLoader";
 
 function PurchasedTopic() {
     const history = useHistory();
@@ -21,7 +22,7 @@ function PurchasedTopic() {
         title: "Lectures",
     });
 
-    const dispatch = useDispatch();
+    const { user_data } = useAuthStore();
     const [isModal, setModal] = useState(false);
     const [lessons, setLessons] = useState([]);
     const [selectedLesson, setSelectedLesson] = useState({});
@@ -30,11 +31,10 @@ function PurchasedTopic() {
     const [allTopics, setAllTopics] = useState([]);
 
     const [selectedTopic, setSelectedTopic] = useState({});
-    const [isLoading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(true);
     const [isWatched, setWatched] = useState(false);
     const [isMarkAsLoading, setMarkasLoading] = useState(false);
     const [certificationId, setCertificationId] = useState(null);
-    const user_data = useSelector((state) => state.user_data);
     const [showNextCard, setShowNextCard] = useState(false);
     const defaultOptions = {
         loop: false,
@@ -150,39 +150,30 @@ function PurchasedTopic() {
     };
 
     useEffect(() => {
-        const fetchTopic = () => {
-            setLoading(true);
-            let access_token = user_data.access_token;
-            primeprogramsConfig
-                .get(`learning/topic-details/${topic_pk}/`, {
+        const { access_token } = user_data;
+        const fetchData = async () => {
+            await primeprogramsConfig
+                .get(`learning/topic/${topic_pk}/`, {
                     headers: {
                         Authorization: `Bearer ${access_token}`,
                     },
                 })
                 .then((response) => {
-                    const { StatusCode, data } = response.data;
-                    if (StatusCode === 6000) {
-                        setWatched(data.is_watched);
-                        setTopic(data);
-                        setLoading(false);
-                    } else if (StatusCode === 6001) {
-                        getCourse();
-                    }
+                    const { data } = response.data;
+                    setLoading(false);
+                    setTopic(data);
+                    setWatched(data.is_watched);
+                    setCertificationId(data.certificate_id);
                 })
                 .catch((err) => {
                     console.log(err);
                     setLoading(false);
-                    dispatch({
-                        type: "UPDATE_ERROR",
-                        error: err,
-                        errorMessage: "Server error, please try again",
-                    });
                 });
         };
 
         setShowNextCard(false);
         if (topic_pk) {
-            fetchTopic();
+            fetchData();
         }
     }, [topic_pk]);
 
@@ -286,119 +277,121 @@ function PurchasedTopic() {
     return (
         <>
             <TalropEdtechHelmet title={selectedTopic.title} />
-            <PrimeContainer>
-                <CertificateModal
-                    certificationId={certificationId}
-                    isModal={isModal}
-                    setModal={setModal}
-                    setTopic={setTopic}
-                    isWatched={isWatched}
-                />
-                <PrimeTop>
-                    {isLoading ? (
-                        <LoaderContainer>
-                            <Loader />
-                        </LoaderContainer>
-                    ) : (
-                        <>
-                            <VideoContainer>{videoCard()}</VideoContainer>
-                            <Topic>{selectedTopic.course_name}</Topic>
-                            <Lesson>{selectedTopic.title}</Lesson>
-                            {topic.description && (
-                                <Description>
-                                    {selectedTopic.description}
-                                </Description>
-                            )}
-                        </>
-                    )}
-                </PrimeTop>
-                <PrimeBottom>
-                    {Object.keys(selectedLesson).length === 0 ? (
-                        <LoaderContainer>
-                            <Loader />
-                        </LoaderContainer>
-                    ) : (
-                        <NavMenu>
-                            {topic.asset ? (
-                                <>
-                                    {sections.map((item) => (
-                                        <MenuItem
-                                            onClick={() => setCurrentItem(item)}
-                                            className={
-                                                item.id === currentItem.id
-                                                    ? "active"
-                                                    : null
-                                            }
-                                        >
-                                            {item.title}
-                                        </MenuItem>
-                                    ))}
-                                </>
-                            ) : (
-                                <>
-                                    <MenuItem
-                                        onClick={() =>
-                                            setCurrentItem(currentItem)
-                                        }
-                                        className="active"
-                                    >
-                                        Lectures
-                                    </MenuItem>
-                                </>
-                            )}
-                        </NavMenu>
-                    )}
+            <Container>
+                {isLoading ? (
+                    <LoaderContainer>
+                        <SignupLoader />
+                    </LoaderContainer>
+                ) : (
+                    <>
+                        <CertificateModal
+                            certificationId={certificationId}
+                            isModal={isModal}
+                            setModal={setModal}
+                            setTopic={setTopic}
+                            isWatched={isWatched}
+                        />
+                        <PrimeContainer>
+                            <PrimeTop>
+                                <VideoContainer>{videoCard()}</VideoContainer>
+                                <Topic>{selectedTopic.course_name}</Topic>
+                                <Lesson>{selectedTopic.title}</Lesson>
+                                {topic.description && (
+                                    <Description>
+                                        {selectedTopic.description}
+                                    </Description>
+                                )}
+                            </PrimeTop>
+                            <PrimeBottom>
+                                {Object.keys(selectedLesson).length === 0 ? (
+                                    <LoaderContainer>
+                                        <Loader />
+                                    </LoaderContainer>
+                                ) : (
+                                    <NavMenu>
+                                        {topic.asset ? (
+                                            <>
+                                                {sections.map((item) => (
+                                                    <MenuItem
+                                                        onClick={() => setCurrentItem(item)}
+                                                        className={
+                                                            item.id === currentItem.id
+                                                                ? "active"
+                                                                : null
+                                                        }
+                                                    >
+                                                        {item.title}
+                                                    </MenuItem>
+                                                ))}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <MenuItem
+                                                    onClick={() =>
+                                                        setCurrentItem(currentItem)
+                                                    }
+                                                    className="active"
+                                                >
+                                                    Lectures
+                                                </MenuItem>
+                                            </>
+                                        )}
+                                    </NavMenu>
+                                )}
 
-                    {currentItem.title === "Lectures" && (
-                        <>
-                            <LessonBars
-                                allTopics={allTopics}
-                                selectedLesson={selectedLesson}
-                                setSelectedLesson={setSelectedLesson}
-                                lessons={lessons}
-                                selectedTopic={selectedTopic}
-                                setSelectedTopic={setSelectedTopic}
-                                topic={topic}
-                            />
-                        </>
-                    )}
-                    {currentItem.title === "Resources" && (
-                        <>
-                            <ResourceMainContainer>
-                                <ResourceContainer>
-                                    <ResourceImg
-                                        src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/zip.svg"
-                                        className="sc-gwZsXD fPEIEu"
-                                        alt="Image"
-                                    />
-                                    <ResourceDetails>
-                                        <Details>
-                                            <Name>{topic.asset_name}</Name>
-                                            <Size>
-                                                {isNaN(topic.asset_size)
-                                                    ? topic.asset_size
-                                                    : formatBytes(
-                                                          topic.asset_size
-                                                      )}
-                                            </Size>
-                                        </Details>
-                                        <DownloadLink
-                                            href={topic.asset}
-                                            download
-                                            target="_blank"
-                                        >
-                                            <DownloadImg
-                                                src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/cloud-download.svg"
-                                                className="sc-cBOTKl gDRdBV"
-                                            />
-                                        </DownloadLink>
-                                    </ResourceDetails>
-                                </ResourceContainer>
-                            </ResourceMainContainer>
-                        </>
-                    )}
-                </PrimeBottom>
-            </PrimeContainer>
+                                {currentItem.title === "Lectures" && (
+                                    <>
+                                        <LessonBars
+                                            allTopics={allTopics}
+                                            selectedLesson={selectedLesson}
+                                            setSelectedLesson={setSelectedLesson}
+                                            lessons={lessons}
+                                            selectedTopic={selectedTopic}
+                                            setSelectedTopic={setSelectedTopic}
+                                            topic={topic}
+                                        />
+                                    </>
+                                )}
+                                {currentItem.title === "Resources" && (
+                                    <>
+                                        <ResourceMainContainer>
+                                            <ResourceContainer>
+                                                <ResourceImg
+                                                    src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/zip.svg"
+                                                    className="sc-gwZsXD fPEIEu"
+                                                    alt="Image"
+                                                />
+                                                <ResourceDetails>
+                                                    <Details>
+                                                        <Name>{topic.asset_name}</Name>
+                                                        <Size>
+                                                            {isNaN(topic.asset_size)
+                                                                ? topic.asset_size
+                                                                : formatBytes(
+                                                                      topic.asset_size
+                                                                  )}
+                                                        </Size>
+                                                    </Details>
+                                                    <DownloadLink
+                                                        href={topic.asset}
+                                                        download
+                                                        target="_blank"
+                                                    >
+                                                        <DownloadImg
+                                                            src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/cloud-download.svg"
+                                                            className="sc-cBOTKl gDRdBV"
+                                                        />
+                                                    </DownloadLink>
+                                                </ResourceDetails>
+                                            </ResourceContainer>
+                                        </ResourceMainContainer>
+                                    </>
+                                )}
+                            </PrimeBottom>
+                        </PrimeContainer>
+                    </>
+                )}
+            </Container>
         </>
     );
 }

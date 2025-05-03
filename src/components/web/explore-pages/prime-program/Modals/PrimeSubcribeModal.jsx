@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { primeprogramsConfig } from "../../../../../axiosConfig";
 import PaymentStatusModal from "../../../../learn/screens/prime-programs/PaymentStatusModal";
@@ -9,12 +8,13 @@ import Loader from "../../../../../assets/lotties/prime-progrmmes/voucherLoader.
 import Lottie from "react-lottie";
 import tickIcon from "../../../../../assets/images/prime-explore/tick.svg";
 import closeIcon from "../../../../../assets/images/prime-explore/close.svg";
+import { useAuthStore } from "../../../../../store/authStore";
 
 function PrimeSubcribeModal(props) {
 	const { primeProgramState, primeProgramDispatch } =
 		useContext(PrimeProgramContext);
 
-	const { user_data } = useSelector((state) => state);
+	const { user_data } = useAuthStore();
 
 	// #states
 	const [show, setShow] = useState(false);

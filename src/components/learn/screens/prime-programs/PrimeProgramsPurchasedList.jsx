@@ -1,23 +1,28 @@
 import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import PrimeProgramsPurchaseCard from "./PrimeProgramsPurchaseCard";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../../../store/authStore";
 import { primeprogramsConfig } from "../../../../axiosConfig";
 import Loader from "../../includes/techschooling/general/loaders/Loader";
 import Pagination from "../../../helpers/Pagination";
 import queryString from "query-string";
 import { useLocation } from "react-router";
+import SignupLoader from "../../includes/techschooling/general/loaders/SignupLoader";
+import StartNowModal from "./StartNowModal";
 
 const PrimeProgramsPurchasedList = () => {
+    const { user_data } = useAuthStore();
     const [purchased, setPurchased] = useState([]);
     const [isLoading, setLoading] = useState(true);
     const location = useLocation();
     const [itemsPerPage] = useState(12);
     const [currentPage, setCurrentPage] = useState("");
     const [isButtonLoading, setButtonLoading] = useState(false);
-    const user_data = useSelector((state) => state.user_data);
     const [pagination, setPagination] = useState([]);
+    const [isStartNowModal, setStartNowModal] = useState(false);
+    const [topicId, setTopicId] = useState("");
+    const navigate = useNavigate();
 
     // get page
     const paginate = (pageNumber) => {
@@ -41,10 +46,10 @@ const PrimeProgramsPurchasedList = () => {
     };
 
     useEffect(() => {
-        const fetchData = () => {
+        const fetchData = async () => {
             setButtonLoading(true);
             const { access_token } = user_data;
-            primeprogramsConfig
+            await primeprogramsConfig
                 .get("learning/purchased-courses/", {
                     headers: {
                         Authorization: `Bearer ${access_token}`,
@@ -82,9 +87,15 @@ const PrimeProgramsPurchasedList = () => {
 
     return (
         <>
+            <StartNowModal
+                topicId={topicId}
+                setTopicId={setTopicId}
+                isStartNowModal={isStartNowModal}
+                setStartNowModal={setStartNowModal}
+            />
             {isLoading ? (
                 <LoaderContainer>
-                    <Loader />
+                    <SignupLoader />
                 </LoaderContainer>
             ) : (
                 <>

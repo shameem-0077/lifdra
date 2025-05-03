@@ -1,11 +1,10 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useAuthStore } from "../../../../store/authStore";
 import PaymentStatusModal from "./PaymentStatusModal";
 import loader from "../../../../assets/lotties/modal/buttonloader.json";
 import applyLoader from "../../../../assets/lotties/prime-progrmmes/voucherLoader.json";
 import Lottie from "react-lottie";
-import { PrimeProgramContext } from "../../../contexts/stores/PrimeProgramStore";
 import { primeprogramsConfig } from "../../../../axiosConfig";
 import queryString from "query-string";
 import SignupLoader from "../../includes/techschooling/general/loaders/SignupLoader";
@@ -13,14 +12,11 @@ import VoucherModal from "./VoucherModal";
 import { useParams } from "react-router-dom";
 
 const BuynowModal = (props) => {
-    const user_data = useSelector((state) => state.user_data);
-
-    const { primeProgramState, primeProgramDispatch } =
-        useContext(PrimeProgramContext);
+    const { user_data } = useAuthStore();
+    const [isUsedPurchasedCoins, setIsUsedPurchasedCoins] = useState(false);
 
     const [show, setShow] = useState(false);
     const [isVoucherModal, setVoucherModal] = useState(false);
-    const user_profile = useSelector((state) => state.user_profile);
     const [modalType, setModalType] = useState("");
     const [isButtonLoading, setButtonLoading] = useState(false);
     const [courseId, setCourseId] = useState("");
@@ -233,12 +229,6 @@ const BuynowModal = (props) => {
                             alt="Image"
                         />
                     </Bg>
-                    {/* <Buynow>
-                        <BuyNowImage
-                            src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/buynow.svg"
-                            alt="Image"
-                        />
-                    </Buynow> */}
                     <Heading>Order Summary</Heading>
                     {isLoading ? (
                         <LoaderContainer>
@@ -405,25 +395,23 @@ const BuynowModal = (props) => {
                                     </PurchaseTitle>
                                     <FloatingIcons
                                         status={
-                                            user_profile.total_purchased_coins ===
+                                            user_data.total_purchased_coins ===
                                             0
                                                 ? "active"
                                                 : "not"
                                         }
                                         onClick={() => {
-                                            user_profile.total_purchased_coins >
+                                            user_data.total_purchased_coins >
                                             0
-                                                ? primeProgramDispatch({
-                                                      type: "TOGGLE_IS_PURCHASED_COINS",
-                                                  })
+                                                ? setIsUsedPurchasedCoins(!isUsedPurchasedCoins)
                                                 : handleToggle();
                                         }}
                                     >
                                         <FloatingIcon>
                                             <Circle
                                                 status={
-                                                    primeProgramState.isUsedPurchasedCoins &&
-                                                    user_profile.total_purchased_coins >
+                                                    isUsedPurchasedCoins &&
+                                                    user_data.total_purchased_coins >
                                                         0
                                                         ? "active"
                                                         : "not"
@@ -431,8 +419,8 @@ const BuynowModal = (props) => {
                                             ></Circle>
                                             <Span
                                                 status={
-                                                    primeProgramState.isUsedPurchasedCoins &&
-                                                    user_profile.total_purchased_coins >
+                                                    isUsedPurchasedCoins &&
+                                                    user_data.total_purchased_coins >
                                                         0
                                                         ? "active"
                                                         : "not"
@@ -453,7 +441,7 @@ const BuynowModal = (props) => {
                                             />
                                             <Coin>
                                                 {
-                                                    user_profile.total_purchased_coins
+                                                    user_data.total_purchased_coins
                                                 }
                                             </Coin>
                                         </Coins>
@@ -480,8 +468,8 @@ const BuynowModal = (props) => {
                     )}
                 </Container>
                 {!isLoading &&
-                    (primeProgramState.isUsedPurchasedCoins &&
-                    user_profile.total_purchased_coins > 0 ? (
+                    (isUsedPurchasedCoins &&
+                    user_data.total_purchased_coins > 0 ? (
                         <Button
                             className="anim-fade"
                             onClick={() => {
