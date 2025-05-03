@@ -4,7 +4,7 @@ import { connect, useDispatch } from "react-redux";
 import styled from "styled-components";
 import TopicSmallCard from "../../../includes/techschooling/lesson-topics/TopicSmallCard";
 import TopicAssetCard from "../../../includes/techschooling/lesson-topics/TopicAssetCard";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { learnConfig } from "../../../../../axiosConfig";
 import Loader from "../../../includes/techschooling/general/loaders/Loader";
 import ModalScreen from "../../../includes/general/ModalScreen";
@@ -29,7 +29,7 @@ function NewContentSinglePage(props) {
   const [topic, setTopic] = useState("");
   const [isLoading, setLoading] = useState(true);
   const [isTopicLoading, setTopicLoading] = useState(true);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const fetchTopic = (id) => {
     let { user_data } = props;

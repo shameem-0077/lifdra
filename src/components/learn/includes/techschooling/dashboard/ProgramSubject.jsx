@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Link, useParams, useHistory } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { learnConfig } from "../../../../../axiosConfig";
 import Loader from "../general/loaders/Loader";
@@ -14,9 +14,9 @@ function ProgramSubject() {
     const { user_data, user_profile } = useSelector((state) => state);
     const [gridColumns, setGridColumns] = useState("");
 
-    const history = useHistory();
+    const navigate = useNavigate();
     useEffect(() => {
-        if (user_profile.program.program_id) fetchData();
+        if (user_profile?.program?.program_id) fetchData();
     }, [user_data, user_profile]);
     const fetchData = () => {
         let { access_token } = user_data;
@@ -67,7 +67,7 @@ function ProgramSubject() {
                                     onClick={(e) => {
                                         e.preventDefault();
                                         if (item.is_started) {
-                                            history.push(`/${item.slug}/`);
+                                            navigate(`/${item.slug}/`);
                                         } else {
                                             setSubjectModal(true);
                                         }

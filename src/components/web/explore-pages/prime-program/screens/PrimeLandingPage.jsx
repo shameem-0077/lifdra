@@ -11,7 +11,7 @@ import PrimeSpotlight from "./PrimeSpotlight";
 import PrimeProgramFAQ from "./PrimeProgramFAQ";
 import SubscriptionBanner from "./SubscriptionBanner";
 import PrimeSubcribeModal from "../Modals/PrimeSubcribeModal";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import queryString from "query-string";
 import { useSelector } from "react-redux";
 
@@ -20,15 +20,12 @@ import { useSelector } from "react-redux";
 function PrimeLandingPage() {
     const location = useLocation();
     const user_profile = useSelector((state) => state.user_profile);
-
     const [action, setAction] = useState("");
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const closeModal = () => {
         setAction("");
-        history.push({
-            pathname: location.pathname,
-        });
+        navigate(location.pathname);
     };
 
     useEffect(() => {
@@ -38,9 +35,7 @@ function PrimeLandingPage() {
                     user_profile.prime_program_subscription.is_subscription &&
                     !user_profile.prime_program_subscription.is_expired
                 ) {
-                    history.push({
-                        pathname: `/prime-programs/courses/`,
-                    });
+                    navigate(`/prime-programs/courses/`);
                 }
             }
         }
@@ -48,10 +43,8 @@ function PrimeLandingPage() {
 
     useEffect(() => {
         let { search } = location;
-
         const values = queryString.parse(search);
         const action = values.action;
-
         setAction(action);
     }, [location.search]);
 

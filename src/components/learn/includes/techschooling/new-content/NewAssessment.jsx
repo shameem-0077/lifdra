@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { learnConfig } from "../../../../../axiosConfig";
 import Loader from "../general/loaders/Loader";
 import { useSelector, useDispatch } from "react-redux";
@@ -10,7 +10,7 @@ const NewAssessment = () => {
 	const [setError] = useState(false);
 	const user_data = useSelector((state) => state.user_data);
 	const [isLoading, setLoading] = useState(true);
-	const history = useHistory();
+	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	useEffect(() => {
 		let { access_token } = user_data;

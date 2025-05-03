@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { connect, useSelector, useDispatch } from "react-redux";
-import { Route, useLocation, Link } from "react-router-dom";
+import { Route, useLocation, Link, Routes, Navigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
@@ -19,8 +19,10 @@ import {
 import ProfileCard from "../../learn/includes/community/community-sidebox/ProfileCard";
 import { accountsConfig, learnConfig } from "../../../axiosConfig";
 import Skeleton from "react-loading-skeleton";
-import InProgressCard from "../../learn/screens/nano-degree/components/in-progress/InProgressCard";
 import TalropEdtechHelmet from "../../helpers/TalropEdtechHelmet";
+import CommunityProfile from "../../learn/screens/community/CommunityProfile";
+import ProfileSectionSkeleton from "../../learn/includes/community/community-profile/ProfileSectionSkeleton";
+import UnfollowModal from "../../learn/includes/community/modals/UnfollowModal";
 
 function mapStateToProps(state) {
   return {
@@ -39,55 +41,64 @@ function mapDispatchtoProps(dispatch) {
 }
 
 function CommunityRouter(props) {
-  const [showSideBox, setShowBox] = useState(false);
+  const { user_data } = useSelector((state) => state);
+  const access_token = user_data?.access_token;
+
+  const [userProfileDetails, setUserProfileDetails] = useState({});
   const [inner, setInner] = useState(false);
+  const [showSideBox, setShowSideBox] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showUnfollowModal, setShowUnfollowModal] = useState(false);
+  const [isFollow, setIsFollow] = useState(false);
+  const [followCount, setFollowCount] = useState({ follow: 0, follower: 0 });
   const [isModal, setModal] = useState(false);
   const [username, setUsername] = useState(null);
-  const user_data = useSelector((state) => state.user_data);
-  const { access_token } = user_data;
   const [profileData, setProfileData] = useState("");
-  const [isLoading, setLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("following");
   const location = useLocation();
-  const [followCount, setFollowCount] = useState({
-    follow: 0,
-    follower: 0,
-  });
   const [myLearningData, setMyLearningData] = useState([]);
   const [mLstatusCode, setMLStatusCode] = useState(6001);
 
   useEffect(() => {
     let isMounted = true;
-    async function fetchProfile() {
+
+    async function fetchMyProfileDetails() {
+      if (!access_token) return;
+      
+      setIsLoading(true);
       try {
         const response = await accountsConfig.get(
-          `/api/v1/users/community-profiles/`,
+          "/api/v1/users/community-profiles/",
           {
             headers: {
               Authorization: `Bearer ${access_token}`,
-            },
+            }
           }
         );
-        const { status_code, data, message } = response.data;
+        const { status_code, data } = response.data;
 
         if (status_code === 6000 && isMounted) {
-          setUsername(data?.username);
           setFollowCount({
-            follow: data?.following,
-            follower: data?.followers,
+            follow: data?.following || 0,
+            follower: data?.followers || 0,
           });
+          setUserProfileDetails(data || {});
+          setIsFollow(data?.is_following || false);
+          setUsername(data?.username);
           setProfileData(data);
-          setLoading(false);
           setTimeout(() => setIsVisible(true), 50);
         }
       } catch (error) {
-        console.error("Error fetching profile data:", error);
-        setLoading(false);
+        console.error("Error fetching profile:", error);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     }
 
-    fetchProfile();
+    fetchMyProfileDetails();
 
     return () => {
       isMounted = false;
@@ -104,7 +115,7 @@ function CommunityRouter(props) {
 
   useEffect(() => {
     const fetchMyLrngsCardsData = async () => {
-      setLoading(true);
+      setIsLoading(true);
       try {
         const { data } = await learnConfig.get(
           "/learn/nano-degree-my-learning-progress/",
@@ -119,11 +130,11 @@ function CommunityRouter(props) {
 
         if (status_code !== 6000) {
           setMyLearningData([]);
-          setLoading(false);
+          setIsLoading(false);
           setMLStatusCode(status_code);
         } else {
           setMyLearningData(datas);
-          setLoading(false);
+          setIsLoading(false);
           setMLStatusCode(status_code);
         }
       } catch (error) {
@@ -152,10 +163,14 @@ function CommunityRouter(props) {
 
   console.log(location.pathname.match(SinglePageRouteRegex), "single page====");
 
+  if (!access_token) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <div id="main">
       <ToastContainer />
-      <TalropEdtechHelmet title={profileData?.name} />
+      <TalropEdtechHelmet title={userProfileDetails?.name} />
       <ListProfileModal
         setActiveTab={setActiveTab}
         activeTab={activeTab}
@@ -163,231 +178,87 @@ function CommunityRouter(props) {
         setModal={setModal}
         isModal={isModal}
       />
-      <MainContainer>
-        {location.pathname === "/feed/" ||
-        location.pathname.match(SinglePageRouteRegex) ? (
-          <>
-            <LeftContainerBox>
-              <ContentBox
-                isInsideProfile={
-                  location.pathname.match(ProfileRouteRegex) ||
-                  location.pathname.match(PostRouteRegex) ||
-                  location.pathname.match(SavedRouteRegex)
-                    ? true
-                    : false
-                }
-              >
-                {isLoading ? (
-                  <ProfileCardSkeleton />
-                ) : (
-                  <FadeInContainer isVisible={isVisible}>
-                    <ProfileCard
-                      setActiveTab={setActiveTab}
-                      followCount={followCount}
-                      profileData={profileData}
-                      setModal={setModal}
-                    />
-                  </FadeInContainer>
-                )}
-                {location.pathname === "/feed/" && (
-                  <InPrograsBox>
-                    {myLearningData && myLearningData.length > 0 && (
-                      <InProgressCard
-                        key={0}
-                        type={"feed"}
-                        progressData={myLearningData[0]}
-                      />
-                    )}
-                  </InPrograsBox>
-                )}
-              </ContentBox>
-            </LeftContainerBox>
+      <UnfollowModal
+        openModal={showUnfollowModal}
+        setOpenModal={setShowUnfollowModal}
+        item={userProfileDetails}
+        followCount={followCount}
+        setFollowCount={setFollowCount}
+        setIsFollow={setIsFollow}
+        isFollow={isFollow}
+      />
+      <MainBoxContainer>
+        <MainContainer>
+          {isLoading ? (
+            <ProfileSectionSkeleton />
+          ) : (
+            <CommunityProfile
+              userProfileDetails={userProfileDetails}
+              followCount={followCount}
+              setFollowCount={setFollowCount}
+              setShowUnfollowModal={setShowUnfollowModal}
+              showUnfollowModal={showUnfollowModal}
+              setIsFollow={setIsFollow}
+              isFollow={isFollow}
+            />
+          )}
 
-            <CentetrContainerBox inner={inner}>
-              <Suspense fallback={<RouteLoading />}>
-                <Route
-                  exact
-                  path="/feed/"
-                  render={() => (
-                    <PostMain toast={toast} setFollowCount={setFollowCount} />
-                  )}
-                />
-              </Suspense>
-              <Suspense>
-                <Route
-                  exact
-                  path="/feed/view/:slug"
-                  render={() => (
-                    <SharedPostMain
-                      toast={toast}
-                      setFollowCount={setFollowCount}
-                    />
-                  )}
-                />
-              </Suspense>
-            </CentetrContainerBox>
-            {location.pathname.match(ProfileRouteRegex) ? (
-              <></>
-            ) : (
-              <>
-                {!inner && (
-                  <RightContainerBox className={showSideBox && "active"}>
-                    <PostSideBar
-                      setFollowCount={setFollowCount}
-                      followCount={followCount}
-                      toast={toast}
-                      setModal={setModal}
-                      setUsername={setUsername}
-                    />
-                  </RightContainerBox>
-                )}
-              </>
-            )}
-          </>
-        ) : (
-          <>
-            <Suspense fallback={<RouteLoading />}>
-              <Route
-                exact
-                path="/feed/*"
-                render={() => (
-                  <PostProfileRouter
-                    setFollowCount={setFollowCount}
-                    followCount={followCount}
-                    toast={toast}
-                    setModal={setModal}
-                    setUsername={setUsername}
-                    username={username}
-                  />
-                )}
+          <LeftContainerBox inner={inner}>
+            <Routes>
+              <Route path="/" element={<PostMain />} />
+              <Route path="/saved" element={<PostMain />} />
+              <Route path="/:username" element={<CommunityProfile />} />
+            </Routes>
+          </LeftContainerBox>
+
+          {!inner && (
+            <RightContainerBox className={showSideBox && "active"}>
+              <PostSideBar
+                followCount={followCount}
+                setFollowCount={setFollowCount}
               />
-            </Suspense>
-          </>
-        )}
-      </MainContainer>
-      {/* ) : (
-          <UnAutharisedPage />
-        ) */}
-      {/* ) : (
-        <RouteLoading />
-      )} */}
+            </RightContainerBox>
+          )}
+        </MainContainer>
+      </MainBoxContainer>
     </div>
   );
 }
 
 export default connect(mapStateToProps, mapDispatchtoProps)(CommunityRouter);
 
+const MainBoxContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
 const MainContainer = styled.div`
   display: flex;
+  width: 100%;
+  gap: 32px;
   justify-content: space-between;
+  flex-wrap: wrap;
+  @media all and (max-width: 1441px) {
+    gap: 15px;
+  }
 `;
+
 const LeftContainerBox = styled.div`
-  max-width: 268px;
-  width: 19.94%;
-  @media all and (max-width: 1180px) {
-    width: 24%;
-  }
-  @media all and (max-width: 1064px) {
-    width: 28%;
-  }
-  @media all and (max-width: 840px) {
-    width: 32%;
-  }
-
-  @media all and (max-width: 768px) {
-    display: none;
-  }
-`;
-const ContentBox = styled.section`
-  /* position: relative; */
-  position: sticky;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  top: 0px;
-  /* padding: 32px 0px 0px; */
-  background-color: #fff;
-  /* height: calc(100vh - 80px); */
-  z-index: 2;
-  overflow-y: scroll;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
-  @media all and (max-width: 980px) {
-    width: ${({ isInsideProfile }) => (isInsideProfile ? "100%" : "100%")};
-
-    /* padding: ${({ isInsideProfile }) =>
-      isInsideProfile ? "0" : "26px  0px"}; */
-  }
-  @media all and (max-width: 768px) {
-    padding: 15px;
-  }
-  @media all and (max-width: 690px) {
-    width: ${({ isInsideProfile }) => (isInsideProfile ? "100%" : "129%")};
-    padding: 6px 20px 0px;
-  }
-  @media all and (max-width: 640px) {
-    /* min-height: calc(100vh - 60px); */
-    width: 100%;
-    min-height: ${({ isInsideProfile }) =>
-      isInsideProfile ? "none" : "100vh"};
-  }
-`;
-const InPrograsBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-`;
-const SuggestionPeopeleCard = styled.div`
-  display: none;
-  @media all and (max-width: 1024px) {
-    display: block;
-  }
-`;
-const CentetrContainerBox = styled.div`
-  width: ${({ inner }) => (inner ? "100%" : "48.81%")};
+  width: ${({ inner }) => (inner ? "100%" : "65%")};
   position: relative;
-  &:after {
-    content: "";
-    top: 400px;
-    right: 0;
-    width: 20px;
-    height: 500px;
-    background: #000;
-  }
-  @media all and (max-width: 1180px) {
-    width: ${({ inner }) => (inner ? "100%" : "48%")};
-  }
-  @media all and (max-width: 1064px) {
-    width: 70%;
-  }
-  @media all and (max-width: 840px) {
-    width: 66%;
-  }
-  @media all and (max-width: 768px) {
-    width: ${({ inner }) => (inner ? "100%" : "100%")};
-  }
-  @media all and (max-width: 640px) {
-    width: ${({ inner }) => (inner ? "100%" : "100%")};
+
+  @media all and (max-width: 1080px) {
+    width: 100%;
   }
 `;
 
 const RightContainerBox = styled.div`
-  max-width: 372px;
-  width: 27.68%;
-  @media all and (max-width: 1180px) {
-    width: 24%;
-  }
-  @media all and (max-width: 1064px) {
-    display: none;
-  }
-`;
+  width: 30%;
 
-const FadeInContainer = styled.div`
-  max-width: 268px;
-  opacity: ${(props) => (props.isVisible ? 1 : 0)};
-  transition: opacity 0.5s ease-in-out;
+  @media all and (max-width: 1080px) {
+    width: 100%;
+  }
 `;
 
 const Container = styled.div`

@@ -3,12 +3,15 @@ import styled from "styled-components";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { ProfileRouteRegex, PostRouteRegex } from "./RouteRegexPattern";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { primeprogramsConfig } from "../../../../axiosConfig";
 
 function PostCardContent({ item, isSinglePost }) {
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
-
+  const { user_data } = useSelector((state) => state);
   const [isExpanded, setIsExpanded] = useState(isSinglePost);
   const words = item?.content?.split(/\s+/) || [];
   const isLongContent = words.length > 30;
@@ -18,6 +21,8 @@ function PostCardContent({ item, isSinglePost }) {
 
   const contentRef = useRef(null);
   const [contentHeight, setContentHeight] = useState("auto");
+  const [isLiked, setIsLiked] = useState(item.is_liked);
+  const [likeCount, setLikeCount] = useState(item.likes_count);
 
   useEffect(() => {
     if (contentRef.current) {
@@ -30,10 +35,38 @@ function PostCardContent({ item, isSinglePost }) {
       location.pathname.match(ProfileRouteRegex) ||
       location.pathname.match(PostRouteRegex)
     ) {
-      history.push(`/feed/${slug}`);
+      navigate(`/feed/${slug}`);
     } else {
       setIsExpanded(!isExpanded);
     }
+  };
+
+  const handleLike = () => {
+    const { access_token } = user_data;
+    primeprogramsConfig
+      .post(
+        `community/posts/${item.id}/like/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      )
+      .then((response) => {
+        const { StatusCode } = response.data;
+        if (StatusCode === 6000) {
+          setIsLiked(!isLiked);
+          setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleComment = () => {
+    navigate(`/community/post/${item.id}/`);
   };
 
   const renderContent = (text) => {
@@ -103,6 +136,26 @@ function PostCardContent({ item, isSinglePost }) {
           {isExpanded ? "View Less" : "View More"}
         </ShowMoreButton>
       )}
+      <ActionContainer>
+        <ActionButton onClick={handleLike}>
+          <img
+            src={
+              isLiked
+                ? "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/21-01-2022/like-filled.svg"
+                : "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/21-01-2022/like.svg"
+            }
+            alt=""
+          />
+          <span>{likeCount}</span>
+        </ActionButton>
+        <ActionButton onClick={handleComment}>
+          <img
+            src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/21-01-2022/comment.svg"
+            alt=""
+          />
+          <span>{item.comments_count}</span>
+        </ActionButton>
+      </ActionContainer>
     </>
   );
 }
@@ -176,5 +229,31 @@ const ShowMoreButton = styled.button`
 
   &:hover {
     color: #0c8456;
+  }
+`;
+
+const ActionContainer = styled.div`
+  display: flex;
+  gap: 16px;
+`;
+
+const ActionButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  img {
+    width: 20px;
+    height: 20px;
+  }
+  span {
+    font-size: 14px;
+    color: #757575;
+  }
+  &:hover {
+    opacity: 0.8;
   }
 `;

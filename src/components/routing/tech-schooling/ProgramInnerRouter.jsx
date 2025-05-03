@@ -1,9 +1,9 @@
 import React, { Suspense, useEffect, useState, lazy } from "react";
 import {
+  Routes,
   Route,
-  Switch,
-  Redirect,
-  useHistory,
+  Navigate,
+  useNavigate,
   useLocation,
   useParams,
 } from "react-router-dom";
@@ -76,7 +76,7 @@ function ProgramInnerRouter({ program_slug }) {
   const user_profile = useSelector((state) => state.user_profile);
   const user_data = useSelector((state) => state.user_data);
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
 
   const [action, setAction] = useState("");
@@ -91,9 +91,7 @@ function ProgramInnerRouter({ program_slug }) {
 
   const closeModal = () => {
     setAction("");
-    history.push({
-      pathname: location.pathname,
-    });
+    navigate(location.pathname);
   };
 
   const menuHeader = () => {
@@ -118,119 +116,156 @@ function ProgramInnerRouter({ program_slug }) {
       {menuHeader()}
       {action === "subscribe" && <SubscribeModal closeModal={closeModal} />}
       <Suspense fallback={<RouteLoading />}>
-        <Switch>
-          <ChildrenPrivateRoute exact path={`/nanodegree/:slug/assessments`}>
-            <AssessmentsMainRouter subject_slug={program_slug} />
-          </ChildrenPrivateRoute>
-
-          <ChildrenPrivateRoute exact path={`/nanodegree/:slug/assessments/all`}>
-            <AllAssessments subject_slug={program_slug} />
-          </ChildrenPrivateRoute>
-
-          <ChildrenPrivateRoute exact path={`/nanodegree/:slug/professions/`}>
-            <TechSchoolingProfessions subject_slug={program_slug} />
-          </ChildrenPrivateRoute>
-
-          <SubscriptionPrivateRoute
-            exact
-            path={`/nanodegree/:slug/professions/:id/`}
-          >
-            <SkillsPage subject_slug={program_slug} />
-          </SubscriptionPrivateRoute>
-
-          <SubscriptionPrivateRoute
-            exact
-            path={`/nanodegree/:slug/lessons/:id/`}
-          >
-            <LessonsListPage subject_slug={program_slug} />
-          </SubscriptionPrivateRoute>
-
-          <SubscriptionPrivateRoute
-            exact
-            path={`/nanodegree/:slug/topics/view/:id/`}
-          >
-            <TechSchoolingTopicSingle subject_slug={program_slug} />
-          </SubscriptionPrivateRoute>
-
-          <ChildrenPrivateRoute exact path={`/nanodegree/:slug/practices/`}>
-            <TechSchoolingPractices subject_slug={program_slug} />
-          </ChildrenPrivateRoute>
-
-          <PrivateRoute exact path={`/nanodegree/:slug/practices/all/`}>
-            <AllPractices subject_slug={program_slug} />
-          </PrivateRoute>
-
-          <ChildrenPrivateRoute exact path={`/nanodegree/:slug/workshops/`}>
-            <TechSchoolingWorkshops subject_slug={program_slug} />
-          </ChildrenPrivateRoute>
-
-          <PrivateRoute exact path={`/nanodegree/:slug/workshops/all/`}>
-            <AllWorkshops subject_slug={program_slug} />
-          </PrivateRoute>
-
-          <SubscriptionPrivateRoute
-            exact
-            path={`/nanodegree/:slug/workshops/view/:id/`}
-          >
-            <TechSchoolingWorkshop subject_slug={program_slug} />
-          </SubscriptionPrivateRoute>
-
-          {/* <PrivateRoute exact path={`/nanodegree/:slug/new-content/`}>
-            <Redirect
-              to={{
-                pathname: `/new-content/skills/`,
-              }}
-            />
-
-          </PrivateRoute>
-          <PrivateRoute exact path={`/new-content/skills/`}>
-            <NewContent subject_slug={program_slug} />
-          </PrivateRoute> */}
-          <PrivateRoute exact path={`/nanodegree/:slug/new-content/`}>
-            <NewContent subject_slug={program_slug} />
-          </PrivateRoute>
-
-          <PrivateRoute path={`/nanodegree/:slug/new-content/skills/:id/`}>
-            <NewContentRouter subject_slug={program_slug} />
-          </PrivateRoute>
-
-          <ChildrenPrivateRoute exact path={`/nanodegree/:slug/certification/`}>
-            <CertificateHome subject_slug={program_slug} />
-          </ChildrenPrivateRoute>
+        <Routes>
           <Route
-            exact
-            path={`/nanodegree/:slug/certification/:id/`}
-            component={CertificateSinglePage}
+            path="/assessments"
+            element={
+              <ChildrenPrivateRoute>
+                <AssessmentsMainRouter subject_slug={program_slug} />
+              </ChildrenPrivateRoute>
+            }
           />
-
-          <Route exact path={`/`}>
-            <Redirect
-              to={{
-                pathname: `/feed/`,
-              }}
-            />
-          </Route>
-
-          <PrivateRoute path={`/401/`}>
-            <ErrorWrap>
-              <Error401 />
-            </ErrorWrap>
-          </PrivateRoute>
-
-          <PrivateRoute path={`/403/`}>
-            <ErrorWrap>
-              <Error403 />
-            </ErrorWrap>
-          </PrivateRoute>
-
-          <PrivateRoute path={`/500/`}>
-            <ErrorWrap>
-              <Error500 />
-            </ErrorWrap>
-          </PrivateRoute>
-
-          <Route component={Error404} />
-        </Switch>
+          <Route
+            path="/assessments/all"
+            element={
+              <ChildrenPrivateRoute>
+                <AllAssessments subject_slug={program_slug} />
+              </ChildrenPrivateRoute>
+            }
+          />
+          <Route
+            path="/professions"
+            element={
+              <ChildrenPrivateRoute>
+                <TechSchoolingProfessions subject_slug={program_slug} />
+              </ChildrenPrivateRoute>
+            }
+          />
+          <Route
+            path="/professions/:id"
+            element={
+              <SubscriptionPrivateRoute>
+                <SkillsPage subject_slug={program_slug} />
+              </SubscriptionPrivateRoute>
+            }
+          />
+          <Route
+            path="/lessons/:id"
+            element={
+              <SubscriptionPrivateRoute>
+                <LessonsListPage subject_slug={program_slug} />
+              </SubscriptionPrivateRoute>
+            }
+          />
+          <Route
+            path="/topics/view/:id"
+            element={
+              <SubscriptionPrivateRoute>
+                <TechSchoolingTopicSingle subject_slug={program_slug} />
+              </SubscriptionPrivateRoute>
+            }
+          />
+          <Route
+            path="/practices"
+            element={
+              <ChildrenPrivateRoute>
+                <TechSchoolingPractices subject_slug={program_slug} />
+              </ChildrenPrivateRoute>
+            }
+          />
+          <Route
+            path="/practices/all"
+            element={
+              <PrivateRoute>
+                <AllPractices subject_slug={program_slug} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/workshops"
+            element={
+              <ChildrenPrivateRoute>
+                <TechSchoolingWorkshops subject_slug={program_slug} />
+              </ChildrenPrivateRoute>
+            }
+          />
+          <Route
+            path="/workshops/all"
+            element={
+              <PrivateRoute>
+                <AllWorkshops subject_slug={program_slug} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/workshops/view/:id"
+            element={
+              <SubscriptionPrivateRoute>
+                <TechSchoolingWorkshop subject_slug={program_slug} />
+              </SubscriptionPrivateRoute>
+            }
+          />
+          <Route
+            path="/new-content"
+            element={
+              <PrivateRoute>
+                <NewContent subject_slug={program_slug} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/new-content/skills/:id"
+            element={
+              <PrivateRoute>
+                <NewContentRouter subject_slug={program_slug} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/certification"
+            element={
+              <ChildrenPrivateRoute>
+                <CertificateHome subject_slug={program_slug} />
+              </ChildrenPrivateRoute>
+            }
+          />
+          <Route
+            path="/certification/:id"
+            element={<CertificateSinglePage />}
+          />
+          <Route path="/" element={<Navigate to="/feed/" replace />} />
+          <Route
+            path="/401"
+            element={
+              <PrivateRoute>
+                <ErrorWrap>
+                  <Error401 />
+                </ErrorWrap>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/403"
+            element={
+              <PrivateRoute>
+                <ErrorWrap>
+                  <Error403 />
+                </ErrorWrap>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/500"
+            element={
+              <PrivateRoute>
+                <ErrorWrap>
+                  <Error500 />
+                </ErrorWrap>
+              </PrivateRoute>
+            }
+          />
+          <Route path="*" element={<Error404 />} />
+        </Routes>
       </Suspense>
     </Container>
   );

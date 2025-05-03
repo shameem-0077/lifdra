@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useEffect, useContext, useState } from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import RouteLoading from "../RouteLoading";
 import Error401 from "../../error-pages/Error401";
 import Error403 from "../../error-pages/Error403";
@@ -239,7 +239,7 @@ const StudentRouter = (props) => {
     if (user_data?.access_token && currentToken) {
       createDevice();
     }
-  }, [user_data.access_token, currentToken]);
+  }, [user_data?.access_token, currentToken]);
 
   const combinedProps = {
     ...props, // Existing props
@@ -249,187 +249,39 @@ const StudentRouter = (props) => {
   return (
     <div id="main-container">
       {/* <WarningMenu isSecondMenu={isSecondMenu} /> */}
-      <PrimeProgramSucessModal />
-      <TrialGiftModal />
-      <CertificateModal />
+      <Header />
       <MessagePopUp />
-      <Header {...props} />
-      {location.pathname != "/feed/" ||
-      location.pathname != "/feed/profile" ||
-      location.pathname != "/tech-updates/" ? null : (
-        <>
-          <Sidebar {...props} />
-        </>
-      )}
-      <InvitationModal />
-      <PaymentLinkModal />
-      <SubscriptionDiscountModal handleIdUploadModal={handleIdUploadModal} />
-      {/* {auth.isAuthenticated() && <MobailNavManu />} */}
+      <Sidebar />
       <MobailNavManu />
-      {/* <BottomNavBar isSecondMenu={isSecondMenu} /> */}
-
-      <ValidationModal handleIdUploadModal={handleIdUploadModal} />
-      {errorState.isError ? (
-        <MainErrorPage />
-      ) : (
-        <Suspense fallback={<RouteLoading />}>
-          <Switch>
-            <Route exact path="/">
-              <Redirect
-                to={{
-                  pathname: "/nanodegree/:slug/daily-syllabus/",
-                }}
-              />
-            </Route>
-            {/* <PrivateRoute exact path="/dashboard/" component={NewDashBoard} /> */}
-            <Route
-              exact
-              path="/nanodegree/:slug/daily-syllabus/"
-              component={NewDashBoard}
-            />
-
-            <PrivateRoute
-              exact
-              path="/nanodegree/:slug/support/"
-              // component={ChatScreen}
-              component={user_data.uid ? ChatScreen : Connect}
-            />
-
-            <Route
-              exact
-              path="/subscription/"
-              render={() => (
-                <ProgramPlans title="Tech Schooling" program="tech-schooling" />
-                // <DashBoard />
-              )}
-            />
-            <Route
-              exact
-              path="/feed/tech-schooling/"
-              render={() => (
-                <ProgramPlans title="Tech Schooling" program="tech-schooling" />
-              )}
-            />
-            <Route
-              exact
-              path="/feed/tech-degree/"
-              render={() => (
-                <ProgramPlans title="Tech Degree" program="tech-degree" />
-              )}
-            />
-
-            <Route
-              exact
-              path="/feed/program/tech-schooling/:id"
-              render={() => <ProgramSubject title="Tech Schooling" />}
-            />
-            <Route
-              exact
-              path="/feed/program/tech-degree/:id/"
-              render={() => <ProgramSubject title="Tech Degree" />}
-            />
-            <Route
-              exact
-              path="/feed/program/tech-grad/:id"
-              render={() => <ProgramSubject title="Tech Grad" />}
-            />
-            {/* Profile routes are here */}
-
-            <Route path="/profile/" component={SettingsRouter} />
-
-            <PrivateRoute exact path="/search/:id" component={GlobalSearch} />
-
-            <PrivateRoute
-              exact
-              path="/notifications/"
-              component={NotificationSinglePage}
-            />
-
-            <Route path="/coins/" component={SettingsRouter} />
-
-            <Route
-              path="/prime-programs/courses/"
-              component={PrimeProgramsRouter}
-            />
-
-            <Route
-              path="/prime-programs/"
-              component={PrimeProgramsInnerRouter}
-            />
-
-            <Route
-              exact
-              path="/certificate/"
-              component={PrimeProgramsCertificate}
-            />
-            <PrivateRoute path="/my-club/" component={MyclubRouter} />
-            <PrivateRoute
-              path="/nanodegree/:slug/leaderboard/"
-              component={LeaderBoard}
-            />
-
-            <PrivateRoute
-              exact
-              path="/nanodegree/:slug/projects/*"
-              component={ProjectsRouter}
-            />
-
-            <PrivateRoute
-              exact
-              path="/tech-updates/*"
-              component={TechUpdatesRouter}
-            />
-            <PrivateRoute exact path="/feed/*" component={CommunityRouter} />
-
-            <PrivateRoute
-              exact
-              path="/support/"
-              component={
-                (user_profile?.subscription_data?.has_active_subscription &&
-                  !user_profile.subscription_data.expired_subscription &&
-                  user_data.uid) ||
-                (allowedFeatures.includes("support") && user_data.uid)
-                  ? ChatScreen
-                  : Connect
-              }
-            />
-            {/* <PrivateRoute exact path="/projects*" component={ProjectsRouter} /> */}
-
-            <PrivateRoute
-              exact
-              path="/tech-updates/*"
-              component={TechUpdatesRouter}
-            />
-            <PrivateRoute
-              exact
-              path="/nanodegree/:slug/meet/"
-              component={MeetRouter}
-            />
-            <PrivateRoute path="/401/">
-              <ErrorWrap>
-                <Error401 />
-              </ErrorWrap>
-            </PrivateRoute>
-            <PrivateRoute path="/403/">
-              <ErrorWrap>
-                <Error403 />
-              </ErrorWrap>
-            </PrivateRoute>
-            <PrivateRoute path="/500/">
-              <ErrorWrap>
-                <Error500 />
-              </ErrorWrap>
-            </PrivateRoute>
-            {/* Tech-schooling routes are here */}
-            <PrivateRoute path="/nanodegree/:slug/*">
-              <TechSchoolingStore>
-                <ProgramRouter {...props} />
-              </TechSchoolingStore>
-            </PrivateRoute>
-            <Route component={Error404} />
-          </Switch>
-        </Suspense>
-      )}
+      <TrialGiftModal />
+      <SubscriptionDiscountModal />
+      <ValidationModal />
+      <CertificateModal />
+      <MainErrorPage />
+      <ProgramSubject />
+      <PrimeProgramSucessModal />
+      <Suspense fallback={<RouteLoading />}>
+        <Routes>
+          <Route path="/feed/*" element={<CommunityRouter />} />
+          <Route path="/meet/*" element={<MeetRouter />} />
+          <Route path="/tech-updates/*" element={<TechUpdatesRouter />} />
+          <Route path="/projects/*" element={<ProjectsRouter />} />
+          <Route path="/global-search/*" element={<GlobalSearch />} />
+          <Route path="/plans/*" element={<ProgramPlans />} />
+          <Route path="/prime-programs/certificate/*" element={<PrimeProgramsCertificate />} />
+          <Route path="/notifications/:id/*" element={<NotificationSinglePage />} />
+          <Route path="/my-club/*" element={<MyclubRouter />} />
+          <Route path="/tech-schooling/*" element={<ProgramRouter />} />
+          <Route path="/prime-programs/*" element={<PrimeProgramsRouter />} />
+          <Route path="/prime-programs-inner/*" element={<PrimeProgramsInnerRouter />} />
+          <Route path="/settings/*" element={<SettingsRouter />} />
+          <Route path="/401" element={<Error401 />} />
+          <Route path="/403" element={<Error403 />} />
+          <Route path="/404" element={<Error404 />} />
+          <Route path="/500" element={<Error500 />} />
+          <Route path="*" element={<Navigate to="/404" replace />} />
+        </Routes>
+      </Suspense>
     </div>
   );
 };

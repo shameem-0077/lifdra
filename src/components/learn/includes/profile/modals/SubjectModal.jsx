@@ -4,7 +4,7 @@ import Lottie from "react-lottie";
 import { useSelector } from "react-redux";
 import ReactPlayer from "react-player";
 import loader from "../../../../../assets/lotties/modal/buttonloader.json";
-import { Link, useParams, useHistory } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { learnConfig } from "../../../../../axiosConfig";
 import $ from "jquery";
 
@@ -17,7 +17,7 @@ function SubjectModal({
 	const [isButtonLoading, setButtonLoading] = useState(false);
 	const { id } = useParams();
 	const user_data = useSelector((state) => state.user_data);
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const loaderdefaultOptions = {
 		loop: true,
@@ -42,7 +42,7 @@ function SubjectModal({
 			.then((response) => {
 				const { StatusCode, data } = response.data;
 				if (StatusCode === 6000) {
-					history.push(`/${selectedSubject.slug}/`);
+					navigate(`/${selectedSubject.slug}/`);
 					setButtonLoading(true);
 				} else if (StatusCode === 6001) {
 					setButtonLoading(false);

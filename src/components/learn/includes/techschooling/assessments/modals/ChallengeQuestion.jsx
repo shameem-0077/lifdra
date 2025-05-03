@@ -6,7 +6,7 @@ import { AssessmentContext } from "../../../../../contexts/stores/AssessmentStor
 import { learnConfig } from "../../../../../../axiosConfig";
 import RequestLoader from "../../../authentication/general/RequestLoader";
 import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function mapStateToProps(state) {
   return {
@@ -108,7 +108,7 @@ const ChallengeQuestion = ({
   isImprovementTest,
   subject_slug,
 }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user_profile } = useSelector((state) => state);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -282,16 +282,16 @@ const ChallengeQuestion = ({
                   setBasicLoading(false);
                 }
               } else if (is_new_lesson) {
-                history.push(`/nanodegree/${subject_slug}/daily-syllabus/`);
+                navigate(`/nanodegree/${subject_slug}/daily-syllabus/`);
               } else if (is_new_skill) {
-                history.push(`/nanodegree/${subject_slug}/daily-syllabus/`);
+                navigate(`/nanodegree/${subject_slug}/daily-syllabus/`);
               } else if (is_new_designation) {
                 updateProfessionStatus(true);
                 updateNextProfession({
                   pk: data.upcoming_designation_pk,
                   name: data.upcoming_designation_name,
                 });
-                history.push(`/nanodegree/${subject_slug}/daily-syllabus/`);
+                navigate(`/nanodegree/${subject_slug}/daily-syllabus/`);
               }
             } else if (StatusCode === 6001) {
               setErrorMessage(data.title);

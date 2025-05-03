@@ -10,13 +10,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.0.2",
+    "@mui/material": "^7.0.2",
     "@reduxjs/toolkit": "^2.7.0",
+    "@splidejs/react-splide": "^0.7.12",
     "aos": "^2.3.4",
     "axios": "^1.9.0",
     "date-fns": "^4.1.0",
     "firebase": "^11.6.1",
     "hls.js": "^1.6.2",
     "jquery": "^3.7.1",
+    "lodash": "^4.17.21",
+    "moment": "^2.30.1",
     "query-string": "^9.1.1",
     "react": "^19.0.0",
     "react-countdown": "^2.3.6",
@@ -33,6 +40,7 @@
     "react-router-dom": "^7.5.3",
     "react-scroll": "^1.9.3",
     "react-slick": "^0.30.3",
+    "react-toastify": "^11.0.5",
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.17",
     "video-react": "^0.16.0"

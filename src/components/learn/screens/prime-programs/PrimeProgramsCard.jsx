@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import PlaceHolder from "../../../general/PlaceHolder";
 import { numberWithCommas, secondsTohm } from "../../../helpers/functions";
@@ -11,7 +11,7 @@ import loader from "../../../../assets/lotties/prime-progrmmes/voucherLoader.jso
 
 const PrimeProgramsCard = ({ course }) => {
     const location = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const [isStartNowLoading, setStartNowLoading] = useState(false);
     const { user_data } = useSelector((state) => state);
@@ -35,9 +35,7 @@ const PrimeProgramsCard = ({ course }) => {
             .then((response) => {
                 const { StatusCode, data } = response.data;
                 if (StatusCode === 6000) {
-                    history.push(
-                        `/prime-programs/${course.slug}/${course.first_topic}/`
-                    );
+                    navigate(`/prime-programs/${course.slug}/${course.first_topic}/`);
                     setStartNowLoading(false);
                 } else if (StatusCode === 6001) {
                     setStartNowLoading(false);
@@ -414,12 +412,12 @@ const PrimeProgramsCard = ({ course }) => {
                                 onClick={(e) => {
                                     e.preventDefault();
                                     if (auth.isAuthenticated()) {
-                                        history.push({
+                                        navigate({
                                             pathname: location.pathname,
                                             search: `?action=buy-course&c=${course.slug}`,
                                         });
                                     } else {
-                                        history.push({
+                                        navigate({
                                             pathname: location.pathname,
                                             search: `?action=login&next=/prime-programs/courses/`,
                                         });

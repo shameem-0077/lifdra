@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import TalropEdtechHelmet from "../helpers/TalropEdtechHelmet";
 import { connect } from "react-redux";
+import error404Image from "../../assets/images/404.svg";
 
 function mapStateToProps(state) {
   return {
@@ -21,7 +22,7 @@ const Error404 = (props) => {
               <Image
                 alt="Error 404"
                 // src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/error-pages/image-404.png"
-                src={require("../../assets/images/404.svg")}
+                src={error404Image}
               />
             </ImageContainer>
             <Title>Page not found</Title>

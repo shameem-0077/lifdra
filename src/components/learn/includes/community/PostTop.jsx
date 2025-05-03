@@ -2,40 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Jdenticon from "react-jdenticon";
-import { useHistory, useLocation, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import ProficPic from "../../../../assets/images/community/profile-pic.svg";
 import CreatePostModal from "./create-post/CreatePostModal";
 import { learnConfig } from "../../../../axiosConfig";
+import { toast } from "react-toastify";
+import moment from "moment";
 
 function PostTop({ toast, isUpdate, setUpdate, setModal, isModal, generatePost, isPostId }) {
   const { user_data, user_profile } = useSelector((state) => state);
   const { access_token } = user_data;
 
-  // const [isPostId, setPostId] = useState("");
-
+  const navigate = useNavigate();
   const location = useLocation();
-  const history = useHistory();
-
-  // const generatePost = async () => {
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("status", "on_draft");
-
-  //     const response = await learnConfig.post(`/posts/create/`, formData, {
-  //       headers: {
-  //         Authorization: `Bearer ${access_token}`,
-  //         "Content-Type": "multipart/form-data",
-  //       },
-  //     });
-
-  //     const { status_code, data } = response.data;
-  //     if (status_code === 6000) {
-  //       setPostId(data?.post_id);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error creating post:", error);
-  //   }
-  // };
 
   useEffect(() => {
     if (location.state && location.state.openModal) {
@@ -43,6 +22,25 @@ function PostTop({ toast, isUpdate, setUpdate, setModal, isModal, generatePost, 
       generatePost();
     }
   }, [location]);
+
+  const handleDelete = () => {
+    primeprogramsConfig
+      .delete(`community/posts/${data.id}/`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+      .then((response) => {
+        const { StatusCode } = response.data;
+        if (StatusCode === 6000) {
+          toast.success("Post deleted successfully");
+          setPostData(postData.filter((item) => item.id !== data.id));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <>
@@ -64,12 +62,9 @@ function PostTop({ toast, isUpdate, setUpdate, setModal, isModal, generatePost, 
           <ProfileLink to={`/feed/profile`}>
             <ProfileIcon>
               {user_profile?.photo ? (
-                <img src={user_profile?.photo} />
+                <img src={user_profile?.photo} alt="Profile" />
               ) : (
-                <Jdenticon
-                  // size={window.innerWidth > 1280 ? "47" : "45"}
-                  value={user_profile?.name}
-                />
+                <Jdenticon value={user_profile?.name} />
               )}
             </ProfileIcon>
           </ProfileLink>
@@ -77,7 +72,7 @@ function PostTop({ toast, isUpdate, setUpdate, setModal, isModal, generatePost, 
         </ProfileDiv>
 
         <SendIcon>
-          <img src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/01-06-2024/send.svg" />
+          <img src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/01-06-2024/send.svg" alt="Send" />
         </SendIcon>
       </CreatePostDiv>
     </>

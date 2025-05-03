@@ -2,7 +2,7 @@ import React, { useState, Suspense, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { PrivateRoute } from "../PrivateRoute";
 import PostProfile from "../../learn/screens/community/PostProfile";
-import { Switch, useLocation, useParams } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import RouteLoading from "../RouteLoading";
 import CommunityProfile from "../../learn/screens/community/CommunityProfile";
 import PostMain from "../../learn/screens/community/PostMain";
@@ -26,7 +26,8 @@ const PostProfileRouter = ({
   setUsername,
   username,
 }) => {
-  const location = useLocation();
+  const { user_data } = useSelector((state) => state);
+  const { access_token } = user_data;
 
   const [userProfileDetails, setUserProfileDetails] = useState({});
   const [inner, setInner] = useState(false);
@@ -35,10 +36,6 @@ const PostProfileRouter = ({
 
   const [showUnfollowModal, setShowUnfollowModal] = useState(false);
   const [isFollow, setIsFollow] = useState(false);
-
-  const {
-    user_data: { access_token },
-  } = useSelector((state) => state);
 
   useEffect(() => {
     let isMounted = true;
@@ -86,6 +83,10 @@ const PostProfileRouter = ({
     };
   }, [access_token, username]);
 
+  if (!access_token) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <>
       <UnfollowModal
@@ -115,33 +116,12 @@ const PostProfileRouter = ({
           )}
 
           <LeftContainerBox inner={inner}>
-            <Suspense fallback={<RouteLoading />}>
-              <Switch>
-                <PrivateRoute
-                  exact
-                  path="/feed/profile/:username?"
-                  component={() => (
-                    <CommunityProfile setUsername={setUsername} />
-                  )}
-                />
-                <PrivateRoute
-                  exact
-                  path="/feed/post/:username?"
-                  component={() => (
-                    <PostMain
-                      userProfileDetails={userProfileDetails}
-                      setUsername={setUsername}
-                      toast={toast}
-                    />
-                  )}
-                />
-                <PrivateRoute
-                  exact
-                  path="/feed/saved"
-                  component={() => <PostMain />}
-                />
-              </Switch>
-            </Suspense>
+            <Routes>
+              <Route path="/" element={<RouteLoading />} />
+              <Route path="/:username" element={<CommunityProfile setUsername={setUsername} />} />
+              <Route path="/post/:username" element={<PostMain userProfileDetails={userProfileDetails} setUsername={setUsername} toast={toast} />} />
+              <Route path="/saved" element={<PostMain />} />
+            </Routes>
           </LeftContainerBox>
 
           {!inner && (

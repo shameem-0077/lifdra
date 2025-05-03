@@ -1,12 +1,12 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import auth from "../../../../routing/auth";
 
 function CourseLibary({ isSteyp }) {
 	const location = useLocation();
-	const history = useHistory();
+	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const user_profile = useSelector((state) => state.user_profile);
 	return (
@@ -67,9 +67,7 @@ function CourseLibary({ isSteyp }) {
 						!user_profile.prime_program_subscription.is_expired ? (
 							<SubscribeButton
 								onClick={(e) => {
-									history.push({
-										pathname: `/prime-programs/courses/`,
-									});
+									navigate(`/prime-programs/courses/`);
 								}}
 							>
 								Continue
@@ -79,15 +77,9 @@ function CourseLibary({ isSteyp }) {
 								onClick={(e) => {
 									e.preventDefault();
 									if (auth.isAuthenticated()) {
-										history.push({
-											pathname: `/prime-programs/courses/`,
-											search: `?action=subscribe-prime-programs`,
-										});
+										navigate(`/prime-programs/courses/?action=subscribe-prime-programs`);
 									} else {
-										history.push({
-											pathname: location.pathname,
-											search: `?action=login`,
-										});
+										navigate(`${location.pathname}?action=login`);
 									}
 								}}
 							>
@@ -99,15 +91,9 @@ function CourseLibary({ isSteyp }) {
 							onClick={(e) => {
 								e.preventDefault();
 								if (auth.isAuthenticated()) {
-									history.push({
-										pathname: `/prime-programs/courses/`,
-										search: `?action=subscribe-prime-programs`,
-									});
+									navigate(`/prime-programs/courses/?action=subscribe-prime-programs`);
 								} else {
-									history.push({
-										pathname: location.pathname,
-										search: `?action=login`,
-									});
+									navigate(`${location.pathname}?action=login`);
 								}
 							}}
 						>

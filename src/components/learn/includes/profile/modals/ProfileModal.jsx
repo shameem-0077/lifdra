@@ -506,7 +506,7 @@ function ProfileModal() {
 					<Modal>
 						<Cover>
 							<Title>
-								{user_profile.student_category
+								{user_profile?.student_category
 									? "Edit Category"
 									: "Add Category"}
 							</Title>

@@ -9,8 +9,10 @@ import queryString from "query-string";
 import Footer from "../terms&condition/SteypFooter";
 import auth from "../../../routing/auth";
 import StartNowModal from "./StartNowModal";
+import { useLocation } from "react-router-dom";
 
-const PrimeProgramsHome = (props) => {
+const PrimeProgramsHome = () => {
+    const location = useLocation();
     const { user_data } = useSelector((state) => state);
     const [isModal, setModal] = useState(false);
     const [selectedCourse, setSeletedCourse] = useState("");
@@ -37,7 +39,7 @@ const PrimeProgramsHome = (props) => {
     const currentItems = courses.slice(indexOfFirstItem, indexOfLastItem);
 
     const setInitialSearch = () => {
-        let { search } = props.location;
+        let { search } = location;
         const values = queryString.parse(search);
         let page = values.page;
         setCurrentPage(page ? page : 1);
@@ -123,7 +125,7 @@ const PrimeProgramsHome = (props) => {
                     </SectionBtm>
                     {itemsPerPage && (
                         <Pagination
-                            location={props.location}
+                            location={location}
                             currentPage={currentPage}
                             paginate={paginate}
                             itemsPerPage={itemsPerPage}

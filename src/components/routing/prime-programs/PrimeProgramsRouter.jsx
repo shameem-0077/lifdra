@@ -1,9 +1,9 @@
 import React, { Suspense, lazy, useState, useEffect } from "react";
 import {
-  Redirect,
+  Navigate,
   Route,
-  Switch,
-  useHistory,
+  Routes,
+  useNavigate,
   useLocation,
 } from "react-router-dom";
 
@@ -49,30 +49,25 @@ function mapDispatchtoProps(dispatch) {
 
 function PrimeProgramsRouter(props) {
   const location = useLocation();
-
   const [action, setAction] = useState("");
   const [days, setDays] = useState("");
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const closeModal = () => {
     setAction("");
     setDays("");
-    history.push({
-      pathname: props.location.pathname,
-    });
+    navigate(location.pathname);
   };
 
   useEffect(() => {
-    let { location } = props;
-    let { search } = location;
-
+    const { search } = location;
     const values = queryString.parse(search);
     const action = values.action;
     const d = values.d;
 
     setAction(action);
     setDays(d);
-  }, [props.location.search]);
+  }, [location.search]);
 
   useEffect(() => {
     props.updateActiveMenu("prime-programs");
@@ -88,7 +83,7 @@ function PrimeProgramsRouter(props) {
                     closeModal={closeModal}
                 /> */}
         <NewBuyNowModal
-          location={props.location}
+          location={location}
           action={action}
           closeModal={closeModal}
         />
@@ -100,7 +95,7 @@ function PrimeProgramsRouter(props) {
         />
         <Nav />
         <Suspense fallback={<RouteLoading />}>
-          <Switch>
+          <Routes>
             {/* <Route
                             exact
                             path="/prime-programs/"
@@ -112,19 +107,16 @@ function PrimeProgramsRouter(props) {
                             path="/prime-programs/courses/"
                             component={PrimeProgramsHome}
                         /> */}
-            <Route exact path="/prime-programs/courses/">
-              <Redirect
-                to={{
-                  pathname: "/prime-programs/courses/purchased",
-                }}
-              />
-            </Route>
-            <PrivateRoute
-              exact
+            <Route path="/prime-programs/courses/" element={<Navigate to="/prime-programs/courses/purchased" replace />} />
+            <Route
               path="/prime-programs/courses/purchased/"
-              component={PrimeProgramsPurchasedList}
+              element={
+                <PrivateRoute>
+                  <PrimeProgramsPurchasedList />
+                </PrivateRoute>
+              }
             />
-          </Switch>
+          </Routes>
         </Suspense>
       </div>
     </>

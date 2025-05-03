@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Lottie from "react-lottie";
-import { Link, useHistory, useLocation, useParams } from "react-router-dom";
+import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
 import successData from "../../../../assets/lotties/modal/successtick.json";
 import failedData from "../../../../assets/lotties/modal/failed.json";
@@ -22,21 +22,21 @@ function PrimeProgramSucessModal({ topicId }) {
         rendererSettings: {},
     };
     const location = useLocation();
+    const navigate = useNavigate();
+    const { course_id } = useParams();
 
     const [status, setStatus] = useState("");
     const [type, setType] = useState("");
     const [topic, setTopic] = useState("");
     const [plan, setPlan] = useState("");
     const [course, setCourse] = useState("");
-    const history = useHistory();
-    const { course_id } = useParams();
 
     const closeModal = () => {
         setStatus("");
         setType("");
         setTopic("");
         setPlan("");
-        history.push({
+        navigate({
             pathname: location.pathname,
         });
     };

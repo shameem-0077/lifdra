@@ -14,7 +14,7 @@ import ReportModal from "../../includes/community/modals/ReportModal";
 import {
   ProfileRouteRegex,
   ProfilePostRedirctRegex,
-  ViewPostRouteRegex,
+  SinglePageRouteRegex,
   SavedRouteRegex,
   PostRouteRegex,
 } from "../../includes/community/RouteRegexPattern";

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useParams, useLocation, useHistory } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import ProfileSlider from "../../../screens/community/ProfileSlider";
 import { learnConfig } from "../../../../../axiosConfig";
@@ -8,16 +8,17 @@ import Loader from "../../techschooling/general/loaders/Loader";
 import plus from "../../../../../assets/images/profile-screen/plus.svg";
 import ProfilePostSliderSkeleton from "./ProfilePostSliderSkeleton";
 import CommunityNoDataFound from "../CommunityNoDataFound";
+import { toast } from "react-toastify";
 
 function ProfilePost({ userId }) {
+  const navigate = useNavigate();
   const location = useLocation();
-  const history = useHistory();
 
   const [userPosts, setUserPosts] = useState([]);
   const [isLoading, setLoading] = useState(false);
 
   const handleCreatePost = () => {
-    history.push("/feed/", { openModal: true });
+    navigate("/feed/", { state: { openModal: true } });
   };
 
   const {
@@ -67,6 +68,26 @@ function ProfilePost({ userId }) {
       isMounted = false;
     };
   }, [access_token, userId]);
+
+  const handleDelete = (postId) => {
+    const { access_token } = user_data;
+    learnConfig
+      .delete(`/posts/profile-posts/${postId}/`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+      .then((response) => {
+        const { status_code } = response.data;
+        if (status_code === 6000) {
+          toast.success("Post deleted successfully");
+          setUserPosts(userPosts.filter((post) => post.id !== postId));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <Container>

@@ -241,11 +241,11 @@ export default function SubscriptionDiscountModal({ handleIdUploadModal }) {
                 {modalType === "student" ? (
                     <ModalContent modalType={modalType}>
                         <LeftSection>
-                            {user_profile.student_category === "Graduates" ? (
+                            {user_profile?.student_category === "Graduates" ? (
                                 <Title>Are you a Graduate / Other ?</Title>
                             ) : (
                                 <Title>
-                                    Are you a {user_profile.student_category}{" "}
+                                    Are you a {user_profile?.student_category}{" "}
                                     student ?
                                 </Title>
                             )}

@@ -12,6 +12,12 @@ import supportImage from "../../../../assets/images/new-dashboard/support.svg";
 import meetImage from "../../../../assets/images/meet/videoconference 2.svg";
 import techImage from "../../../../assets/images/new-dashboard/techupdates.svg";
 import projects from "../../../../assets/images/projects-Image/projects.svg";
+import syllabusIcon from "../../../../assets/images/new-dashboard/syllabus.svg";
+import practiceIcon from "../../../../assets/images/new-dashboard/practice.svg";
+import workshopIcon from "../../../../assets/images/new-dashboard/workshop.svg";
+import assessmentIcon from "../../../../assets/images/new-dashboard/assessment.svg";
+import certificationIcon from "../../../../assets/images/new-dashboard/certification.svg";
+import supportIcon from "../../../../assets/images/support.svg";
 
 function mapDispatchtoProps(dispatch) {
   return {
@@ -55,6 +61,10 @@ class Sidebar extends React.PureComponent {
   };
 
   fetchCourses = () => {
+    if (!this.props.user_data?.access_token) {
+      return;
+    }
+
     const { access_token } = this.props.user_data;
     primeprogramsConfig
       .get("learning/purchased-courses/", {
@@ -72,6 +82,7 @@ class Sidebar extends React.PureComponent {
         console.log(error);
       });
   };
+
   componentDidMount() {
     this.fetchCourses();
 
@@ -175,137 +186,19 @@ class Sidebar extends React.PureComponent {
                         this.props.handleLearnModal(false);
                       }}
                       style={this.styles.link_style}
-                      to={`/nanodegree/${this.props.slug}/daily-syllabus/`}
+                      to={`/prime-programs`}
                     >
                       <MenuItemIcon
                         src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/menu/dashboard.svg"
                         alt="Icon"
                       />
-                      <span>Dashboard</span>
+                      <span>Prime Programs</span>
                       {/* <span></span> */}
                     </Link>
                   </RippleButton>
                 </li>
 
-                <li
-                  className={this.props.isLearnDiv ? "learn-active" : ""}
-                  style={this.styles.button_style}
-                >
-                  <RippleButton
-                    className={
-                      this.props.isLearnDiv
-                        ? "learn learn-active"
-                        : "learn learn-ripple"
-                    }
-                  >
-                    <LearnDiv
-                      onClick={(e) => {
-                        this.props.handleLearnModal(!this.props.isLearnDiv);
-                        e.preventDefault();
-                        // if (window.innerWidth <= 1100) {
-                        //     this.props.toggleRespMenu(
-                        //         "hide"
-                        //     );
-                        // }
-                      }}
-                      style={this.styles.link_style}
-                    >
-                      <LearnHead>
-                        <MenuItemIcon src={learnImage} alt="Icon" />
-                        <span className="learn">Learning</span>
-                        <ArrowIcon
-                          src={arrowImage}
-                          alt="Arrow"
-                          className={
-                            this.props.isLearnDiv
-                              ? "learn-arrow arrow-active"
-                              : "learn-arrow"
-                          }
-                        />
-                      </LearnHead>
-                    </LearnDiv>
-                    <LearnUl
-                      className={this.props.isLearnDiv ? "learn-active" : ""}
-                    >
-                      <LearnList
-                        to={`/nanodegree/${this.props.slug}/professions/`}
-                        onClick={(e) => {
-                          if (window.innerWidth <= 1100) {
-                            this.props.toggleRespMenu("hide");
-                          }
-                        }}
-                      >
-                        <SubMenuItemIcon
-                          className="submenuIcon"
-                          src={require("../../../../assets/images/new-dashboard/syllabus.svg")}
-                          alt="Icon"
-                        />
-                        <span>Syllabus</span>
-                      </LearnList>
-                      <LearnList
-                        to={`/nanodegree/${this.props.slug}/practices`}
-                        onClick={(e) => {
-                          if (window.innerWidth <= 1100) {
-                            this.props.toggleRespMenu("hide");
-                          }
-                        }}
-                      >
-                        <SubMenuItemIcon
-                          className="submenuIcon"
-                          src={require("../../../../assets/images/new-dashboard/practice.svg")}
-                          alt="Icon"
-                        />
-                        <span>Practices</span>
-                      </LearnList>
-                      <LearnList
-                        to={`/nanodegree/${this.props.slug}/workshops`}
-                        onClick={(e) => {
-                          if (window.innerWidth <= 1100) {
-                            this.props.toggleRespMenu("hide");
-                          }
-                        }}
-                      >
-                        <SubMenuItemIcon
-                          className="submenuIcon"
-                          src={require("../../../../assets/images/new-dashboard/workshop.svg")}
-                          alt="Icon"
-                        />
-                        <span>Workshops</span>
-                      </LearnList>
-                      <LearnList
-                        to={`/nanodegree/${this.props.slug}/assessments`}
-                        onClick={(e) => {
-                          if (window.innerWidth <= 1100) {
-                            this.props.toggleRespMenu("hide");
-                          }
-                        }}
-                      >
-                        <SubMenuItemIcon
-                          className="submenuIcon"
-                          src={require("../../../../assets/images/new-dashboard/assessment.svg")}
-                          alt="Icon"
-                        />
-                        <span>Assessments</span>
-                      </LearnList>
-                      <LearnList
-                        to={`/nanodegree/${this.props.slug}/certification`}
-                        onClick={(e) => {
-                          if (window.innerWidth <= 1100) {
-                            this.props.toggleRespMenu("hide");
-                          }
-                        }}
-                      >
-                        <SubMenuItemIcon
-                          className="submenuIcon"
-                          src={require("../../../../assets/images/new-dashboard/certification.svg")}
-                          alt="Icon"
-                        />
-                        <span>Certification</span>
-                      </LearnList>
-                    </LearnUl>
-                    {/* )} */}
-                  </RippleButton>
-                </li>
+                
 
                 <li
                   className={
@@ -324,471 +217,18 @@ class Sidebar extends React.PureComponent {
                       to={`/nanodegree/${this.props.slug}/support/`}
                     >
                       <MenuItemIcon
-                        src={require("../../../../assets/images/support.svg")}
+                        src={supportIcon}
                         alt="Icon"
                       />
                       <span>Support</span>
-                      {/* <BetaIcon
-                                                    src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/badge-new.svg"
-                                                    // {require("../../../../assets/images/support/beta.png")}
-                                                    alt="Arrow"
-                                                    className={
-                                                        this.props.isLearnDiv
-                                                            ? "learn-arrow arrow-active"
-                                                            : "learn-arrow"
-                                                    }
-                                                /> */}
                     </Link>
                   </RippleButton>
                 </li>
-                {/* ----------------- meet section start---------------- */}
-                <li
-                  className={this.props.active_menu === "meet" ? "active" : ""}
-                  style={this.styles.button_style}
-                >
-                  <RippleButton>
-                    <Link
-                      onClick={() => {
-                        this.props.handleLearnModal(false);
-                        if (window.innerWidth <= 1100) {
-                          this.props.toggleRespMenu("hide");
-                        }
-                      }}
-                      to={`/nanodegree/${this.props.slug}/meet/`}
-                      style={this.styles.link_style}
-                    >
-                      <MenuItemIcon src={meetImage} alt="Icon" />
-                      <span className="g-regular">Meet</span>
-                    </Link>
-                  </RippleButton>
-                </li>
-                {/* ----------------- meet section end---------------- */}
               </ul>
-              <ul>
-                <li
-                  className={
-                    this.props.active_menu === "leader_board" ? "active" : ""
-                  }
-                  style={this.styles.button_style}
-                >
-                  <RippleButton>
-                    <Link
-                      onClick={() => {
-                        this.props.handleLearnModal(false);
-                        if (window.innerWidth <= 768) {
-                          this.props.toggleRespMenu("hide");
-                        }
-                      }}
-                      style={this.styles.link_style}
-                      to={`/nanodegree/${this.props.slug}/leaderboard/`}
-                    >
-                      <MenuItemIcon src={leaderImage} alt="Icon" />
-                      <span>Weekly Leaderboard</span>
-                    </Link>
-                  </RippleButton>
-                </li>
-                {/* {this.props.user_profile.subscription_data
-                                    .has_active_subscription &&
-                                !this.props.user_profile.subscription_data
-                                    .expired_subscription ? (
-                                    <li
-                                        className={
-                                            this.props.active_menu ===
-                                            "monthly_report"
-                                                ? "active"
-                                                : ""
-                                        }
-                                        style={this.styles.button_style}
-                                    >
-                                        <RippleButton>
-                                            <Link
-                                                onClick={() => {
-                                                    this.props.handleLearnModal(
-                                                        false
-                                                    );
-                                                    if (
-                                                        window.innerWidth <= 768
-                                                    ) {
-                                                        this.props.toggleRespMenu(
-                                                            "hide"
-                                                        );
-                                                    }
-                                                }}
-                                                style={this.styles.link_style}
-                                                to="/monthly-report/"
-                                            >
-                                                <MenuItemIcon
-                                                    src={MonthlyIcon}
-                                                    alt="Icon"
-                                                />
-                                                <span>Monthly Report</span>
-                                            </Link>
-                                        </RippleButton>
-                                    </li>
-                                ) : null} */}
-                {/* {this.state.courses.length > 0 && (
-                  <li
-                    className={
-                      this.props.active_menu === "prime-programs"
-                        ? "active"
-                        : ""
-                    }
-                    style={this.styles.button_style}
-                  >
-                    <RippleButton>
-                      <Link
-                        onClick={() => {
-                          this.props.handleLearnModal(false);
-                          if (window.innerWidth <= 1100) {
-                            this.props.toggleRespMenu("hide");
-                          }
-                        }}
-                        style={this.styles.link_style}
-                        to="/prime-programs/courses/"
-                      >
-                        <MenuItemIcon src={primeImage} alt="Icon" />
-                        <span>Prime Programs</span>
-                      </Link>
-                    </RippleButton>
-                  </li>
-                )} */}
-
-                <li
-                  className={
-                    this.props.active_menu === "projects" ? "active" : ""
-                  }
-                  style={this.styles.button_style}
-                >
-                  <RippleButton>
-                    <Link
-                      onClick={() => {
-                        this.props.handleLearnModal(false);
-                        if (window.innerWidth <= 1100) {
-                          this.props.toggleRespMenu("hide");
-                        }
-                      }}
-                      style={this.styles.link_style}
-                      to={`/nanodegree/${this.props.slug}/projects/`}
-                    >
-                      <MenuItemIcon src={projects} alt="Icon" />
-                      <span>Projects</span>
-                    </Link>
-                  </RippleButton>
-                </li>
-
-                {/* {(this.props.user_profile?.is_free_trial_enabled ||
-                  this.props.user_profile?.subscription_data
-                    ?.has_active_subscription ||
-                  this.props.user_profile?.subscription_data
-                    ?.is_premium_user) && ( */}
-                {/* <li
-                  className={
-                    this.props.active_menu === "tech_updates" ? "active" : ""
-                  }
-                  style={this.styles.button_style}
-                >
-                  <RippleButton>
-                    <Link
-                      onClick={() => {
-                        this.props.handleLearnModal(false);
-                        if (window.innerWidth <= 1100) {
-                          this.props.toggleRespMenu("hide");
-                        }
-                      }}
-                      style={this.styles.link_style}
-                      to="/tech-updates/?updates=all"
-                    >
-                      <MenuItemIcon src={techImage} alt="Icon" />
-                      <span>Tech Updates</span>
-                    </Link>
-                  </RippleButton>
-                </li> */}
-
-                {/* --------- community sidebar ---------------
-
-                {
-                  <li
-                    className={
-                      this.props.active_menu === "community" ? "active" : ""
-                    }
-                    style={this.styles.button_style}
-                  >
-                    <RippleButton>
-                      <Link
-                        onClick={() => {
-                          this.props.handleLearnModal(false);
-                          if (window.innerWidth <= 1100) {
-                            this.props.toggleRespMenu("hide");
-                          }
-                        }}
-                        style={this.styles.link_style}
-                        to="/community/"
-                      >
-                        <MenuItemIcon
-                          src={
-                            "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/01-06-2024/community.svg"
-                          }
-                          alt="Icon"
-                        />
-                        <span>Community</span>
-                      </Link>
-                    </RippleButton>
-                  </li>
-                } */}
-
-                {/* <li
-                                    className={
-                                        this.props.active_menu === "challenges"
-                                            ? "active"
-                                            : ""
-                                    }
-                                    style={this.styles.button_style}
-                                    title="Challenges"
-                                >
-                                    <RippleButton>
-                                        <Link
-                                            onClick={() => {
-                                                this.props.handleLearnModal(
-                                                    false
-                                                );
-                                                if (window.innerWidth <= 1100) {
-                                                    this.props.toggleRespMenu(
-                                                        "hide"
-                                                    );
-                                                }
-                                            }}
-                                            style={this.styles.link_style}
-                                            to="/challenges/"
-                                        >
-                                            <MenuItemIcon
-                                                src={challengeImage}
-                                                alt="Icon"
-                                            />
-                                            <span>Challenges</span>
-                                        </Link>
-                                    </RippleButton>
-                                </li> */}
-
-                {/* {this.props.user_profile.subscription_data &&
-                                    !this.props.user_profile.subscription_data
-                                        .expired_subscription &&
-                                    this.props.user_data.signup_type ===
-                                        "tech_schooling" && (
-                                        <li
-                                            className={
-                                                this.props.active_menu ===
-                                                "premium_assist"
-                                                    ? "active"
-                                                    : ""
-                                            }
-                                            style={this.styles.button_style}
-                                            title="Premium Assist"
-                                        >
-                                            <RippleButton>
-                                                <Link
-                                                    onClick={() => {
-                                                        if (
-                                                            window.innerWidth <=
-                                                            1100
-                                                        ) {
-                                                            this.props.toggleRespMenu(
-                                                                "hide"
-                                                            );
-                                                        }
-                                                    }}
-                                                    style={
-                                                        this.styles.link_style
-                                                    }
-                                                    to="/premium-assist/"
-                                                >
-                                                    <MenuItemIcon
-                                                        src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/steyp-images/support-img.svg"
-                                                        alt="Icon"
-                                                    />
-                                                    <span>Premium Assist</span>
-                                                </Link>
-                                            </RippleButton>
-                                        </li>
-                                    )} */}
-              </ul>
-              {/* <ul style={{ borderBottom: "unset" }}>
-                                <li
-                                    className={
-                                        this.props.active_menu === "my_club"
-                                            ? "active"
-                                            : ""
-                                    }
-                                    style={this.styles.button_style}
-                                >
-                                    <RippleButton>
-                                        <Link
-                                            onClick={() => {
-                                                if (window.innerWidth <= 768) {
-                                                    this.props.toggleRespMenu(
-                                                        "hide"
-                                                    );
-                                                }
-                                            }}
-                                            style={this.styles.link_style}
-                                            to="/my-club/"
-                                        >
-                                            <MenuItemIcon
-                                                src={require("../../../../assets/images/myClub/my-club-logo.svg")}
-                                                alt="Icon"
-                                            />
-                                            <span>My Club</span>
-                                        </Link>
-                                    </RippleButton>
-                                </li> */}
-
-              {/* <li
-                                    className={
-                                        this.props.active_menu === "ceo_talks"
-                                            ? "active"
-                                            : ""
-                                    }
-                                    style={this.styles.button_style}
-                                >
-                                    <RippleButton>
-                                        <Link
-                                            onClick={() => {
-                                                if (window.innerWidth <= 1100) {
-                                                    this.props.toggleRespMenu(
-                                                        "hide"
-                                                    );
-                                                }
-                                            }}
-                                            style={this.styles.link_style}
-                                            to="/talrop-talks/"
-                                        >
-                                            <MenuItemIcon
-                                                src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/steyp-images/ceotalk.svg"
-                                                alt="Icon"
-                                            />
-                                            <span>Talrop Talks</span>
-                                        </Link>
-                                    </RippleButton>
-                                </li> */}
-
-              {/* <li
-								className={
-									this.props.active_menu === "my-activities"
-										? "active"
-										: ""
-								}
-								style={this.styles.button_style}
-							>
-								<RippleButton>
-									<Link
-										onClick={() => {
-											if (window.innerWidth <= 1100) {
-												this.props.toggleRespMenu(
-													"hide"
-												);
-											}
-										}}
-										style={this.styles.link_style}
-										to="/my-activities/"
-									>
-										<MenuItemIcon
-											src={Calender}
-											alt="Icon"
-										/>
-										<span>My Activities</span>
-									</Link>
-								</RippleButton>
-							</li> */}
-              {/* </ul>  */}
             </InnerWrapper>
-            {/* <ReferMainContainer>
-                            {this.props.user_profile.subscription_data &&
-                                !this.props.user_profile.subscription_data
-                                    .expired_subscription && (
-                                    <ReferContainer
-                                        to="/merchandise/"
-                                        className="social"
-                                        onClick={() => {
-                                            if (window.innerWidth <= 1100) {
-                                                this.props.toggleRespMenu(
-                                                    "hide"
-                                                );
-                                            }
-                                        }}
-                                    >
-                                        <ReferImageContainer>
-                                            <ReferImage
-                                                src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/merchandise/ReferImage.png"
-                                                alt=""
-                                            />
-                                        </ReferImageContainer>
-                                        <Button to="/merchandise/">
-                                            <ReferIconSpan>
-                                                <ReferIcon
-                                                    src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/merchandise/ReferIcon.svg"
-                                                    alt=""
-                                                />
-                                            </ReferIconSpan>
-                                            Refer and Earn
-                                        </Button>
-                                    </ReferContainer>
-                                )}
-                        </ReferMainContainer> */}
+            
           </WrapParent>
           <Social className="bottom-fixed">
-            {/* <li className="social">
-              <SocialWrapper>
-                <SocialLink
-                  target="_blank"
-                  href="https://www.linkedin.com/company/steyp/"
-                  rel="noopener noreferrer"
-                >
-                  <SocialIcon
-                    alt="Steyp"
-                    src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/social/linkedin.svg"
-                  />
-                </SocialLink>
-                <SocialLink
-                  target="_blank"
-                  href="https://twitter.com/steypworld/"
-                  rel="noopener noreferrer"
-                >
-                  <SocialIcon
-                    alt="Steyp"
-                    src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/26-07-2023/twitterx.svg"
-                  />
-                </SocialLink>
-                <SocialLink
-                  target="_blank"
-                  href="https://www.facebook.com/steypworld/"
-                  rel="noopener noreferrer"
-                >
-                  <SocialIcon
-                    alt="Steyp"
-                    src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/social/facebook.svg"
-                  />
-                </SocialLink>
-                <SocialLink
-                  target="_blank"
-                  href="https://www.instagram.com/steypworld/"
-                  rel="noopener noreferrer"
-                >
-                  <SocialIcon
-                    alt="Steyp"
-                    src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/social/instagram.svg"
-                  />
-                </SocialLink>
-                <SocialLink
-                  target="_blank"
-                  href="https://www.youtube.com/c/Steyp/"
-                  rel="noopener noreferrer"
-                >
-                  <SocialIcon
-                    alt="Steyp"
-                    src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/social/youtube.svg"
-                  />
-                </SocialLink>
-              </SocialWrapper>
-            </li> */}
             <li className="explore">
               <ExploreLink target="_blank" href="https://www.talrop.com/">
                 <ExploreText>Explore Talrop</ExploreText>

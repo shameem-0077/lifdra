@@ -5,12 +5,12 @@ import right_quote from "../../../../assets/images/prime-explore/right_quote.svg
 import curve_line from "../../../../assets/images/prime-explore/curve_line.svg";
 import arrow_right from "../../../../assets/images/prime-explore/arrow-right.svg";
 import auth from "../../../routing/auth";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 function SubscriptionBanner() {
     const location = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
     const { prime_program_subscription } = useSelector(
         (state) => state.user_profile
     );
@@ -19,15 +19,9 @@ function SubscriptionBanner() {
             onClick={(e) => {
                 e.preventDefault();
                 if (auth.isAuthenticated()) {
-                    history.push({
-                        pathname: `/prime-programs/courses/`,
-                        search: `?action=subscribe-prime-programs`,
-                    });
+                    navigate(`/prime-programs/courses/?action=subscribe-prime-programs`);
                 } else {
-                    history.push({
-                        pathname: location.pathname,
-                        search: `?action=login`,
-                    });
+                    navigate(`${location.pathname}?action=login`);
                 }
             }}
         >

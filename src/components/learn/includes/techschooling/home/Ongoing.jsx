@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import ReactPlaceholder from "react-placeholder";
 import YTModal from "../general/YTModal";
@@ -18,7 +18,7 @@ export default function Ongoing({
         setModalActive((prev) => !prev);
     };
     const location = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const { user_profile, user_data, userSubscriptionType } = useSelector((state) => state);
     const [isCopy, setIsCopy] = useState(false);
@@ -41,7 +41,7 @@ export default function Ongoing({
     };
 
     const signupAction = () => {
-        history.push({
+        navigate({
             pathname: location.pathname,
             search: `action=techschooling`,
         });
@@ -115,13 +115,13 @@ export default function Ongoing({
                                 if (is_explore) {
                                     user_profile.subscription_data &&
                                     user_profile.subscription_data.expired_subscription
-                                        ? history.push("/tech-schooling/subscribe/")
-                                        : history.push("/");
+                                        ? navigate("/tech-schooling/subscribe/")
+                                        : navigate("/");
                                 } else {
                                     if (user_data.signup_type === "other") {
                                         signupAction();
                                     } else {
-                                        history.push({
+                                        navigate({
                                             pathname: location.pathname,
                                             search: `action=login`,
                                         });

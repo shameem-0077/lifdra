@@ -1,5 +1,5 @@
 import React, { lazy } from "react";
-import { Route, Switch } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import styled from "styled-components";
 import { PrivateRoute } from "../../PrivateRoute";
 
@@ -15,31 +15,12 @@ const AllAssessments = lazy(() =>
 export default function AssessmentsMainRouter({ subject_slug }) {
   return (
     <>
-      <Switch>
+      <Routes>
         <Route
-          exact
-          path={``}
-          component={() => (
-            <TechSchoolingAssessments subject_slug={subject_slug} />
-          )}
+          path="/"
+          element={<TechSchoolingAssessments subject_slug={subject_slug} />}
         />
-        {/* <Route
-          exact
-          path={`/assessments/`}
-          component={() => (
-            <TechSchoolingAssessments subject_slug={subject_slug} />
-          )}
-        /> */}
-        {/* <Route
-          path={`/nanodegree/:slug/assessments/all`}
-          component={() => <AllAssessments subject_slug={subject_slug} />}
-        /> */}
-        {/* <Route
-          exact
-          path={`/assessments/all/`}
-          component={() => <AllAssessments subject_slug={subject_slug} />}
-        /> */}
-      </Switch>
+      </Routes>
     </>
   );
 }

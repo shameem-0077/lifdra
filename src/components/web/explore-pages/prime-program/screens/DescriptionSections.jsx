@@ -1,12 +1,12 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import auth from "../../../../routing/auth";
 
 function DescriptionSections({ img_right, bgc, points, section, image }) {
     const location = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const user_profile = useSelector((state) => state.user_profile);
     // const { is_expired, is_subscription } = useSelector(
@@ -96,9 +96,7 @@ function DescriptionSections({ img_right, bgc, points, section, image }) {
                         !user_profile.prime_program_subscription.is_expired ? (
                             <SubscribeButton
                                 onClick={(e) => {
-                                    history.push({
-                                        pathname: `/prime-programs/courses/`,
-                                    });
+                                    navigate(`/prime-programs/courses/`);
                                 }}
                             >
                                 Continue
@@ -108,15 +106,9 @@ function DescriptionSections({ img_right, bgc, points, section, image }) {
                                 onClick={(e) => {
                                     e.preventDefault();
                                     if (auth.isAuthenticated()) {
-                                        history.push({
-                                            pathname: `/prime-programs/courses/`,
-                                            search: `?action=subscribe-prime-programs`,
-                                        });
+                                        navigate(`/prime-programs/courses/?action=subscribe-prime-programs`);
                                     } else {
-                                        history.push({
-                                            pathname: location.pathname,
-                                            search: `?action=login&next=/prime-programs/courses?action=subscribe-prime-programs`,
-                                        });
+                                        navigate(`${location.pathname}?action=login&next=/prime-programs/courses?action=subscribe-prime-programs`);
                                     }
                                 }}
                             >
@@ -128,15 +120,9 @@ function DescriptionSections({ img_right, bgc, points, section, image }) {
                             onClick={(e) => {
                                 e.preventDefault();
                                 if (auth.isAuthenticated()) {
-                                    history.push({
-                                        pathname: `/prime-programs/courses/`,
-                                        search: `?action=subscribe-prime-programs`,
-                                    });
+                                    navigate(`/prime-programs/courses/?action=subscribe-prime-programs`);
                                 } else {
-                                    history.push({
-                                        pathname: location.pathname,
-                                        search: `?action=login&next=/prime-programs/courses?action=subscribe-prime-programs`,
-                                    });
+                                    navigate(`${location.pathname}?action=login&next=/prime-programs/courses?action=subscribe-prime-programs`);
                                 }
                             }}
                         >

@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { Link, useHistory } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import Jdenticon from "react-jdenticon";
 import { accountsConfig } from "../../../../axiosConfig";
 
 const UserFollowComponent = ({ item, setFollowCount, setModal }) => {
   const [isFollow, setIsFollow] = useState(item?.is_following || false);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleProfileNavClick = (e) => {
     e.preventDefault();
     setModal(false);
-    history.push(`/feed/profile/${item?.username}`);
+    navigate(`/feed/profile/${item?.username}`);
   };
 
   useEffect(() => {
@@ -52,11 +52,13 @@ const UserFollowComponent = ({ item, setFollowCount, setModal }) => {
             ...prevCount,
             follow: prevCount.follow + 1,
           }));
+          toast.success("Followed successfully");
         } else if (message?.message === "Unfollowed") {
           setFollowCount((prevCount) => ({
             ...prevCount,
             follow: prevCount.follow - 1,
           }));
+          toast.success("Unfollowed successfully");
         }
       }
     } catch (error) {
@@ -95,7 +97,7 @@ const UserFollowComponent = ({ item, setFollowCount, setModal }) => {
           onClick={() => handleFollowClick(item?.id)}
           isActive={isFollow}
         >
-          {isFollow ? "Following" : "Follow"}
+          {isFollow ? "Unfollow" : "Follow"}
         </FollowButton>
       </DetailsSec>
     </ProfileContainer>

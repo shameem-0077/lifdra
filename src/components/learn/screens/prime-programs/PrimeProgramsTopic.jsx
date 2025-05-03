@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams, useLocation } from "react-router-dom";
+import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PreviewModal from "./PreviewModal";
 import { primeprogramsConfig } from "../../../../axiosConfig";
@@ -15,7 +15,7 @@ import auth from "../../../routing/auth";
 import TalropEdtechHelmet from "../../../helpers/TalropEdtechHelmet";
 import StartNowModal from "./StartNowModal";
 
-const PrimeProgramsTopic = ({ history }) => {
+const PrimeProgramsTopic = () => {
   const [isModal, setModal] = useState(false);
   const { course_id } = useParams();
   const [topics, setTopics] = useState([]);
@@ -42,6 +42,7 @@ const PrimeProgramsTopic = ({ history }) => {
     (state) => state
   ).user_profile;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const setInitialSearch = () => {
@@ -147,7 +148,7 @@ const PrimeProgramsTopic = ({ history }) => {
 
   const closeModal = () => {
     setAction("");
-    history.push({
+    navigate({
       pathname: location.pathname,
       search: "",
     });
@@ -161,7 +162,7 @@ const PrimeProgramsTopic = ({ history }) => {
   }, []);
 
   const handleBack = () => {
-    history.push({
+    navigate({
       pathname: "/prime-programs/",
       search: "",
     });
@@ -248,12 +249,12 @@ const PrimeProgramsTopic = ({ history }) => {
                     onClick={(e) => {
                       e.preventDefault();
                       if (auth.isAuthenticated()) {
-                        history.push({
+                        navigate({
                           pathname: `/prime-programs/courses/`,
                           search: `?action=subscribe-prime-programs`,
                         });
                       } else {
-                        history.push({
+                        navigate({
                           pathname: location.pathname,
                           search: `?action=login&next=${location.pathname}`,
                         });
@@ -419,12 +420,12 @@ const PrimeProgramsTopic = ({ history }) => {
                             onClick={(e) => {
                               e.preventDefault();
                               if (auth.isAuthenticated()) {
-                                history.push({
+                                navigate({
                                   pathname: location.pathname,
                                   search: `?action=buy-course&c=${topics.slug}`,
                                 });
                               } else {
-                                history.push({
+                                navigate({
                                   pathname: location.pathname,
                                   search: `?action=login`,
                                 });
@@ -456,12 +457,12 @@ const PrimeProgramsTopic = ({ history }) => {
                           <BuyButtonSpan
                             onClick={() => {
                               if (auth.isAuthenticated()) {
-                                history.push({
+                                navigate({
                                   pathname: location.pathname,
                                   search: "?action=buy-course",
                                 });
                               } else {
-                                history.push({
+                                navigate({
                                   pathname: location.pathname,
                                   search: `?action=login&next=${location.pathname}`,
                                 });
@@ -553,12 +554,12 @@ const PrimeProgramsTopic = ({ history }) => {
                     <BuyButtonFooter
                       onClick={() => {
                         if (auth.isAuthenticated()) {
-                          history.push({
+                          navigate({
                             pathname: location.pathname,
                             search: "?action=buy-course",
                           });
                         } else {
-                          history.push({
+                          navigate({
                             pathname: location.pathname,
                             search: "?action=login",
                           });

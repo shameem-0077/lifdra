@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useState, lazy } from "react";
 import { connect, useSelector, useDispatch } from "react-redux";
-import { Route, useLocation, Link } from "react-router-dom";
+import { Routes, Route, useLocation, Link } from "react-router-dom";
 import styled from "styled-components";
 import TechUpdatesSingle from "../../learn/includes/tech-updates/TechUpdatesSingle";
 import SideBox from "../../learn/includes/tech-updates/SideBox";
@@ -95,18 +95,12 @@ function TechUpdatesRouter(props) {
 					</HambergMenu>
 				)} */}
           <Suspense fallback={<RouteLoading />}>
-            <Route exact path="/tech-updates" component={TechUpdatesFeatures} />
-            <Route
-              exact
-              path="/tech-updates/post/:slug/"
-              component={TechUpdatesSingle}
-            />
-            <Route exact path="/tech-updates/topics/" component={AllTopics} />
-            <Route
-              exact
-              path="/tech-updates/saved-posts/"
-              component={SavedPostsPage}
-            />
+            <Routes>
+              <Route path="/" element={<TechUpdatesFeatures />} />
+              <Route path="/post/:slug/" element={<TechUpdatesSingle />} />
+              <Route path="/topics/" element={<AllTopics />} />
+              <Route path="/saved-posts/" element={<SavedPostsPage />} />
+            </Routes>
           </Suspense>
         </LeftContainerBox>
         {!inner && (

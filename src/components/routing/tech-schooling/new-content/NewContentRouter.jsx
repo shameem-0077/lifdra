@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect, useState } from "react";
-import { Route, Switch, Redirect, useParams, NavLink } from "react-router-dom";
+import { Routes, Route, Navigate, useParams, NavLink } from "react-router-dom";
 // import styled from "styled-components";
 // import { learnConfig } from "../../../../axiosConfig";
 import NewAssessment from "../../../learn/includes/techschooling/new-content/NewAssessment";
@@ -25,69 +25,40 @@ export default function NewContentRouter({ subject_slug }) {
 	return (
 		<Suspense fallback={<RouteLoading />}>
 			<NewContentNavBar subject_slug={subject_slug} />
-			<Switch>
-				<PrivateRoute
-					exact
-					path={`/new-content/skills/topics/lessons/`}
-				>
-					<Redirect
-						to={{
-							pathname: `/new-content/skills/`,
-						}}
-					/>
-				</PrivateRoute>
-				<PrivateRoute exact path={`/new-content/skills/:id/`}>
-					{/* <Redirect
-						to={{
-							pathname: `/new-content/skills/`,
-						}}
-					/> */}
-				</PrivateRoute>
-				<PrivateRoute path={`/nanodegree/:slug/new-content/skills/:id/lessons/`}>
-					<NewLessons subject_slug={subject_slug} />
-				</PrivateRoute>
-				<PrivateRoute
-					path={`/nanodegree/:slug/new-content/skills/:id/topics/`}
-					// component={NewTopics}
-				>
-					<NewTopics subject_slug={subject_slug} />
-				</PrivateRoute>
-				{/* <PrivateRoute
-                    path="/tech-schooling/new-content/skills/:id/practices/"
-                    component={Practices}
-                />
-                <PrivateRoute
-                    path="/tech-schooling/new-content/practices/view/:id/"
-                    component={PracticePage}
-                />
-                <PrivateRoute
-                    path="/tech-schooling/new-content/skills/:id/workshops/"
-                    component={WorkShop}
-                />
-                <PrivateRoute
-                    path="/tech-schooling/new-content/skills/workshops/view/:id/"
-                    component={TechSchoolingWorkshop}
-                />
-                <PrivateRoute
-                    path="/tech-schooling/new-content/skills/:id/assessments/"
-                    component={NewAssessment}
-                />
-                <PrivateRoute
-                    path="/tech-schooling/new-content/skills/assessments/view/:id/"
-                    component={() => (
-                        <AssessmentStore>
-                            <AssessmentPage />
-                        </AssessmentStore>
-                    )}
-                /> */}
-				<PrivateRoute path={`/nanodegree/:slug/new-content/skills/topics/view/:id/`}>
-					<NewContentSinglePage subject_slug={subject_slug} />
-				</PrivateRoute>
-				{/* <PrivateRoute
-                    path="/tech-schooling/new-content/skills/:id/workshops/"
-                    component={WorkShop}
-                /> */}
-			</Switch>
+			<Routes>
+				<Route
+					path="/topics/lessons"
+					element={
+						<PrivateRoute>
+							<Navigate to="/new-content/skills/" replace />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/lessons"
+					element={
+						<PrivateRoute>
+							<NewLessons subject_slug={subject_slug} />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/topics"
+					element={
+						<PrivateRoute>
+							<NewTopics subject_slug={subject_slug} />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/topics/view/:id"
+					element={
+						<PrivateRoute>
+							<NewContentSinglePage subject_slug={subject_slug} />
+						</PrivateRoute>
+					}
+				/>
+			</Routes>
 		</Suspense>
 	);
 }

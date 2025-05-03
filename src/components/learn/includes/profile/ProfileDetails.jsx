@@ -345,7 +345,7 @@ function ProfileDetails() {
                 </Right>
               </UserDetailCards>
               <UserDetailCards
-                onClick={user_profile.student_category ? null : handleCategory}
+                onClick={user_profile?.student_category ? null : handleCategory}
                 className={
                   user_profile.student_category ? "already selected" : "active"
                 }
@@ -359,14 +359,14 @@ function ProfileDetails() {
                   />
                   <span>
                     <h3>
-                      {user_profile.student_category
+                      {user_profile?.student_category
                         ? user_profile.student_category
                         : "Add Category"}
                     </h3>
                     <p>Category</p>
                   </span>
                 </Left>
-                {user_profile.student_category ? null : (
+                {user_profile?.student_category ? null : (
                   <Right className="alreadySelected">
                     <Arrow
                       // src={require("../../../../assets/images/profile/arrow.svg")}

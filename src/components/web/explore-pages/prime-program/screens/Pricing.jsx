@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { primeprogramsConfig } from "../../../../../axiosConfig";
 import auth from "../../../../routing/auth";
 
 function Pricing() {
     const location = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
     const [selectedPlan, setSeletedPlan] = useState("yearly");
     const [currentPlan, setCurrentPlan] = useState({});
     const [plan, setPlans] = useState([]);
@@ -136,15 +136,9 @@ function Pricing() {
                         onClick={(e) => {
                             e.preventDefault();
                             if (auth.isAuthenticated()) {
-                                history.push({
-                                    pathname: `/prime-programs/courses/`,
-                                    search: `?action=subscribe-prime-programs&d=${plan.days}`,
-                                });
+                                navigate(`/prime-programs/courses/?action=subscribe-prime-programs&d=${plan.days}`);
                             } else {
-                                history.push({
-                                    pathname: location.pathname,
-                                    search: `?action=login`,
-                                });
+                                navigate(`${location.pathname}?action=login`);
                             }
                         }}
                     >

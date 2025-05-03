@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import queryString from "query-string";
 import { learnConfig } from "../../../../../axiosConfig";
 
@@ -13,7 +13,7 @@ const ViewAllFilter = ({
   setFinalArray,
 }) => {
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   //fetching datas
   const [professions, setProfessions] = useState([]);
@@ -121,7 +121,7 @@ const ViewAllFilter = ({
     }
 
     setFinalArray(temp);
-    history.push({
+    navigate({
       pathname: location.pathname,
       search: `?${searchQuery ? `q=${searchQuery}` : ""}${
         lesson ? `&l=${lesson}` : ""

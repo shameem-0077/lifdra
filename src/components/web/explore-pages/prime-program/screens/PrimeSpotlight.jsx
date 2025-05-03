@@ -1,12 +1,12 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import auth from "../../../../routing/auth";
 
 function PrimeSpotlight() {
     const dispatch = useDispatch();
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
     const user_profile = useSelector((state) => state.user_profile);
 
@@ -31,9 +31,7 @@ function PrimeSpotlight() {
                         !user_profile.prime_program_subscription.is_expired ? (
                             <SubscribeButton
                                 onClick={(e) => {
-                                    history.push({
-                                        pathname: `/prime-programs/courses/`,
-                                    });
+                                    navigate(`/prime-programs/courses/`);
                                 }}
                             >
                                 Continue
@@ -43,15 +41,9 @@ function PrimeSpotlight() {
                                 onClick={(e) => {
                                     e.preventDefault();
                                     if (auth.isAuthenticated()) {
-                                        history.push({
-                                            pathname: `/prime-programs/courses/`,
-                                            search: `?action=subscribe-prime-programs`,
-                                        });
+                                        navigate(`/prime-programs/courses/?action=subscribe-prime-programs`);
                                     } else {
-                                        history.push({
-                                            pathname: location.pathname,
-                                            search: `?action=login&next=/prime-programs/courses?action=subscribe-prime-programs`,
-                                        });
+                                        navigate(`${location.pathname}?action=login&next=/prime-programs/courses?action=subscribe-prime-programs`);
                                     }
                                 }}
                             >
@@ -63,15 +55,9 @@ function PrimeSpotlight() {
                             onClick={(e) => {
                                 e.preventDefault();
                                 if (auth.isAuthenticated()) {
-                                    history.push({
-                                        pathname: `/prime-programs/courses/`,
-                                        search: `?action=subscribe-prime-programs`,
-                                    });
+                                    navigate(`/prime-programs/courses/?action=subscribe-prime-programs`);
                                 } else {
-                                    history.push({
-                                        pathname: location.pathname,
-                                        search: `?action=login&next=/prime-programs/courses?action=subscribe-prime-programs`,
-                                    });
+                                    navigate(`${location.pathname}?action=login&next=/prime-programs/courses?action=subscribe-prime-programs`);
                                 }
                             }}
                         >
@@ -80,9 +66,7 @@ function PrimeSpotlight() {
                     )}
                     <ViewCourse
                         onClick={(e) => {
-                            history.push({
-                                pathname: `/prime-programs/courses/`,
-                            });
+                            navigate(`/prime-programs/courses/`);
                         }}
                     >
                         View Courses

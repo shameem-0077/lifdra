@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Slider from "react-slick";
 import styled from "styled-components";
 import ReactPlaceholder from "react-placeholder";
@@ -13,7 +13,7 @@ export default function Spotlight({
 }) {
 	const [imageLoaded, setImageLoaded] = useState(false);
 	const location = useLocation();
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { user_profile, user_data } = useSelector((state) => state);
 
 	let slider = useRef();
@@ -62,18 +62,16 @@ export default function Spotlight({
 									if (is_explore) {
 										user_profile.subscription_data
 											.expired_subscription
-											? history.push(
-													"/tech-schooling/subscribe/"
-											  )
-											: history.push("/");
+											? navigate("/tech-schooling/subscribe/")
+											: navigate("/");
 									} else {
 										if (user_data.signup_type === "other") {
-											history.push({
+											navigate({
 												pathname: location.pathname,
 												search: `action=techschooling`,
 											});
 										} else {
-											history.push({
+											navigate({
 												pathname: location.pathname,
 												search: `action=login`,
 											});
@@ -124,10 +122,10 @@ export default function Spotlight({
 				onClick={() => {
 					if (is_explore) {
 						user_profile.subscription_data.expired_subscription
-							? history.push("/tech-schooling/subscribe/")
-							: history.push("/");
+							? navigate("/tech-schooling/subscribe/")
+							: navigate("/");
 					} else {
-						history.push({
+						navigate({
 							pathname: location.pathname,
 							search: `action=login`,
 						});

@@ -7,6 +7,8 @@ import $ from "jquery";
 import { PrimeProgramContext } from "../../../../contexts/stores/PrimeProgramStore";
 import Loader from "../../../../../assets/lotties/prime-progrmmes/voucherLoader.json";
 import Lottie from "react-lottie";
+import tickIcon from "../../../../../assets/images/prime-explore/tick.svg";
+import closeIcon from "../../../../../assets/images/prime-explore/close.svg";
 
 function PrimeSubcribeModal(props) {
 	const { primeProgramState, primeProgramDispatch } =
@@ -195,7 +197,6 @@ function PrimeSubcribeModal(props) {
 									<Lottie
 										options={defaultOptions}
 										height={54}
-										// width={"100%"}
 									/>
 								) : (
 									<>
@@ -234,7 +235,7 @@ function PrimeSubcribeModal(props) {
 											<DetailPoints key={data.id}>
 												<Tick>
 													<img
-														src={require("../../../../../assets/images/prime-explore/tick.svg")}
+														src={tickIcon}
 														alt=""
 													/>
 												</Tick>
@@ -246,7 +247,7 @@ function PrimeSubcribeModal(props) {
 											<DetailPoints key={data.id}>
 												<Tick>
 													<img
-														src={require("../../../../../assets/images/prime-explore/tick.svg")}
+														src={tickIcon}
 														alt=""
 													/>
 												</Tick>
@@ -285,7 +286,7 @@ function PrimeSubcribeModal(props) {
 				</Cover>
 				<CloseButton onClick={props.closeModal}>
 					<img
-						src={require("../../../../../assets/images/prime-explore/close.svg")}
+						src={closeIcon}
 						alt=""
 					/>
 				</CloseButton>

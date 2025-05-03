@@ -1,6 +1,6 @@
 import React, { lazy, useContext, useEffect } from "react";
 import { connect } from "react-redux";
-import { Route, Switch, useLocation, useParams } from "react-router-dom";
+import { Routes, Route, useLocation, useParams } from "react-router-dom";
 
 import styled from "styled-components";
 import { learnConfig } from "../../../../axiosConfig";
@@ -80,33 +80,20 @@ function PracticesInnerRouter(props) {
       <TopContainer>
         <Header subject_slug={props.subject_slug} />
       </TopContainer>
-      <Switch>
-        {/* <Route exact path={``}>
-          <PracticeSingleDashboard subject_slug={props.subject_slug} />
-        </Route> */}
-        <Route exact path={`/nanodegree/:slug/practices/view/:id/`}>
-          <PracticeSingleDashboard subject_slug={props.subject_slug} />
-        </Route>
-        {/* <Route
-          exact
-          // path={`/${props.subject_slug}/practices/view/:id/revaluation/`}
-          path={`/nanodegree/:slug/practices/view/:id/revaluation/`}
-        >
-          <Revaluation subject_slug={props.subject_slug} />
-        </Route> */}
-        <Route exact path={`/nanodegree/:slug/practices/view/:id/revaluation/`}>
-          <Revaluation subject_slug={props.subject_slug} />
-        </Route>
-        {/* <Route
-          exact
-          path={`/nanodegree/${props.subject_slug}/practices/view/:id/improvement/`}
-        >
-          <Improvement subject_slug={props.subject_slug} />
-        </Route> */}
-        <Route exact path={`/nanodegree/:slug/practices/view/:id/improvement/`}>
-          <Improvement subject_slug={props.subject_slug} />
-        </Route>
-      </Switch>
+      <Routes>
+        <Route
+          path="/"
+          element={<PracticeSingleDashboard subject_slug={props.subject_slug} />}
+        />
+        <Route
+          path="/revaluation"
+          element={<Revaluation subject_slug={props.subject_slug} />}
+        />
+        <Route
+          path="/improvement"
+          element={<Improvement subject_slug={props.subject_slug} />}
+        />
+      </Routes>
     </>
   );
 }

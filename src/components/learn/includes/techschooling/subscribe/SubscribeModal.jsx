@@ -5,7 +5,7 @@ import { accountsConfig, learnConfig } from "../../../../../axiosConfig";
 import PlanCard from "./PlanCard";
 import successAnimate from "../../../../../assets/lotties/7698-success.json";
 import errorAnimate from "../../../../../assets/lotties/14331-error.json";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import queryString from "query-string";
 // import { getUserDateFromUTC } from "../../../../helpers/functions";
 import Loader from "../general/loaders/Loader";
@@ -30,7 +30,7 @@ export default function SubscribeModal({
     pincode,
     address,
 }) {
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch();
 
@@ -241,7 +241,7 @@ export default function SubscribeModal({
                     setCoinsLoading(false);
                     setResponseType("success");
                     setSuccessTitle("Payment successfull");
-                    history.push({
+                    navigate({
                         pathname: `/feed/`,
                         search: `status=success${
                             data.event ? `&event=${event}` : ``
@@ -510,7 +510,7 @@ export default function SubscribeModal({
                                         onClick={(e) => {
                                             e.preventDefault();
                                             if (selected) {
-                                                history.push({
+                                                navigate({
                                                     pathname: location.pathname,
                                                     search: `action=subscribe&status=confirm&plan=${selected}`,
                                                 });

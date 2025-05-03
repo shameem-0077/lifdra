@@ -1,6 +1,6 @@
 import React, { lazy, Suspense, useContext, useEffect } from "react";
 import { connect } from "react-redux";
-import { Route, Switch, useLocation, useParams } from "react-router-dom";
+import { Routes, Route, useLocation, useParams } from "react-router-dom";
 
 import styled from "styled-components";
 import { learnConfig } from "../../../../axiosConfig";
@@ -108,37 +108,24 @@ function AssessmentsInnerRouter(props) {
         <Header subject_slug={props.subject_slug} />
       </TopContainer>
       <Suspense fallback={<RouteLoading />}>
-        <Switch>
-          <Route exact path={`/nanodegree/:slug/assessments/view/:id/`}>
-            <Dashboard subject_slug={props.subject_slug} />
-          </Route>
+        <Routes>
           <Route
-            exact
-            path={`/nanodegree/:slug/assessments/view/:id/revaluation/`}
-          >
-            <ReavluationsPage subject_slug={props.subject_slug} />
-          </Route>
+            path="/"
+            element={<Dashboard subject_slug={props.subject_slug} />}
+          />
           <Route
-            exact
-            path={"/nanodegree/:slug/assessments/view/:id/revaluation/"}
-          >
-            <ReavluationsPage subject_slug={props.subject_slug} />
-          </Route>
+            path="/revaluation"
+            element={<ReavluationsPage subject_slug={props.subject_slug} />}
+          />
           <Route
-            exact
-            path={`/nanodegree/:slug/assessments/view/:id/improvement/`}
-          >
-            <ImprovmentPage subject_slug={props.subject_slug} />
-          </Route>
+            path="/improvement"
+            element={<ImprovmentPage subject_slug={props.subject_slug} />}
+          />
           <Route
-            path={`/nanodegree/:slug/assessments/view/:id/questions/`}
-          >
-            <AssessmentsQuestionsRouter subject_slug={props.subject_slug} />
-          </Route>
-          {/* <Route path={"/assessments/view/:id/questions/"}>
-            <AssessmentsQuestionsRouter subject_slug={props.subject_slug} />
-          </Route> */}
-        </Switch>
+            path="/questions/*"
+            element={<AssessmentsQuestionsRouter subject_slug={props.subject_slug} />}
+          />
+        </Routes>
       </Suspense>
     </>
   );

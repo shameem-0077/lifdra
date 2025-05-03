@@ -391,13 +391,13 @@ const Header = (props) => {
       icon: "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/01-06-2024/community.svg",
     },
     {
-      path: "/nanodegree/",
-      label: "NanoDegree",
+      path: "/prime-programs/",
+      label: "courses",
       icon: "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/10-09-2024/nano_degree_icons.svg",
     },
     {
       path: "/tech-updates/",
-      label: "Tech Updates",
+      label: "explore",
       icon: "https://steyp.com/static/media/techupdates.53fa5c58.svg",
     },
   ];
@@ -408,9 +408,9 @@ const Header = (props) => {
 
   const onSubscribe = () => {
     if (auth.isAuthenticated()) {
-      navigate(`${props.location.pathname}?action=subscribe`);
+      navigate(`${location.pathname}?action=subscribe`);
     } else {
-      navigate(`${props.location.pathname}?action=login`);
+      navigate(`${location.pathname}?action=login`);
     }
   };
 
@@ -555,7 +555,7 @@ const Header = (props) => {
 
         {/* {renderMessageDropdown()} */}
 
-        <ProfileSideBar setProfileSideBar={setProfileSideBar} />
+        {/* <ProfileSideBar setProfileSideBar={setProfileSideBar} /> */}
       </div>
       <Head>
         <Left

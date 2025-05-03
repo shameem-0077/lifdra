@@ -18,7 +18,7 @@ function MainErrorPage() {
 
   return (
     <>
-      {errorState.errorData.status === 404 ? (
+      {errorState?.errorData?.status === 404 ? (
         <Outer>
           <TalropEdtechHelmet title="Page Not Found" />
           <Container>
@@ -39,7 +39,7 @@ function MainErrorPage() {
             </InnerContainer>
           </Container>
         </Outer>
-      ) : errorState.errorData.status === 500 ? (
+      ) : errorState?.errorData?.status === 500 ? (
         <Outer>
           <TalropEdtechHelmet title="Internal Server Error" />
           <Container>
@@ -64,7 +64,7 @@ function MainErrorPage() {
             </InnerContainer>
           </Container>
         </Outer>
-      ) : errorState.errorData.status === 401 ? (
+      ) : errorState?.errorData?.status === 401 ? (
         <Outer>
           <TalropEdtechHelmet title="Unauthorised Access" />
           <Container>
@@ -91,7 +91,7 @@ function MainErrorPage() {
             </InnerContainer>
           </Container>
         </Outer>
-      ) : errorState.errorData.status === 403 ? (
+      ) : errorState?.errorData?.status === 403 ? (
         <Outer>
           <TalropEdtechHelmet title="Page Forbidden" />
           <Container>

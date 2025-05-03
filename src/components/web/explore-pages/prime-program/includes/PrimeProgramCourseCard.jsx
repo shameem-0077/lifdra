@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PlaceHolder from "../../../../general/PlaceHolder";
 // import { secondsTohm } from "../../../../helpers/functions";
@@ -15,7 +15,7 @@ function PrimeProgramCourseCard({ data }) {
     return hDisplay + mDisplay;
   };
   const [isLoading, setIsLoading] = useState(true);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   function onLoad() {
     setIsLoading(false);
@@ -53,9 +53,7 @@ function PrimeProgramCourseCard({ data }) {
       <BottomSection>
         <ViewCourse
           onClick={(e) => {
-            history.push({
-              pathname: `/prime-programs/${data.slug}/info`,
-            });
+            navigate(`/prime-programs/${data.slug}/info`);
           }}
         >
           View Course

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled, { keyframes, css } from "styled-components";
 import moment from "moment";
 import PlayButtonIcon from "../../../../../assets/icons/new-updates/play_button.svg";
+import { toast } from "react-toastify";
+import { primeprogramsConfig } from "../../../../../axiosConfig";
 
 const SliderCard = ({ index, card }) => {
   const {
@@ -17,15 +19,14 @@ const SliderCard = ({ index, card }) => {
     is_liked,
   } = card;
 
-  
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user_profile } = useSelector((state) => state);
 
-  const history = useHistory();
   const [thumnail, setThumbnail] = useState({
     thumbnail: "",
     attachment_type: "",
   });
-
-  const { user_profile } = useSelector((state) => state);
 
   const get_thumbnail = () => {
     if (attachments && attachments.length > 0) {
@@ -60,10 +61,30 @@ const SliderCard = ({ index, card }) => {
     return words.slice(0, wordLimit).join(" ") + "...";
   };
 
+  const handleDelete = () => {
+    const { access_token } = user_profile;
+    primeprogramsConfig
+      .delete(`community/posts/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+      .then((response) => {
+        const { StatusCode } = response.data;
+        if (StatusCode === 6000) {
+          toast.success("Post deleted successfully");
+          navigate("/feed");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <CardContainer
       onClick={() =>
-        history.push(
+        navigate(
           user_profile?.user_id == author?.user_id
             ? `/feed/post?post=${id}`
             : `/feed/post/${author?.username}?post=${id}`
@@ -111,6 +132,15 @@ const SliderCard = ({ index, card }) => {
           </CommentIcon>
           <CommentCount>{comments_count}</CommentCount>
         </CommentBtn>
+
+        <DeleteBtn onClick={handleDelete}>
+          <DeleteIcon>
+            <img
+              src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/21-01-2022/delete.svg"
+              alt="Delete"
+            />
+          </DeleteIcon>
+        </DeleteBtn>
       </ActionContainer>
     </CardContainer>
   );
@@ -241,4 +271,28 @@ const PlayIcon = styled.span`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+`;
+
+const DeleteBtn = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  margin-left: 12px;
+  img {
+    width: 20px;
+    height: 20px;
+  }
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+const DeleteIcon = styled.div`
+  width: 16.25px;
+  height: 16.25px;
+  img {
+    width: 100%;
+    display: block;
+  }
 `;

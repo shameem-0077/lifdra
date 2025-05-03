@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useEffect, useState } from "react";
-import { Route, Switch, useHistory, useParams } from "react-router-dom";
+import { Routes, Route, useNavigate, useParams } from "react-router-dom";
 import { connect, useDispatch, useSelector } from "react-redux";
 import "../../../assets/css/Style.css";
 import RouteLoading from "../RouteLoading";
@@ -56,13 +56,11 @@ function ProgramRouter(props) {
   }, []);
 
   const [action, setAction] = useState("");
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const closeModal = () => {
     setAction("");
-    history.push({
-      pathname: props.location.pathname,
-    });
+    navigate(props.location.pathname);
   };
 
   useEffect(() => {
@@ -86,45 +84,31 @@ function ProgramRouter(props) {
       <Sidebar slug={slug} />
       <SupportModal />
       <Suspense fallback={<RouteLoading />}>
-        <Switch>
+        <Routes>
+          <Route path="/testimonials/" element={<TestimonialsPage />} />
           <Route
-            exact
-            path={`/${slug}/testimonials/`}
-            component={TestimonialsPage}
+            path="/assessments/view/:id/"
+            element={
+              <SubscriptionPrivateRoute>
+                <AssessmentStore>
+                  <AssessmentsInnerRouter subject_slug={slug} />
+                </AssessmentStore>
+              </SubscriptionPrivateRoute>
+            }
           />
-          <SubscriptionPrivateRoute
-            path={`/nanodegree/:slug/assessments/view/:id/`}
-          >
-            <AssessmentStore>
-              <AssessmentsInnerRouter subject_slug={slug} />
-            </AssessmentStore>
-          </SubscriptionPrivateRoute>
-
-          {/* <SubscriptionPrivateRoute path={`/assessments/view/:id/`}>
-            <AssessmentStore>
-              <AssessmentsInnerRouter subject_slug={slug} />
-            </AssessmentStore>
-          </SubscriptionPrivateRoute> */}
-
-          {/* <SubscriptionPrivateRoute
-            path={`/nanodegree/${slug}/practices/view/:id/`}
-          >
-            <PracticeStore>
-              <PracticesInnerRouter subject_slug={slug} />
-            </PracticeStore>
-          </SubscriptionPrivateRoute> */}
-          <SubscriptionPrivateRoute path={`/nanodegree/:slug/practices/view/:id/`}>
-            <PracticeStore>
-              <PracticesInnerRouter subject_slug={slug} />
-            </PracticeStore>
-          </SubscriptionPrivateRoute>
-
-          <Route path={`/`}>
-            <ProgramInnerRouter program_slug={slug} />
-          </Route>
-
-          <Route component={Error404} />
-        </Switch>
+          <Route
+            path="/practices/view/:id/"
+            element={
+              <SubscriptionPrivateRoute>
+                <PracticeStore>
+                  <PracticesInnerRouter subject_slug={slug} />
+                </PracticeStore>
+              </SubscriptionPrivateRoute>
+            }
+          />
+          <Route path="/" element={<ProgramInnerRouter program_slug={slug} />} />
+          <Route path="*" element={<Error404 />} />
+        </Routes>
       </Suspense>
     </div>
   );

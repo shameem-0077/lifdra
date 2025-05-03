@@ -1,9 +1,10 @@
 import React from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
+import badgeIcon from "../../../../assets/images/prime-program/apply-voucher/badge.svg";
 
 function VoucherModal({ isVoucherModal, modalType, setVoucherModal, data, coupon }) {
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
     return (
         <BackContainer style={{ transform: isVoucherModal && "scale(1,1)" }}>
@@ -17,11 +18,11 @@ function VoucherModal({ isVoucherModal, modalType, setVoucherModal, data, coupon
                     <ModalTop>
                         <VoucherIcon>
                             <img
-                                src={require("../../../../assets/images/prime-program/apply-voucher/badge.svg")}
+                                src={badgeIcon}
                                 alt=""
                             />
                         </VoucherIcon>
-                        <h2>‘{coupon}’ Coupon Applied</h2>
+                        <h2>'{coupon}' Coupon Applied</h2>
                     </ModalTop>
                     <ModalBottom>
                         <CouponDiscountPrice>₹ {data.coin_value * 50}</CouponDiscountPrice>
@@ -32,10 +33,7 @@ function VoucherModal({ isVoucherModal, modalType, setVoucherModal, data, coupon
                         onClick={(e) => {
                             // e.preventDefault();
                             setVoucherModal(false);
-                            // history.push({
-                            //     pathname: location.pathname,
-                            //     search: "?action=buy-course",
-                            // });
+                            // navigate(`${location.pathname}?action=buy-course`);
                         }}
                     >
                         Yay!

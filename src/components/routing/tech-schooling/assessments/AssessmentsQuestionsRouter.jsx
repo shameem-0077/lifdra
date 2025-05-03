@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from "react";
-import { Redirect, Route, Switch, useLocation } from "react-router-dom";
+import { Navigate, Routes, Route, useLocation } from "react-router-dom";
 
 import styled from "styled-components";
 import Aside from "../../../learn/includes/techschooling/assessments/Aside";
@@ -29,63 +29,35 @@ export default function AssessmentsQuestionsRouter({ subject_slug }) {
             <BottomContainer>
                 <Aside subject_slug={subject_slug} />
                 <Suspense fallback={<RouteLoading />}>
-                    <Switch>
-                        <Route exact path={`/nanodegree/:slug/assessments/view/:id/questions/`}>
-                            <Redirect
-                                push
-                                to={{
-                                    pathname: `${location.pathname}descriptives/`,
-                                }}
-                            />
-                        </Route>
-                        {/* <Route
-                            exact
-                            path={`/nanodegree/:slug/assessments/view/:id/questions/`}
-                        >
-                            <Redirect
-                                push
-                                to={{
-                                    pathname: `${location.pathname}descriptives/`,
-                                }}
-                            />
-                        </Route> */}
-
-                        {/* <Route
-                            exact
-                            path={`/nanodegree/${subject_slug}/assessments/view/:id/questions/descriptives/`}
-                            component={DescriptiveQuestions}
-                        /> */}
+                    <Routes>
                         <Route
-                            exact
-                            path={`/nanodegree/:slug/assessments/view/:id/questions/descriptives/`}
-                            component={DescriptiveQuestions}
+                            path="/questions"
+                            element={
+                                <Navigate
+                                    to={`${location.pathname}descriptives/`}
+                                    replace
+                                />
+                            }
                         />
-                        {/* <Route
-                            exact
-                            path={`/${subject_slug}/assessments/view/:id/questions/objectives/`}
-                            component={ObjectiveQuestions}
-                        /> */}
                         <Route
-                            exact
-                            path={`/nanodegree/:slug/assessments/view/:id/questions/objectives/`}
-                            component={ObjectiveQuestions}
+                            path="/questions/descriptives"
+                            element={<DescriptiveQuestions />}
                         />
-                        {/* <Route
-                            exact
-                            path={`/${subject_slug}/assessments/view/:id/questions/challenge/`}
-                            component={Challengequestions}
-                        /> */}
                         <Route
-                            exact
-                            path={`/nanodegree/:slug/assessments/view/:id/questions/challenge/`}
-                            component={Challengequestions}
+                            path="/questions/objectives"
+                            element={<ObjectiveQuestions />}
                         />
-                    </Switch>
+                        <Route
+                            path="/questions/challenge"
+                            element={<Challengequestions />}
+                        />
+                    </Routes>
                 </Suspense>
             </BottomContainer>
         </>
     );
 }
+
 const BottomContainer = styled.div`
     display: flex;
     padding: 29px 10px;

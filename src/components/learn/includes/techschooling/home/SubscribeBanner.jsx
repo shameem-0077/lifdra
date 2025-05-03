@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import CopyModal from "../../../../merchandise/includes/modals/CopyModal";
 // import ShareModal from "./ShareModal";
@@ -9,7 +9,7 @@ function SubscribeBanner({ is_explore }) {
     const { user_profile, userSubscriptionType, user_data } = useSelector((state) => state);
     const [isCopy, setIsCopy] = useState(false);
     const location = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const shareCode = () => {
         if (navigator.share) {
@@ -40,16 +40,16 @@ function SubscribeBanner({ is_explore }) {
                                 if (is_explore) {
                                     user_profile.subscription_data &&
                                     user_profile.subscription_data.expired_subscription
-                                        ? history.push("/tech-schooling/subscribe/")
-                                        : history.push("/");
+                                        ? navigate("/tech-schooling/subscribe/")
+                                        : navigate("/");
                                 } else {
                                     if (user_data.signup_type === "other") {
-                                        history.push({
+                                        navigate({
                                             pathname: location.pathname,
                                             search: `action=techschooling`,
                                         });
                                     } else {
-                                        history.push({
+                                        navigate({
                                             pathname: location.pathname,
                                             search: `action=login`,
                                         });

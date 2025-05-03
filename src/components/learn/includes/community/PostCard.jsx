@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import moment from "moment";
 import UserProfile from "./UserProfile";
@@ -16,6 +16,10 @@ import {
   SavedRouteRegex,
   PostRouteRegex,
 } from "../../includes/community/RouteRegexPattern";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { primeprogramsConfig } from "../../../../axiosConfig";
+import PostTop from "./PostTop";
 
 function PostCard({
   item,
@@ -35,9 +39,12 @@ function PostCard({
   selectedComment,
   setSelectedComment,
   isSinglePost,
+  setPostData,
+  postData,
 }) {
+  const navigate = useNavigate();
   const location = useLocation();
-  const history = useHistory();
+  const { user_data } = useSelector((state) => state);
 
   const [imageAttachments, setImageAttachments] = useState([]);
   const [videoAttachment, setVideoAttachment] = useState(null);
@@ -105,7 +112,7 @@ function PostCard({
       location.pathname.match(ProfileRouteRegex) ||
       location.pathname.match(PostRouteRegex)
     ) {
-      history.push(`/feed/${slug}`);
+      navigate(`/feed/${slug}`);
     } else {
       setModal(true);
     }
@@ -142,6 +149,26 @@ function PostCard({
     } else {
       return `${seconds} s`;
     }
+  };
+
+  const handleDelete = () => {
+    const { access_token } = user_data;
+    primeprogramsConfig
+      .delete(`community/posts/${item.id}/`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+      .then((response) => {
+        const { StatusCode } = response.data;
+        if (StatusCode === 6000) {
+          toast.success("Post deleted successfully");
+          setPostData(postData.filter((item) => item.id !== this.props.item.id));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
