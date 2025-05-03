@@ -1,5 +1,4 @@
 import React, { Suspense, useEffect, useState } from "react";
-import { connect, useSelector, useDispatch } from "react-redux";
 import { Route, useLocation, Link, Routes, Navigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -23,26 +22,12 @@ import TalropEdtechHelmet from "../../helpers/TalropEdtechHelmet";
 import CommunityProfile from "../../learn/screens/community/CommunityProfile";
 import ProfileSectionSkeleton from "../../learn/includes/community/community-profile/ProfileSectionSkeleton";
 import UnfollowModal from "../../learn/includes/community/modals/UnfollowModal";
+import { useAuthStore } from "../../../store/authStore";
 
-function mapStateToProps(state) {
-  return {
-    divMainClass: state.divMainClass,
-  };
-}
-
-function mapDispatchtoProps(dispatch) {
-  return {
-    updateActiveMenu: (active_menu) =>
-      dispatch({
-        type: "ACTIVE_MENU",
-        active_menu: active_menu,
-      }),
-  };
-}
-
-function CommunityRouter(props) {
-  const { user_data } = useSelector((state) => state);
+function CommunityRouter() {
+  const { user_data, updateUserData } = useAuthStore();
   const access_token = user_data?.access_token;
+  const divMainClass = user_data?.divMainClass;
 
   const [userProfileDetails, setUserProfileDetails] = useState({});
   const [inner, setInner] = useState(false);
@@ -198,8 +183,11 @@ function CommunityRouter(props) {
               setFollowCount={setFollowCount}
               setShowUnfollowModal={setShowUnfollowModal}
               showUnfollowModal={showUnfollowModal}
-              setIsFollow={setIsFollow}
               isFollow={isFollow}
+              setIsFollow={setIsFollow}
+              setModal={setModal}
+              myLearningData={myLearningData}
+              mLstatusCode={mLstatusCode}
             />
           )}
 
@@ -225,7 +213,7 @@ function CommunityRouter(props) {
   );
 }
 
-export default connect(mapStateToProps, mapDispatchtoProps)(CommunityRouter);
+export default CommunityRouter;
 
 const MainBoxContainer = styled.div`
   display: flex;

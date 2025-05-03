@@ -1,225 +1,245 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Link, useParams, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { learnConfig } from "../../../../../axiosConfig";
-import Loader from "../general/loaders/Loader";
-import SubjectModal from "../../profile/modals/SubjectModal";
+import { useAuthStore } from "../../../../../store/authStore";
+import { Link } from "react-router-dom";
+import { accountsConfig } from "../../../../../axiosConfig";
+import Moment from "moment";
+import RequestLoader from "../../authentication/general/RequestLoader";
 
 function ProgramSubject() {
-    const [subjects, setSubjects] = useState([]);
-    const [isSubjectModal, setSubjectModal] = useState(false);
-    const [selectedSubject, setSelectedSubject] = useState({});
-    const [isLoading, setLoading] = useState(true);
-    const { user_data, user_profile } = useSelector((state) => state);
-    const [gridColumns, setGridColumns] = useState("");
+    const { user_data, updateUserData } = useAuthStore();
+    const access_token = user_data?.access_token;
+    const selectedEditingMyProfileData = user_data?.selected_editing_my_profile_data;
 
-    const navigate = useNavigate();
+    const [isLoading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [subjects, setSubjects] = useState([]);
+
     useEffect(() => {
-        if (user_profile?.program?.program_id) fetchData();
-    }, [user_data, user_profile]);
-    const fetchData = () => {
-        let { access_token } = user_data;
-        learnConfig
-            .get(`learn/subjects/${user_profile.program?.program_id}/`, {
-                headers: {
-                    Authorization: `Bearer ${access_token}`,
-                },
+        if (access_token) {
+            fetchSubjects();
+        }
+    }, [access_token]);
+
+    const fetchSubjects = () => {
+        setLoading(true);
+        accountsConfig
+            .get("/api/v1/users/get-student-subjects/", {
+                headers: { Authorization: `Bearer ${access_token}` },
             })
             .then((response) => {
-                let { StatusCode, data } = response.data;
+                setLoading(false);
+                const { StatusCode, data } = response.data;
                 if (StatusCode === 6000) {
-                    setSubjects(data.subjects);
-                    setGridColumns(
-                        data.subjects.length === 3 || data.subjects.length === 2
-                            ? data.subjects.length
-                            : "4"
-                    );
-                    setLoading(false);
+                    setSubjects(data);
+                } else {
+                    setErrorMessage("Failed to fetch subjects");
                 }
-                if (StatusCode === 6001) {
-                    setLoading(false);
-                }
+            })
+            .catch((error) => {
+                setLoading(false);
+                setErrorMessage("Failed to fetch subjects");
             });
     };
+
+    const handleSubjectClick = (subject) => {
+        setLoading(true);
+        accountsConfig
+            .post(
+                `/api/v1/users/update-student-subject/${subject?.id}/`,
+                {
+                    is_completed: !subject?.is_completed,
+                },
+                {
+                    headers: { Authorization: `Bearer ${access_token}` },
+                }
+            )
+            .then((response) => {
+                setLoading(false);
+                const { StatusCode, message } = response.data;
+                if (StatusCode === 6000) {
+                    fetchSubjects();
+                } else {
+                    setErrorMessage(message?.message);
+                }
+            })
+            .catch((error) => {
+                setLoading(false);
+                setErrorMessage("Failed to update subject");
+            });
+    };
+
+    useEffect(() => {
+        if (errorMessage) {
+            setTimeout(() => {
+                setErrorMessage("");
+            }, 5000);
+        }
+    }, [errorMessage]);
+
+    if (isLoading && subjects.length === 0) {
+        return (
+            <LoadingContainer>
+                <RequestLoader height={40} />
+            </LoadingContainer>
+        );
+    }
+
     return (
         <MainContainer>
-            <SubjectModal
-                selectedSubject={selectedSubject}
-                isSubjectModal={isSubjectModal}
-                setSubjectModal={setSubjectModal}
-            />
-
-            {isLoading ? (
-                <LoaderContainer>
-                    <Loader />
-                </LoaderContainer>
-            ) : (
-                <Contains>
-                    <h3>Subjects</h3>
-                    <Contents count={gridColumns}>
-                        {subjects
-                            .sort((a, b) => a.order_id - b.order_id)
-                            .map((item) => (
-                                <CardContainer
-                                    type={item.name}
-                                    to={item.slug}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        if (item.is_started) {
-                                            navigate(`/${item.slug}/`);
-                                        } else {
-                                            setSubjectModal(true);
-                                        }
-                                        setSelectedSubject(item);
-                                    }}
-                                >
-                                    <GridTopBox type={item.name}>
-                                        <Image
-                                            src={item.top_image}
-                                            alt="Image"
-                                        />
-                                    </GridTopBox>
-                                    <ImageContainer>
-                                        <Image
-                                            src={item.icon_image}
-                                            alt="Image"
-                                        />
-                                    </ImageContainer>
-
-                                    <Title status={item.type}>
-                                        {item.name}
-                                    </Title>
-
-                                    <Button to={item.link}>
-                                        <Images
-                                            src={item.arrow_image}
-                                            alt="Image"
-                                        />
-                                    </Button>
-                                    <GridBottomBox type={item.name}>
-                                        <Image
-                                            src={item.bottom_image}
-                                            alt="Image"
-                                        />
-                                    </GridBottomBox>
-                                </CardContainer>
-                            ))}
-                    </Contents>
-                </Contains>
-            )}
+            <Title>Program Subjects</Title>
+            {subjects.map((subject) => (
+                <SubjectContainer key={subject.id}>
+                    <SubjectLeft>
+                        <SubjectTitle>{subject.name}</SubjectTitle>
+                        <SubjectDescription>{subject.description}</SubjectDescription>
+                    </SubjectLeft>
+                    <SubjectRight>
+                        <SubjectStatus>
+                            {subject.is_completed ? "Completed" : "Not Completed"}
+                        </SubjectStatus>
+                        <SubjectDate>
+                            {subject.completed_date
+                                ? Moment(subject.completed_date).format("DD MMM YYYY")
+                                : "Not Started"}
+                        </SubjectDate>
+                    </SubjectRight>
+                    <ActionContainer>
+                        <ActionButton
+                            onClick={() => handleSubjectClick(subject)}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <RequestLoader height={24} />
+                            ) : subject.is_completed ? (
+                                "Mark as Not Completed"
+                            ) : (
+                                "Mark as Completed"
+                            )}
+                        </ActionButton>
+                        <ViewButton to={`/tech-schooling/subject/${subject.id}/`}>
+                            View Subject
+                        </ViewButton>
+                    </ActionContainer>
+                </SubjectContainer>
+            ))}
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </MainContainer>
     );
 }
 
 export default ProgramSubject;
-const LoaderContainer = styled.div`
-    min-height: 500px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+
+const MainContainer = styled.div`
     width: 100%;
-`;
-const MainContainer = styled.div``;
-const Contains = styled.div`
-    padding-top: 25px;
-    h3 {
-        font-size: 21px;
-        color: #000;
-        font-family: "gordita_medium";
-        @media (max-width: 480px) {
-            font-size: 18px;
-        }
-    }
-`;
-const Contents = styled.div`
-    display: grid;
-    grid-template-columns: repeat(${(props) => props.count}, 1fr);
-    grid-gap: 17px;
-    padding-top: 10px;
-    border-radius: 5px;
-    @media (max-width: 980px) {
-        grid-template-columns: 1fr 1fr 1fr;
-    }
-    @media (max-width: 640px) {
-        grid-template-columns: 1fr 1fr;
-    }
-    @media (max-width: 480px) {
-        grid-template-columns: 1fr;
-    }
-`;
-const CardContainer = styled(Link)`
-    position: relative;
-    border-radius: 7px;
-    padding: 40px 30px;
-    height: 276px;
-    background-color: ${(props) =>
-        props.type === "Tech Schooling"
-            ? "#ecfded"
-            : props.type === "Technology Fundamentals"
-            ? "#fcf0e5"
-            : props.type === "Academics Mentoring"
-            ? "#e3f6fa"
-            : "#f6e8f9"};
+    padding: 20px;
 `;
 
-const Title = styled.h3`
-    font-family: "gordita_medium";
-    font-size: 18px;
-    margin-top: 20px;
-    width: 50%;
-    color: #373737;
-    @media (max-width: 980px) {
-        font-size: 16px;
-    }
-    @media all and (max-width: 480px) {
-        font-size: 20px;
-        width: unset;
-    }
+const Title = styled.h2`
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    font-family: "baloo_paaji_2semibold";
 `;
-const GridBottomBox = styled.div`
-    position: absolute;
-    bottom: 5px;
-    right: ${(props) => (props.type === "tech" ? "0px" : "unset")};
-    left: ${(props) => (props.type === "tech" ? "unset" : "0px")};
-    width: 60px;
-    display: block;
-`;
-const GridTopBox = styled.div`
-    display: block;
-    position: absolute;
-    top: 5px;
-    left: ${(props) => (props.type === "tech" ? "0px" : "unset")};
-    right: ${(props) => (props.type === "tech" ? "240px" : "0px")};
-    width: ${(props) =>
-        props.type === "tech" || props.type === "mentoring" ? "60px" : "60px"};
-    @media all and (max-width: 480px) {
-        width: ${(props) =>
-            props.type === "tech" || props.type === "mentoring"
-                ? "100px"
-                : "100px"};
-    }
-`;
-const ImageContainer = styled.div`
-    box-shadow: 4px 3px 19px #00000029;
-    border-radius: 50%;
-    width: 50px;
-    display: block;
-`;
-const Image = styled.img`
+
+const LoadingContainer = styled.div`
     width: 100%;
-    display: block;
-`;
-const Images = styled.img`
-    width: 100%;
-    display: block;
-`;
-const Button = styled(Link)`
-    cursor: pointer;
-    width: 25px;
+    height: 200px;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+`;
+
+const SubjectContainer = styled.div`
+    width: 100%;
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+`;
+
+const SubjectLeft = styled.div`
+    flex: 1;
+`;
+
+const SubjectTitle = styled.h3`
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+    font-family: "baloo_paaji_2semibold";
+`;
+
+const SubjectDescription = styled.p`
+    font-size: 14px;
+    color: #666;
+    font-family: "gordita_regular";
+`;
+
+const SubjectRight = styled.div`
+    text-align: right;
+`;
+
+const SubjectStatus = styled.div`
+    font-size: 14px;
+    color: #4ba870;
+    margin-bottom: 5px;
+    font-family: "gordita_medium";
+`;
+
+const SubjectDate = styled.div`
+    font-size: 12px;
+    color: #999;
+    font-family: "gordita_regular";
+`;
+
+const ActionContainer = styled.div`
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+`;
+
+const ActionButton = styled.button`
+    flex: 1;
+    height: 40px;
+    background: ${({ disabled }) => (disabled ? "#ccc" : "#4ba870")};
+    color: #fff;
+    border: none;
     border-radius: 5px;
-    margin-top: 60px;
+    font-family: "baloo_paaji_2semibold";
+    font-size: 14px;
+    cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        background: ${({ disabled }) => (disabled ? "#ccc" : "#3d8c5c")};
+    }
+`;
+
+const ViewButton = styled(Link)`
+    flex: 1;
+    height: 40px;
+    background: #fff;
+    color: #4ba870;
+    border: 2px solid #4ba870;
+    border-radius: 5px;
+    font-family: "baloo_paaji_2semibold";
+    font-size: 14px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        background: #f5f5f5;
+    }
+`;
+
+const ErrorMessage = styled.div`
+    font-size: 14px;
+    color: #ff4d4f;
+    margin-top: 10px;
+    font-family: "gordita_regular";
 `;

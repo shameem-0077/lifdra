@@ -1,286 +1,109 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import Lottie from "react-lottie";
-import animationData from "../../../../assets/lotties/modal/tick.json";
-import error from "../../../../assets/lotties/voucher-section/verfication-failed.json";
-import failed from "../../../../assets/lotties/voucher-section/failed.json";
+import { useAuthStore } from "../../../../store/authStore";
 
-function ValidationModal() {
-	// const [isModal, setModal] = useState(true);
-	// const [validation_modal_type, setvalidation_modal_type] = useState("not_activated");
-	const is_validationModal = useSelector(
-		(state) => state.is_validationModal
-	);
-	const validation_modal_type = useSelector(
-		(state) => state.validation_modal_type
-	);
-	const validation_modal_title = useSelector(
-		(state) => state.validation_modal_title
-	);
-	const validation_modal_description = useSelector(
-		(state) => state.validation_modal_description
-	);
+const ValidationModal = () => {
+	const { user_data, updateUserData } = useAuthStore();
+	const [showModal, setShowModal] = useState(false);
 
-	const dispatch = useDispatch();
-	const defaultOptions = {
-		loop: false,
-		autoplay: true,
-		animationData:
-			validation_modal_type === "success"
-				? animationData
-				: validation_modal_type === "not_activated"
-				? failed
-				: validation_modal_type === "error"
-				? error
-				: null,
-		rendererSettings: {},
+	useEffect(() => {
+		if (user_data?.show_validation_modal) {
+			setShowModal(true);
+		}
+	}, [user_data?.show_validation_modal]);
+
+	const handleClose = () => {
+		setShowModal(false);
+		updateUserData({ show_validation_modal: false });
 	};
 
-	return (
-		<BackContainer
-			style={{ transform: is_validationModal && "scale(1,1)" }}
-		>
-			<Overlay
-				onClick={() =>
-					dispatch({
-						type: "TOGGLE_VALIDATION_MODAL",
-					})
-				}
-			></Overlay>
+	if (!showModal) return null;
 
-			<Modal validation_modal_type={validation_modal_type}>
-				{validation_modal_type === "success" ? (
-					<ModalContent
-						validation_modal_type={validation_modal_type}
-					>
-						<SuccesCard>
-							<SuccessIcon>
-								<Lottie
-									options={defaultOptions}
-									height={"100%"}
-									width={"100%"}
-								/>
-							</SuccessIcon>
-							<SuccessTitle>
-								{validation_modal_title
-									? validation_modal_title
-									: "Success"}
-							</SuccessTitle>
-							<SuccessLabel>
-								{validation_modal_description
-									? validation_modal_description
-									: "Your subscription has activated successfully"}
-							</SuccessLabel>
-							<ContinueButton
-								onClick={() =>
-									dispatch({
-										type: "TOGGLE_VALIDATION_MODAL",
-										is_validationModal: false,
-									})
-								}
-								validation_modal_type={
-									validation_modal_type
-								}
-							>
-								Continue
-							</ContinueButton>
-						</SuccesCard>
-					</ModalContent>
-				) : validation_modal_type === "not_activated" ? (
-					<ModalContent
-						validation_modal_type={validation_modal_type}
-					>
-						<SuccesCard>
-							<SuccessIcon>
-								<Lottie
-									options={defaultOptions}
-									height={"100%"}
-									width={"100%"}
-								/>
-							</SuccessIcon>
-							<SuccessTitle>Not activated</SuccessTitle>
-							<SuccessLabel>
-								Enable your student plan to active
-								this voucher code
-							</SuccessLabel>
-							<ContinueButton
-								onClick={() =>
-									dispatch({
-										type: "TOGGLE_VALIDATION_MODAL",
-										is_validationModal: false,
-									})
-								}
-								validation_modal_type={
-									validation_modal_type
-								}
-							>
-								Continue
-							</ContinueButton>
-						</SuccesCard>
-					</ModalContent>
-				) : validation_modal_type === "error" ? (
-					<ModalContent
-						validation_modal_type={validation_modal_type}
-					>
-						<SuccesCard>
-							<SuccessIcon>
-								<Lottie
-									options={defaultOptions}
-									height={"100%"}
-									width={"100%"}
-								/>
-							</SuccessIcon>
-							<SuccessTitle>Error</SuccessTitle>
-							<SuccessLabel>
-								{validation_modal_description
-									? validation_modal_description
-									: "An error occurred"}
-							</SuccessLabel>
-							<ContinueButton
-								onClick={() =>
-									dispatch({
-										type: "TOGGLE_VALIDATION_MODAL",
-										is_validationModal: false,
-									})
-								}
-								validation_modal_type={
-									validation_modal_type
-								}
-							>
-								{validation_modal_title
-									? "Close"
-									: " Continue"}
-							</ContinueButton>
-						</SuccesCard>
-					</ModalContent>
-				) : null}
-			</Modal>
-		</BackContainer>
+	return (
+		<ModalOverlay>
+			<ModalContent>
+				<CloseButton onClick={handleClose}>×</CloseButton>
+				<ModalTitle>Validation Required</ModalTitle>
+				<ModalBody>
+					<p>Please complete your profile validation to continue.</p>
+					<p>This helps us ensure the security of your account.</p>
+				</ModalBody>
+				<ModalFooter>
+					<Button onClick={handleClose}>Close</Button>
+				</ModalFooter>
+			</ModalContent>
+		</ModalOverlay>
 	);
-}
+};
 
 export default ValidationModal;
 
-const BackContainer = styled.div`
+const ModalOverlay = styled.div`
 	position: fixed;
-	transition: 0.3s;
-	transform: scale(0, 0);
-	width: 100%;
-	height: 100vh;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	z-index: 1000;
-	left: 0;
-	top: 0px;
-	background: rgba(0, 0, 0, 0.2);
-	backdrop-filter: blur(2px);
 `;
-const Overlay = styled.div`
-	position: fixed;
-	left: 0;
-	top: 0px;
-	width: 100%;
-	height: 100vh;
-`;
-const Modal = styled.div`
-	width: 550px;
-	max-height: 127vh;
-	margin: 0 auto;
-	background: #fff;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-	position: absolute;
-	padding: 40px 40px;
-	border-radius: 10px;
-	transition: 0.5s;
-	z-index: 101;
 
-	@media all and (max-width: 980px) {
-		padding: 30px 40px;
-		width: 650px;
-	}
-	@media all and (max-width: 768px) {
-		padding: 30px 40px;
-		width: 550px;
-	}
-	@media all and (max-width: 640px) {
-		width: 400px;
-		padding: 20px 30px;
-	}
-	@media all and (max-width: 480px) {
-		width: 330px;
-		padding: 20px 20px;
-	}
-	@media all and (max-width: 360px) {
-		width: 300px;
-	}
-`;
-const ModalContent = styled.div``;
-const SuccesCard = styled.div`
+const ModalContent = styled.div`
+	background: white;
+	padding: 20px;
+	border-radius: 8px;
 	position: relative;
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	flex-wrap: wrap;
-`;
-const SuccessIcon = styled.div`
-	width: 120px;
-	height: 120px;
-	border-radius: 50%;
-	box-shadow: 0 16px 24px rgb(0 0 0 / 10%);
-	margin: 0 auto;
-	background-color: #fff;
-	position: absolute;
-	display: flex;
-	padding: 10px;
-	justify-content: center;
-	align-items: center;
-	top: -100px;
-	margin: 0 auto;
-	@media all and (max-width: 480px) {
-		width: 100px;
-		height: 100px;
-		top: -75px;
-	}
-`;
-const SuccessTitle = styled.h3`
-	text-align: center;
-	font-size: 30px;
-	font-family: "baloo_paaji_2semibold";
-	margin-top: 30px;
-	@media all and (max-width: 480px) {
-		font-size: 26px;
-	}
-`;
-const SuccessLabel = styled.p`
-	font-size: 22px;
-	text-align: center;
-	font-family: "gordita_medium";
-	color: #3c4852;
-	width: 100%;
-	@media all and (max-width: 480px) {
-		font-size: 16px;
-	}
-`;
-const ContinueButton = styled.span`
-	width: 100%;
-	height: 50px;
-	background-color: ${(props) =>
-		props.validation_modal_type === "success"
-			? "#4ba870"
-			: "red"};
-	color: #fff;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	font-family: "baloo_paaji_2semibold";
-	margin-top: 30px;
-	border-radius: 5px;
-	font-size: 20px;
-	cursor: pointer;
+	width: 90%;
+	max-width: 500px;
 `;
 
-const Error = styled.p`
-	color: red;
-	font-size: 12px;
+const CloseButton = styled.button`
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	border: none;
+	background: none;
+	font-size: 24px;
+	cursor: pointer;
+	color: #666;
+	
+	&:hover {
+		color: #333;
+	}
+`;
+
+const ModalTitle = styled.h2`
+	margin: 0 0 20px 0;
+	color: #333;
+	font-size: 24px;
+`;
+
+const ModalBody = styled.div`
+	margin-bottom: 20px;
+	
+	p {
+		margin: 10px 0;
+		color: #666;
+	}
+`;
+
+const ModalFooter = styled.div`
+	display: flex;
+	justify-content: flex-end;
+`;
+
+const Button = styled.button`
+	padding: 8px 16px;
+	background-color: #007bff;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	
+	&:hover {
+		background-color: #0056b3;
+	}
 `;

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Jdenticon from "react-jdenticon";
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { getUserTimeFromUTC } from "../../../helpers/functions";
+import { useAuthStore } from "../../../../store/authStore";
 
 function MessagePopUp() {
-    const { message } = useSelector((state) => state);
+    const { message } = useAuthStore();
+    const [chatPopup, setChatPopup] = useState(false);
 
     const truncate = (str) => {
         if (str) {
@@ -18,8 +19,6 @@ function MessagePopUp() {
     const handlePopUp = () => {
         setChatPopup(true);
     };
-
-    const [chatPopup, setChatPopup] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => handlePopUp(), 10000);

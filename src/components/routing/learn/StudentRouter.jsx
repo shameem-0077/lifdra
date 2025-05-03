@@ -15,7 +15,6 @@ import {
   notificationsConfig,
   studentActivitiesConfig,
 } from "../../../axiosConfig";
-import { useDispatch, useSelector } from "react-redux";
 import WebSocketMessagesInstance from "../../../messages-socket";
 import { PrivateRoute } from "../PrivateRoute";
 import TechSchoolingStore from "../../contexts/stores/TechSchoolingStore";
@@ -30,6 +29,7 @@ import ProgramSubject from "../../learn/includes/techschooling/dashboard/Program
 import PrimeProgramSucessModal from "../../learn/screens/prime-programs/PrimeProgramSucessModal";
 import { useLocation } from "react-router-dom";
 import MobailNavManu from "../../learn/includes/general/MobailNavManu";
+import { useAuthStore } from "../../../store/authStore";
 
 const CommunityRouter = lazy(() => import("../community/CommunityRouter"));
 const MeetRouter = lazy(() => import("../meet/MeetRouter"));
@@ -66,12 +66,8 @@ const PrimeProgramsInnerRouter = lazy(() =>
 const SettingsRouter = lazy(() => import("./SettingsRouter"));
 
 const StudentRouter = (props) => {
-  // const [isSecondMenu, setSecondMenu] = useState(false);
-
-  const { user_profile, user_data } = useSelector((state) => state);
-  const errorState = useSelector((state) => state.errorState);
+  const { user_profile, user_data, updateUserData } = useAuthStore();
   const currentToken = localStorage.getItem("currentToken");
-  const dispatch = useDispatch();
   const { supportEngineerDispatch } = useContext(SupportEngineerContext);
   const { primeProgramDispatch } = useContext(PrimeProgramContext);
   const location = useLocation();
@@ -103,10 +99,7 @@ const StudentRouter = (props) => {
   };
 
   const setMessages = (message) => {
-    dispatch({
-      type: "SET_MESSAGES",
-      message: message,
-    });
+    updateUserData({ messages: message });
   };
 
   const addMessage = (message) => {
@@ -123,7 +116,7 @@ const StudentRouter = (props) => {
         active_pa_chat_session_id: message.pa_chat_session_id,
       });
     } else {
-      dispatch({
+      updateUserData({
         type: "ADD_MESSAGE",
         message: message,
       });
@@ -142,7 +135,7 @@ const StudentRouter = (props) => {
   };
 
   const handleIdUploadModal = () => {
-    dispatch({
+    updateUserData({
       type: "TOGGLE_STUDENT_UPLOAD_MODAL",
     });
   };
@@ -155,7 +148,7 @@ const StudentRouter = (props) => {
         campus_data_stored = localStorage.getItem("campus_data");
       }
       let campus_data_value = JSON.parse(campus_data_stored);
-      dispatch({
+      updateUserData({
         type: "UPDATE_CAMPUS_DATA",
         campus_data: campus_data_value,
       });
@@ -177,19 +170,11 @@ const StudentRouter = (props) => {
           let { StatusCode, data } = response.data;
 
           if (StatusCode === 6000) {
-            dispatch({
-              type: "UPDATE_PROGRAMS",
-              loading: false,
-              programs: data,
-            });
+            updateUserData({ programs: data, loading: false });
           }
         })
         .catch(() =>
-          dispatch({
-            type: "UPDATE_PROGRAMS",
-            loading: false,
-            programs: [],
-          })
+          updateUserData({ programs: [], loading: false })
         );
     };
     const fetchFeatures = () => {
@@ -215,7 +200,6 @@ const StudentRouter = (props) => {
     if (user_data?.access_token) {
       fetchPrograms();
       fetchFeatures();
-      // fetchDummy();
     }
   }, [user_data && user_data.access_token]);
 
@@ -242,13 +226,12 @@ const StudentRouter = (props) => {
   }, [user_data?.access_token, currentToken]);
 
   const combinedProps = {
-    ...props, // Existing props
-    allowedFeatures: allowedFeatures, // New key to be added
+    ...props,
+    allowedFeatures: allowedFeatures,
   };
 
   return (
     <div id="main-container">
-      {/* <WarningMenu isSecondMenu={isSecondMenu} /> */}
       <Header />
       <MessagePopUp />
       <Sidebar />

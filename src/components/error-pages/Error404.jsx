@@ -2,16 +2,13 @@ import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import TalropEdtechHelmet from "../helpers/TalropEdtechHelmet";
-import { connect } from "react-redux";
+import { useAuthStore } from "../../store/authStore";
 import error404Image from "../../assets/images/404.svg";
 
-function mapStateToProps(state) {
-  return {
-    divMainClass: state.divMainClass,
-  };
-}
+const Error404 = () => {
+  const { user_data } = useAuthStore();
+  const divMainClass = user_data?.divMainClass;
 
-const Error404 = (props) => {
   return (
     <>
       <Outer>
@@ -38,12 +35,14 @@ const Error404 = (props) => {
   );
 };
 
-export default connect(mapStateToProps)(Error404);
+export default Error404;
+
 const Outer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
 `;
+
 const Container = styled.div`
   /* padding-top: 100px; */
   display: flex;
@@ -57,12 +56,14 @@ const Container = styled.div`
     padding-top: 0px;
   }
 `;
+
 const InnerContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
 `;
+
 const ImageContainer = styled.div`
   width: 43%;
   @media (max-width: 1440px) {
@@ -72,10 +73,12 @@ const ImageContainer = styled.div`
     min-width: 200px;
   }
 `;
+
 const Image = styled.img`
   display: block;
   width: 100%;
 `;
+
 const Title = styled.h3`
   font-size: 24px;
   color: #363636;
@@ -88,6 +91,7 @@ const Title = styled.h3`
     font-size: 18px;
   }
 `;
+
 const Text = styled.p`
   font-size: 16px;
   color: #6ca1ad;
@@ -102,6 +106,7 @@ const Text = styled.p`
     width: 94%;
   }
 `;
+
 const Button = styled(Link)`
   font-family: "gordita_regular";
   text-align: center;

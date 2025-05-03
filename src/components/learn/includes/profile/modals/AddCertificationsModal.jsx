@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
+import { useAuthStore } from "../../../../../store/authStore";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import RequestLoader from "../../authentication/general/RequestLoader";
@@ -9,18 +9,14 @@ import Moment from "moment";
 import { startTransition } from "react";
 
 export default function AddCertificationsModal({ isOffline }) {
-    const {
-        user_data: { access_token },
-        selectedEditingMyProfileData,
-    } = useSelector((state) => state);
+    const { user_data, updateUserData } = useAuthStore();
+    const access_token = user_data?.access_token;
+    const selectedEditingMyProfileData = user_data?.selected_editing_my_profile_data;
 
     const handleClose = () => {
-        dispatch({
-            type: "TOGGLE_NEW_UPDATES_MODAL",
-        });
-        dispatch({
-            type: "UPDATE_MY_PROFILE_EDITING_DATA",
-            selectedEditingMyProfileData: {},
+        updateUserData({ 
+            show_new_updates_modal: false,
+            selected_editing_my_profile_data: {}
         });
         setCertificateName("");
         setCompanyName("");
@@ -29,8 +25,6 @@ export default function AddCertificationsModal({ isOffline }) {
         setIssuedDate("");
         setValidDate("");
     };
-    const { profileModalType } = useSelector((state) => state);
-    const dispatch = useDispatch();
 
     const [issuedDate, setIssuedDate] = useState("");
     const [validDate, setValidDate] = useState("");
@@ -107,25 +101,12 @@ export default function AddCertificationsModal({ isOffline }) {
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
             e.preventDefault();
-            switch (profileModalType) {
-                case "date_of_birth":
-                    break;
-
-                default:
-                    break;
-            }
         }
     };
 
     const handleSuccess = () => {
-        dispatch({
-            type: "UPDATE_NEW_UPDATES_MODAL_TYPE",
-            newUpdatesModalType: "success",
-        });
-        dispatch({
-            type: "UPDATE_MY_PROFILE_EDITING_DATA",
-            selectedEditingMyProfileData: {},
-        });
+        updateUserData({ show_new_updates_modal: "success" });
+        updateUserData({ selected_editing_my_profile_data: {} });
     };
 
     const createStudentCertificate = () => {
@@ -186,17 +167,14 @@ export default function AddCertificationsModal({ isOffline }) {
         } else if (
             (selectedEditingMyProfileData?.name !== certificateName ||
                 selectedEditingMyProfileData?.issued_by !== companyName ||
-                selectedEditingMyProfileData?.certificate_id !==
-                    certificateId ||
+                selectedEditingMyProfileData?.certificate_id !== certificateId ||
                 selectedEditingMyProfileData?.link !== certificateUrl ||
                 (selectedEditingMyProfileData?.issued_date &&
-                    Moment(selectedEditingMyProfileData?.issued_date)?.format(
-                        "YYYY-MM-DD"
-                    ) !== Moment(issuedDate)?.format("YYYY-MM-DD")) ||
+                    Moment(selectedEditingMyProfileData?.issued_date)?.format("YYYY-MM-DD") !==
+                        Moment(issuedDate)?.format("YYYY-MM-DD")) ||
                 (selectedEditingMyProfileData?.valid_till
-                    ? Moment(selectedEditingMyProfileData?.valid_till)?.format(
-                          "YYYY-MM-DD"
-                      ) !== Moment(validDate)?.format("YYYY-MM-DD")
+                    ? Moment(selectedEditingMyProfileData?.valid_till)?.format("YYYY-MM-DD") !==
+                        Moment(validDate)?.format("YYYY-MM-DD")
                     : validDate)) &&
             certificateName &&
             companyName &&
@@ -228,10 +206,7 @@ export default function AddCertificationsModal({ isOffline }) {
                     const { StatusCode, data, message } = response.data;
                     if (StatusCode === 6000) {
                         handleSuccess();
-                        dispatch({
-                            type: "UPDATE_MY_PROFILE_EDITING_DATA",
-                            selectedEditingMyProfileData: {},
-                        });
+                        updateUserData({ selected_editing_my_profile_data: {} });
                     } else {
                         setErrorMessage(message?.message);
                     }
@@ -345,18 +320,11 @@ export default function AddCertificationsModal({ isOffline }) {
                             <ValidDateLabel>Valid till</ValidDateLabel>
                             <ValidDate>
                                 <ShowStartDate selecteddate={validDate}>
-                                    {/* <span>
+                                    <span>
                                         {validDate
                                             ? formatDate(validDate)
                                             : "DD-MM-YY"}
-                                            
-                                    </span> */}
-
-                                    <Validdate>
-                                        {validDate
-                                            ? formatDate(validDate)
-                                            : "DD-MM-YY"}
-                                    </Validdate>
+                                    </span>
                                     <DatePickerCover>
                                         <MuiPickersUtilsProvider
                                             utils={DateFnsUtils}
@@ -421,7 +389,6 @@ export default function AddCertificationsModal({ isOffline }) {
                             type="url"
                             placeholder="Paste URL"
                             value={certificateUrl}
-                            // onChange={(e) => setCertificateUrl(e.target.value)}
                             onChange={(e) => {
                                 const inputValue = e.target.value;
 
