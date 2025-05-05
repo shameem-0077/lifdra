@@ -41,7 +41,7 @@ export default function WebRouter() {
             auth.isAuthenticated() ? (
               <Navigate to="/feed/" replace />
             ) : (
-              <PrimeLandingPage />
+              <Steyp3LandingPage />
             )
           }
         />

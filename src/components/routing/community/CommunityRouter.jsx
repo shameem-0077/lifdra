@@ -98,37 +98,37 @@ function CommunityRouter() {
     };
   }, []);
 
-  useEffect(() => {
-    const fetchMyLrngsCardsData = async () => {
-      setIsLoading(true);
-      try {
-        const { data } = await learnConfig.get(
-          "/learn/nano-degree-my-learning-progress/",
-          {
-            headers: {
-              Authorization: `Bearer ${access_token}`,
-            },
-          }
-        );
+  // useEffect(() => {
+  //   const fetchMyLrngsCardsData = async () => {
+  //     setIsLoading(true);
+  //     try {
+  //       const { data } = await learnConfig.get(
+  //         "/learn/nano-degree-my-learning-progress/",
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${access_token}`,
+  //           },
+  //         }
+  //       );
 
-        let { data: datas, status_code } = data;
+  //       let { data: datas, status_code } = data;
 
-        if (status_code !== 6000) {
-          setMyLearningData([]);
-          setIsLoading(false);
-          setMLStatusCode(status_code);
-        } else {
-          setMyLearningData(datas);
-          setIsLoading(false);
-          setMLStatusCode(status_code);
-        }
-      } catch (error) {
-        console.error("Error fetching Mylearnings data:", error);
-      }
-    };
+  //       if (status_code !== 6000) {
+  //         setMyLearningData([]);
+  //         setIsLoading(false);
+  //         setMLStatusCode(status_code);
+  //       } else {
+  //         setMyLearningData(datas);
+  //         setIsLoading(false);
+  //         setMLStatusCode(status_code);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching Mylearnings data:", error);
+  //     }
+  //   };
 
-    fetchMyLrngsCardsData();
-  }, []);
+  //   fetchMyLrngsCardsData();
+  // }, []);
 
   const ProfileCardSkeleton = () => (
     <Container>
