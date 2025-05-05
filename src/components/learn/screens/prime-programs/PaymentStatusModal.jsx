@@ -151,6 +151,8 @@ const Overlay = styled.div`
     width: 100%;
     height: 100vh;
     background: rgba(0, 0, 0, 0.2);
+    display: ${props => props.show ? 'block' : 'none'};
+    z-index: 999;
 `;
 
 const ModalContainer = styled.div`
@@ -166,6 +168,7 @@ const ModalContainer = styled.div`
     border-radius: 5px;
     z-index: 1000;
     transition: 0.3s;
+    display: ${props => props.show ? 'block' : 'none'};
     @media (max-width: 560px) {
         width: 400px;
     }

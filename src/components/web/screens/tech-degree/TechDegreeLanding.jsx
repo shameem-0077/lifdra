@@ -3,6 +3,8 @@ import "../../../../assets/css/web/style.css";
 import styled from "styled-components";
 import Aos from "aos";
 import "aos/dist/aos.css";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuthStore } from "../../../../store/authStore";
 
 import AreYouInterested from "../../inludes/general/steyp-landing-page/AreYouInterested";
 import WebHeader from "../../inludes/general/steyp-landing-page/WebHeader";
@@ -23,10 +25,12 @@ import { useSelector } from "react-redux";
 import { manageConfig } from "../../../../axiosConfig";
 
 const TechDegreeLanding = () => {
-    const user_data = useSelector((state) => state.user_data);
+    const { user_profile } = useAuthStore();
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    const [name, setName] = useState(user_data.name ? user_data.name : "");
-    const [phone, setPhone] = useState(user_data.phone ? user_data.phone : "");
+    const [name, setName] = useState(user_profile?.name ? user_profile.name : "");
+    const [phone, setPhone] = useState(user_profile?.phone ? user_profile.phone : "");
     const [selectedClass, setSelectedClass] = useState("");
     const [studentType, setStudentType] = useState("");
     const [selectedCountry, setSelectedCountry] = useState("");
@@ -41,8 +45,19 @@ const TechDegreeLanding = () => {
     const [isConfirmModal, setConfirmModal] = useState(false);
     const [isResponseModal, setResponseModal] = useState(false);
 
+    const handleModal = () => {
+        if (user_profile?.user_id) {
+            navigate("/dashboard");
+        } else {
+            navigate({
+                pathname: location.pathname,
+                search: `action=login`,
+            });
+        }
+    };
+
     const submitData = () => {
-        let { access_token } = user_data;
+        let { access_token } = user_profile;
         setLoading(true);
         manageConfig
             .post(

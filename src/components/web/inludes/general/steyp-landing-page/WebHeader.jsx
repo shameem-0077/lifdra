@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import SlideMenu from "./modal/SlideMenu";
-import { useDispatch, useSelector } from "react-redux";
 import queryString from "query-string";
 import LoginModal from "../../../../learn/includes/authentication/modals/LoginModal";
 import PasswordModal from "../../../../learn/includes/authentication/modals/PasswordModal";
@@ -20,6 +19,8 @@ import auth from "../../../../routing/auth";
 import { Link as Direction } from "react-scroll";
 import RequestLoader from "../../../../learn/includes/authentication/general/RequestLoader";
 import $ from "jquery";
+import { useAuthStore } from "../../../../../store/authStore";
+import hamburgerIcon from "../../../../../assets/images/web/hamburg.svg";
 
 const WebHeader = ({
   about,
@@ -29,9 +30,6 @@ const WebHeader = ({
   clubs,
   isSat,
 }) => {
-  //gobal states and Dispatch
-  const dispatch = useDispatch();
-
   //local states
   const [navBar, setNavbar] = useState(false);
   const [isMenu, setMenu] = useState(false);
@@ -46,30 +44,17 @@ const WebHeader = ({
   const [event, setEvent] = useState(null);
   const [searchValue, setSearchValue] = useState("");
 
+  const { user_profile } = useAuthStore();
+
   //to handle tech degree form
   const closeModal = () => {
     setAction("");
-    dispatch({
-      type: "UPDATE_SIGNUP_DATA",
-      signup_data: {},
-    });
     navigate(location.pathname);
   };
   const handleModal = () => {
-    dispatch({
-      type: "TOGGLE_TECH_DEGREE_FORM_MODAL",
-    });
+    navigate(location.pathname);
   };
-  const { user_profile } = useSelector((state) => state);
 
-  // const handleNavbar = () => {
-  //     if (window.scrollY >= 300) {
-  //         setNavbar(true);
-  //     } else {
-  //         setNavbar(false);
-  //     }
-  // };
-  // window.addEventListener("scroll", handleNavbar);
   useEffect(() => {
     if (
       action === "password" ||
@@ -212,142 +197,70 @@ const WebHeader = ({
       {renderModal()}
       <Container
         className={navBar && "active"}
-        // className={
-        //   (location.pathname == "/school-scientist/" && "postion-active") ||
-        //   (location.pathname == "/school-scientist" && "postion-active") ||
-        //   (location.pathname == "/about-us/" && "postion-active") ||
-        //   (location.pathname == "/contact-us/" && "postion-active") ||
-        //   (location.pathname == "/privacy-policy/" && "postion-active") ||
-        //   (location.pathname == "/terms-of-service/" && "postion-active")
-        // }
       >
-        <SlideMenu
-          about={about}
-          isSat={isSat}
-          isMenu={isMenu}
-          setMenu={setMenu}
-          isTechDegree={isTechDegree}
-        />
-
-        <div className="wrapper">
-          <LeftSection>
-            <h1>
-              <Logo to="/">
-                <img
-                  src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/23-11-2021/steyp-logo.svg"
-                  alt="Logo"
-                />
-              </Logo>
-            </h1>{" "}
-            {[
-              "/plans/",
-              "/terms-of-service/",
-              "/privacy-policy/",
-              "/plans",
-              "/terms-of-service",
-              "/privacy-policy",
-              "/contact-us/",
-              "/contact-us",
-              "/about-us/",
-              "/success-stories/",
-              "/success-stories",
-            ].includes(location.pathname) ? (
-              ""
-            ) : (
-              <>
-                <NavItem
-                  activeClass="active"
-                  spy={true}
-                  to="sat"
-                  smooth={true}
-                  offset={-70}
-                  duration={300}
-                >
-                  School Students
-                </NavItem>
-                <NavItem
-                  activeClass="active"
-                  spy={true}
-                  to="jobdesk"
-                  smooth={true}
-                  duration={300}
-                >
-                  College Students
-                </NavItem>
-                <NavBarLink
-                  activeClass="active"
-                  spy={true}
-                  to="/success-stories/"
-                  smooth={true}
-                  duration={300}
-                >
-                  Success Stories
-                </NavBarLink>
-                <NavBarLink
-                  activeClass="active"
-                  spy={true}
-                  to="/plans/"
-                  smooth={true}
-                  duration={300}
-                >
-                  Plans
-                </NavBarLink>
-              </>
-            )}
-          </LeftSection>
-          <RightSection className={show ? "none" : ""}>
-            {!about ? (
-              <>
-                {/* <NavItem
-                  activeClass="active"
-                  spy={true}
-                  to="internship"
-                  smooth={true}
-                  duration={300}
-                >
-                  Graduates or Dropouts
-                </NavItem> */}
-              </>
-            ) : (
-              <>
-                <Links to="/">School Students</Links>
-                <Links to="/">College Students</Links>
-                {/* <Links to="/">Graduates or Dropouts</Links> */}
-              </>
-            )}
-
-            {!clubs ? (
-              <>
-                <DashBoardButton
-                  to={
-                    user_profile.user_id
-                      ? "/feed/"
-                      : `${location.pathname}?action=login&next=/dashboard`
-                  }
-                >
-                  Go to Dashboard
-                </DashBoardButton>
-                {/* <BottomButton
-                  to={`${location.pathname}?action=phone`}
-                  className="g-medium"
-                >
-                  Free Trial
-                </BottomButton> */}
-              </>
-            ) : null}
-            <HandBurger
-              onClick={() => {
-                setMenu(true);
-              }}
-            >
-              <img
-                src={require("../../../../../assets/images/web/hamburg.svg")}
-                alt="Menu"
-              />
-            </HandBurger>
-          </RightSection>
-        </div>
+        <Section className="wrapper">
+          <Logo to={user_profile?.user_id ? "/dashboard" : "/"}>
+            <img
+              src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/23-11-2021/steyp-logo.svg"
+              alt="Logo"
+            />
+          </Logo>
+          <Menu>
+            <MenuLinks>
+              <NavLink
+                to="/"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                Home
+              </NavLink>
+              <NavLink
+                to="/about-us/"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                About Us
+              </NavLink>
+              <NavLink
+                to="/contact-us/"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                Contact Us
+              </NavLink>
+            </MenuLinks>
+            <ButtonContainer>
+              {!location.pathname === "/success-stories" ? (
+                !isSat ? (
+                  isTechDegree ? (
+                    <ApplyNow onClick={handleModal}>Apply now</ApplyNow>
+                  ) : !user_profile?.user_id ? (
+                    <SignInButton to={`${location.pathname}?action=login`}>
+                      Join now{" "}
+                    </SignInButton>
+                  ) : null
+                ) : null
+              ) : null}
+              <DashBoardButton
+                to={
+                  user_profile?.user_id
+                    ? "/feed/"
+                    : `${location.pathname}?action=login&next=/dashboard`
+                }
+              >
+                Go to dashboard
+              </DashBoardButton>
+            </ButtonContainer>
+          </Menu>
+          <HandBurger onClick={() => setMenu(true)}>
+            <img src={hamburgerIcon} alt="menu" />
+          </HandBurger>
+        </Section>
       </Container>
+      <SlideMenu
+        isMenu={isMenu}
+        setMenu={setMenu}
+        isTechDegree={isTechDegree}
+        isSat={isSat}
+        about={about}
+      />
     </>
   );
 };
@@ -472,6 +385,40 @@ const Container = styled.div`
     // height: 70px;
   }
 `;
+
+const Section = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  width: 85%;
+  margin: 0 auto;
+`;
+
+const Menu = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+`;
+
+const MenuLinks = styled.div`
+  display: flex;
+  align-items: center;
+  margin-right: 30px;
+  @media all and (max-width: 980px) {
+    display: none;
+  }
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  @media all and (max-width: 980px) {
+    display: none;
+  }
+`;
+
 const LeftSection = styled.div`
   display: flex;
   align-items: center;

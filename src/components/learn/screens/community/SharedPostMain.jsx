@@ -135,7 +135,7 @@ function SharedPostMain({
       //     section: "posts",
       //     page,
       //     profile_id:
-      //       user_profile.user_id == userProfileDetails?.user_id
+      //       user_profile?.user_id == userProfileDetails?.user_id
       //         ? null
       //         : userProfileDetails?.user_id,
       //   };

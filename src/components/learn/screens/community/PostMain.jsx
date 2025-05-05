@@ -126,7 +126,7 @@ function PostMain({ toast, setFollowCount, userProfileDetails, setUsername }) {
           section: "posts",
           page,
           profile_id:
-            user_profile.user_id == userProfileDetails?.user_id
+            user_profile?.user_id == userProfileDetails?.user_id
               ? null
               : userProfileDetails?.user_id,
         };

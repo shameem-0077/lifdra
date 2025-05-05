@@ -1,14 +1,13 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import auth from "../../../../routing/auth";
+import { useAuthStore } from "../../../../../store/authStore";
 
 function CourseLibary({ isSteyp }) {
 	const location = useLocation();
 	const navigate = useNavigate();
-	const dispatch = useDispatch();
-	const user_profile = useSelector((state) => state.user_profile);
+	const { user_profile } = useAuthStore();
 	return (
 		<Container isSteyp={isSteyp}>
 			{" "}
@@ -61,7 +60,7 @@ function CourseLibary({ isSteyp }) {
 						</Tick>
 						<span>Find the best for you</span>
 					</DetailPoints>
-					{user_profile.length > 0 ? (
+					{user_profile ? (
 						user_profile.prime_program_subscription
 							.is_subscription &&
 						!user_profile.prime_program_subscription.is_expired ? (

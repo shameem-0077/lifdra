@@ -27,12 +27,16 @@ import { useSelector } from "react-redux";
 import SatCampusModal from "../../inludes/SatCampusModal";
 import NewSpotling from "./sat/NewSpotling";
 import EngineeringProgram from "./sat/EngineeringProgram";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuthStore } from "../../../../store/authStore";
 
 const SatLandingPage = () => {
-    const user_data = useSelector((state) => state.user_data);
+    const { user_profile } = useAuthStore();
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    const [name, setName] = useState(user_data.name ? user_data.name : "");
-    const [phone, setPhone] = useState(user_data.phone ? user_data.phone : "");
+    const [name, setName] = useState(user_profile?.name ? user_profile.name : "");
+    const [phone, setPhone] = useState(user_profile?.phone ? user_profile.phone : "");
     const [selectedClass, setSelectedClass] = useState("");
     const [studentType, setStudentType] = useState("");
     const [selectedCountry, setSelectedCountry] = useState("");
@@ -59,7 +63,7 @@ const SatLandingPage = () => {
     }, []);
 
     const submitData = () => {
-        let { access_token } = user_data;
+        let { access_token } = user_profile;
         setLoading(true);
         manageConfig
             .post(
@@ -110,6 +114,17 @@ const SatLandingPage = () => {
                 console.log(error);
                 setLoading(false);
             });
+    };
+
+    const handleModal = () => {
+        if (user_profile?.user_id) {
+            navigate("/dashboard");
+        } else {
+            navigate({
+                pathname: location.pathname,
+                search: `action=login`,
+            });
+        }
     };
 
     return (

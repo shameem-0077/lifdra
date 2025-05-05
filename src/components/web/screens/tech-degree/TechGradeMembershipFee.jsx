@@ -1,512 +1,178 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState } from "react";
 import styled from "styled-components";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuthStore } from "../../../../store/authStore";
 
-import { learnConfig } from "../../../../axiosConfig";
+const TechGradeMembershipFee = () => {
+    const { user_profile } = useAuthStore();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [loading, setLoading] = useState(false);
 
-function TechGradeMembershipFee() {
-    const dispatch = useDispatch();
-    const steps = [
-        {
-            id: 1,
-            title: "Interview",
-            icon: "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/29-09-2021/interview.svg",
-            description:
-                "Candidates will be required to attend an interview with us.",
-        },
-        {
-            id: 2,
-            title: "Selection ",
-            icon: "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/29-09-2021/selection.svg",
-            description: "Selections will be based on the interview scores.",
-        },
-        {
-            id: 3,
-            title: "Internship",
-            icon: "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/29-09-2021/internship.svg",
-            description:
-                "The selected candidates will be trained at our centres across Kerala.",
-        },
-        {
-            id: 4,
-            title: "Placement",
-            icon: "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/29-09-2021/placement.svg",
-            description:
-                "After successful completion of the program, candidates are offered placement opportunities based on their performance.",
-        },
-        {
-            id: 6,
-            title: "Fee Payment",
-            icon: require("../../../../assets/images/web/new/fee-payment.svg"),
-            description:
-                "Once placed, fees are to be paid based on the income share agreement, in the next 6 months.",
-        },
-        {
-            id: 6,
-            title: "Let's Join",
-            icon: "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/29-09-2021/lets-join.svg",
-            description:
-                "Join with us and build your career in the technology field.",
-        },
-    ];
-
-    const [plans, setPlans] = useState([]);
-
-    useEffect(() => {
-        fetchData();
-    }, []);
-    const fetchData = () => {
-        learnConfig.get(`subscriptions/plan-category/`).then((response) => {
-            let { StatusCode, data } = response.data;
-            if (StatusCode === 6000) {
-                setPlans(data.filter((item) => item.name === ""));
-            }
-        });
-    };
     const handleModal = () => {
-        dispatch({
-            type: "TOGGLE_TECH_DEGREE_FORM_MODAL",
-        });
+        if (user_profile?.user_id) {
+            navigate("/dashboard");
+        } else {
+            navigate({
+                pathname: location.pathname,
+                search: `action=login`,
+            });
+        }
     };
+
     return (
         <Container>
-            <Cover className="wrapper">
+            <Wrapper>
                 <LeftSection>
-                    <Title>Internship Fee</Title>
+                    <Title>Tech Degree Membership</Title>
                     <Description>
-                        {/* <span> Upload your valid ID card </span>and get <small>50% </small>off on
-                        your package. */}
-                        Participate in our internship program and advance your
-                        career with us.
+                        Get access to our comprehensive tech degree program with expert
+                        mentorship and career guidance.
                     </Description>
-
-                    <Card>
-                        <TopSection>
-                            <Icon>
-                                <img
-                                    src={
-                                        "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/29-09-2021/6-months.svg"
-                                    }
-                                    alt="icon"
-                                />
-                            </Icon>
-                            <Period>6 Months</Period>
-                        </TopSection>
-                        <PriceSection>
-                            <Label>Internship fee</Label>
-                            <DiscountPrice>₹ 30000</DiscountPrice>
-                            {/* <Price>₹ 44000</Price> */}
-                            <Terms>* Terms and conditions apply</Terms>
-                        </PriceSection>
-                    </Card>
+                    <PriceSection>
+                        <Price>₹10,000</Price>
+                        <PriceDescription>per year</PriceDescription>
+                    </PriceSection>
+                    <FeatureList>
+                        <FeatureItem>
+                            <FeatureIcon>✓</FeatureIcon>
+                            <FeatureText>Full course access</FeatureText>
+                        </FeatureItem>
+                        <FeatureItem>
+                            <FeatureIcon>✓</FeatureIcon>
+                            <FeatureText>Expert mentorship</FeatureText>
+                        </FeatureItem>
+                        <FeatureItem>
+                            <FeatureIcon>✓</FeatureIcon>
+                            <FeatureText>Career guidance</FeatureText>
+                        </FeatureItem>
+                        <FeatureItem>
+                            <FeatureIcon>✓</FeatureIcon>
+                            <FeatureText>Project-based learning</FeatureText>
+                        </FeatureItem>
+                    </FeatureList>
+                    <Button onClick={handleModal} disabled={loading}>
+                        {loading ? "Processing..." : "Subscribe Now"}
+                    </Button>
                 </LeftSection>
                 <RightSection>
-                    {steps.map((data) => (
-                        <StepCard key={data.id}>
-                            <CardIcon>
-                                <img src={data.icon} alt="" />
-                            </CardIcon>
-                            <CardContent
-                            // style={{ paddingTop: data.id === 1 && 0 }}
-                            >
-                                {data.button ? (
-                                    <ApplyNow onClick={handleModal}>
-                                        {data.title}
-                                    </ApplyNow>
-                                ) : (
-                                    <CardTitle>{data.title}</CardTitle>
-                                )}
-                                <Details>{data.description}</Details>
-                            </CardContent>
-                        </StepCard>
-                    ))}
+                    <Image
+                        src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/tech-degree/membership.png"
+                        alt="Tech Degree Membership"
+                    />
                 </RightSection>
-            </Cover>
+            </Wrapper>
         </Container>
     );
-}
-
-const Container = styled.div`
-    padding: 140px 0;
-    @media all and (max-width: 1280px) {
-        padding: 120px 0;
-    }
-    @media all and (max-width: 640px) {
-        padding: 100px 0;
-    }
-    @media all and (max-width: 480px) {
-        padding: 60px 0;
-    }
-    @media all and (max-width: 360px) {
-        padding: 40px 0;
-    }
-`;
-const LeftSection = styled.div``;
-const RightSection = styled.div``;
-const Cover = styled.div`
-    display: grid;
-    grid-template-columns: 3fr 4fr;
-    grid-gap: 50px;
-    @media all and (max-width: 980px) {
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
-`;
-
-const Title = styled.h3`
-    font-size: 34px;
-    color: #2d2d2d;
-    font-family: gordita_medium;
-    position: relative;
-    margin-bottom: 20px;
-    position: relative;
-    &::before {
-        content: "";
-        position: absolute;
-        top: -60px;
-        left: -70px;
-        width: 200px;
-        height: 200px;
-        opacity: 0.8;
-        background: url("https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/29-09-2021/color.png")
-            no-repeat;
-        background-size: 200px;
-        background-position: center;
-        display: block;
-        z-index: -1;
-    }
-
-    @media all and (max-width: 1280px) {
-        font-size: 32px;
-        margin-bottom: 20px;
-    }
-    @media all and (max-width: 980px) {
-        &::before {
-            left: 50%;
-        }
-    }
-    @media all and (max-width: 640px) {
-        font-size: 26px;
-    }
-    @media all and (max-width: 480px) {
-        font-size: 24px;
-    }
-    @media all and (max-width: 480px) {
-        margin-bottom: 15px;
-    }
-`;
-const Description = styled.p`
-    font-size: 16px;
-    color: #666666;
-    margin-bottom: 100px;
-    max-width: 90%;
-    line-height: 30px;
-
-    span {
-        font-size: inherit;
-        position: relative;
-        color: #666666;
-
-        &::before {
-            content: "";
-            position: absolute;
-            top: 18px;
-            right: 0;
-            width: 100%;
-            height: 20px;
-            background: url("https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/29-09-2021/line.svg")
-                no-repeat;
-            background-size: contain;
-            display: block;
-            z-index: -1;
-        }
-    }
-    small {
-        color: #0fa76f;
-        font-family: gordita_medium;
-        font-size: 16px;
-    }
-    @media all and (max-width: 1280px) {
-        font-size: 15px;
-        margin-bottom: 80px;
-    }
-    @media all and (max-width: 980px) {
-        margin: 0 auto 80px;
-    }
-    @media all and (max-width: 640px) {
-        margin-bottom: 50px;
-        line-height: 1.8;
-    }
-    @media all and (max-width: 480px) {
-        margin-bottom: 40px;
-        font-size: 13px;
-        small {
-            font-size: 14px;
-        }
-    }
-`;
-
-const Card = styled.div`
-    padding: 30px 40px;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-    background-color: #fff;
-    max-width: 380px;
-    @media all and (max-width: 1100px) {
-        padding: 20px 30px;
-    }
-    @media all and (max-width: 980px) {
-        max-width: 400px;
-        padding: 30px 40px;
-        margin: 0 auto;
-    }
-
-    @media all and (max-width: 640px) {
-        padding: 20px 30px;
-    }
-`;
-const TopSection = styled.div`
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding-bottom: 20px;
-    border-bottom: 1px dashed #00000014;
-`;
-const Icon = styled.span`
-    width: 50px;
-    display: block;
-    margin-right: 20px;
-    img {
-        display: block;
-        width: 100%;
-    }
-    @media all and (max-width: 980px) {
-        width: 60px;
-    }
-    @media all and (max-width: 640px) {
-        width: 50px;
-    }
-    @media all and (max-width: 360px) {
-        width: 40px;
-    }
-`;
-const Period = styled.p`
-    font-size: 24px;
-    font-family: gordita_medium;
-    color: #383f50d9;
-    transform: translateY(4px);
-    @media all and (max-width: 1100px) {
-        font-size: 22px;
-    }
-    @media all and (max-width: 980px) {
-        font-size: 26px;
-    }
-    @media all and (max-width: 640px) {
-        font-size: 24px;
-    }
-    @media all and (max-width: 360px) {
-        font-size: 20px;
-    }
-`;
-const PriceSection = styled.div`
-    padding: 30px 0 20px;
-    text-align: center;
-    @media all and (max-width: 1100px) {
-        padding: 25px 0 10px;
-    }
-`;
-const Label = styled.p`
-    text-transform: capitalize;
-    color: #0fa76f;
-    font-family: gordita_medium;
-    font-size: 14px;
-    @media all and (max-width: 980px) {
-        font-size: 16px;
-    }
-    @media all and (max-width: 640px) {
-        font-size: 14px;
-    }
-`;
-const DiscountPrice = styled.h4`
-    font-size: 34px;
-    font-family: gordita_bold;
-    color: #0fa76f;
-    margin-bottom: 10px;
-    @media all and (max-width: 1100px) {
-        font-size: 32px;
-    }
-    @media all and (max-width: 980px) {
-        font-size: 34px;
-    }
-    @media all and (max-width: 640px) {
-        font-size: 32px;
-    }
-    @media all and (max-width: 360px) {
-        font-size: 30px;
-    }
-`;
-const Price = styled.p`
-    font-size: 22px;
-    font-family: gordita_medium;
-    color: #383f50;
-    position: relative;
-    &::before {
-        content: "";
-        position: absolute;
-        top: 5px;
-        left: 0;
-        width: 100%;
-        height: 20px;
-        background: url("https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/29-09-2021/green-line.svg")
-            no-repeat;
-        background-size: 110px;
-        background-position: center;
-        display: block;
-        z-index: 0;
-    }
-    @media all and (max-width: 980px) {
-        font-size: 26px;
-        &::before {
-            top: 8px;
-        }
-    }
-    @media all and (max-width: 640px) {
-        font-size: 22px;
-        &::before {
-            top: 5px;
-        }
-    }
-
-    @media all and (max-width: 360px) {
-        font-size: 18px;
-    }
-`;
-const Terms = styled.p`
-    color: #373e4f;
-    font-size: 10px;
-    font-family: gordita_medium;
-    @media all and (max-width: 980px) {
-        font-size: 12px;
-    }
-    @media all and (max-width: 640px) {
-        font-size: 10px;
-    }
-`;
-const StepCard = styled.div`
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    position: relative;
-    &::before {
-        content: "";
-        height: 95%;
-        width: 2px;
-        border-left: 2px dashed #6fc9b0;
-        position: absolute;
-        display: block;
-        top: 50%;
-        left: 20px;
-        z-index: -1;
-    }
-    &:last-child {
-        &::before {
-            display: none;
-        }
-    }
-
-    @media all and (max-width: 640px) {
-        &::before {
-            left: 15px;
-        }
-    }
-    @media all and (max-width: 480px) {
-        &::before {
-            left: 18px;
-        }
-    }
-    @media all and (max-width: 360px) {
-        &::before {
-            left: 15px;
-        }
-    }
-`;
-const CardIcon = styled.span`
-    width: 40px;
-    min-width: 40px;
-    display: block;
-    margin-right: 30px;
-
-    img {
-        display: block;
-        width: 100%;
-    }
-    @media all and (max-width: 640px) {
-        width: 30px;
-        min-width: 30px;
-        margin-right: 20px;
-    }
-    @media all and (max-width: 480px) {
-        width: 36px;
-        min-width: 36px;
-    }
-    @media all and (max-width: 360px) {
-        width: 30px;
-        min-width: 30px;
-    }
-`;
-const CardContent = styled.div`
-    flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    grid-gap: 30px;
-    align-items: center;
-    border-bottom: 1px solid #f0eded;
-    padding: 40px 0;
-    &::first-child {
-        padding-top: 0 !important;
-    }
-    @media all and (max-width: 640px) {
-        padding: 30px 0;
-        grid-gap: 20px;
-    }
-    @media all and (max-width: 480px) {
-        grid-gap: 10px;
-        padding: 20px 0;
-        grid-template-columns: 1fr;
-        text-align: left;
-    }
-`;
-const ApplyNow = styled.span`
-    cursor: pointer;
-    display: block;
-    font-size: 22px;
-    font-family: gordita_medium;
-    color: #2d2d2d;
-    @media all and (max-width: 640px) {
-        font-size: 20px;
-    }
-    @media all and (max-width: 480px) {
-        font-size: 18px;
-    }
-`;
-const CardTitle = styled.h4`
-    font-size: 22px;
-    font-family: gordita_medium;
-    color: #2d2d2d;
-    @media all and (max-width: 640px) {
-        font-size: 20px;
-    }
-    @media all and (max-width: 480px) {
-        font-size: 18px;
-    }
-`;
-const Details = styled.p`
-    font-size: 16px;
-    @media all and (max-width: 640px) {
-        font-size: 14px;
-    }
-    @media all and (max-width: 480px) {
-        font-size: 13px;
-    }
-`;
+};
 
 export default TechGradeMembershipFee;
+
+const Container = styled.div`
+    width: 100%;
+    padding: 80px 0;
+    background: #f8f9fa;
+`;
+
+const Wrapper = styled.div`
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+`;
+
+const LeftSection = styled.div`
+    flex: 1;
+    padding-right: 40px;
+`;
+
+const Title = styled.h1`
+    font-size: 48px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+`;
+
+const Description = styled.p`
+    font-size: 18px;
+    line-height: 1.6;
+    color: #666;
+    margin-bottom: 30px;
+`;
+
+const PriceSection = styled.div`
+    margin-bottom: 30px;
+`;
+
+const Price = styled.div`
+    font-size: 48px;
+    font-weight: 700;
+    color: #4ca473;
+`;
+
+const PriceDescription = styled.div`
+    font-size: 16px;
+    color: #666;
+`;
+
+const FeatureList = styled.div`
+    margin-bottom: 30px;
+`;
+
+const FeatureItem = styled.div`
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+`;
+
+const FeatureIcon = styled.span`
+    width: 24px;
+    height: 24px;
+    background: #4ca473;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 14px;
+`;
+
+const FeatureText = styled.span`
+    font-size: 16px;
+    color: #333;
+`;
+
+const Button = styled.button`
+    padding: 12px 30px;
+    background: #4ca473;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: #3d8b5f;
+    }
+
+    &:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+`;
+
+const RightSection = styled.div`
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+`;
+
+const Image = styled.img`
+    max-width: 100%;
+    height: auto;
+`;

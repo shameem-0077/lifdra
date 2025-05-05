@@ -3,12 +3,12 @@ import styled from "styled-components";
 
 import auth from "../../../../routing/auth";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useAuthStore } from "../../../../../store/authStore";
 
 function SubscriptionBanner() {
     const location = useLocation();
     const navigate = useNavigate();
-    const user_profile = useSelector((state) => state.user_profile);
+    const { user_profile } = useAuthStore();
 
     return (
         <Cover>
@@ -28,7 +28,7 @@ function SubscriptionBanner() {
                         <span>&#x20b9;500 </span>/month
                     </Price>
                 </ContentSection>
-                {user_profile.length > 0 ? (
+                {user_profile ? (
                     user_profile.prime_program_subscription.is_subscription &&
                     !user_profile.prime_program_subscription.is_expired ? (
                         <SubscribeButton

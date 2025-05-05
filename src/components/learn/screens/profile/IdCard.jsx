@@ -61,7 +61,7 @@ export default function IdCard() {
 
           <IdName className="id-download-##">{user_profile.name}</IdName>
           <Position className="id-download-##">Student at Steyp</Position>
-          <CardId className="id-download-##">ID:{user_profile.user_id}</CardId>
+          <CardId className="id-download-##">ID:{user_profile?.user_id}</CardId>
           <ValidityContainer className="id-download-##">
             <Validity className="left id-download-##">
               <ValidityTop className="join id-download-##">

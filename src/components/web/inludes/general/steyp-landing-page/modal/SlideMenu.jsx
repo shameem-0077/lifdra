@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 import $ from "jquery";
 import { Link as Direction } from "react-scroll";
+import { useAuthStore } from "../../../../../../store/authStore";
+import auth from "../../../../../routing/auth";
 
 const SlideMenu = ({ isMenu, setMenu, isTechDegree, isSat, about }) => {
-  const { user_profile } = useSelector((state) => state);
-  const dispatch = useDispatch();
+  const { user_profile } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -20,9 +20,7 @@ const SlideMenu = ({ isMenu, setMenu, isTechDegree, isSat, about }) => {
   }, [isMenu]);
 
   const handleModal = () => {
-    dispatch({
-      type: "TOGGLE_TECH_DEGREE_FORM_MODAL",
-    });
+    navigate(location.pathname);
   };
 
   const onSubscribe = () => {
@@ -95,9 +93,8 @@ const SlideMenu = ({ isMenu, setMenu, isTechDegree, isSat, about }) => {
           </Logo>
           <MenuContainer>
             <LeftSection>
-              {/* {about ? (
+              {about ? (
                 <>
-                  {" "}
                   {firstmenu.map((data, index) => (
                     <MenuSection key={data.id}>
                       <Icon>
@@ -108,11 +105,7 @@ const SlideMenu = ({ isMenu, setMenu, isTechDegree, isSat, about }) => {
                         <MenuLinks
                           key={item.link}
                           to={item.link}
-                          //   activeClass="active"
-                          //   offset={-50}
-                          //   duration={300}
-                          //   activeClassName="selected"
-                          //   onClick={() => setMenu(false)}
+                          onClick={() => setMenu(false)}
                         >
                           <span>{item.name}</span>
                         </MenuLinks>
@@ -135,7 +128,6 @@ const SlideMenu = ({ isMenu, setMenu, isTechDegree, isSat, about }) => {
                           activeClass="active"
                           offset={-50}
                           duration={300}
-                          //   activeClassName="selected"
                           onClick={() => {
                             setMenu(false);
                           }}
@@ -158,24 +150,20 @@ const SlideMenu = ({ isMenu, setMenu, isTechDegree, isSat, about }) => {
                     <Linkss
                       key={item.link}
                       to={item.link}
-                      //   activeClass="active"
-                      //   offset={-50}
-                      //   duration={300}
-                      // activeClassName="selected"
                       onClick={() => setMenu(false)}
                     >
                       <span>{item.name}</span>
                     </Linkss>
                   ))}
                 </MenuSection>
-              ))} */}
+              ))}
             </LeftSection>
             <RightSection>
               {!location.pathname === "/success-stories" ? (
                 !isSat ? (
                   isTechDegree ? (
                     <ApplyNow onClick={handleModal}>Apply now</ApplyNow>
-                  ) : !user_profile.user_id ? (
+                  ) : !user_profile?.user_id ? (
                     <SignInButton to={`${location.pathname}?action=login`}>
                       Join now{" "}
                     </SignInButton>
@@ -184,28 +172,20 @@ const SlideMenu = ({ isMenu, setMenu, isTechDegree, isSat, about }) => {
               ) : null}
               <DashBoardButton
                 to={
-                  user_profile.user_id
+                  user_profile?.user_id
                     ? "/feed/"
                     : `${location.pathname}?action=login&next=/dashboard`
                 }
               >
                 Go to dashboard
               </DashBoardButton>
-              {/* <BottomButton
-                to={`${location.pathname}?action=phone`}
-                className="g-medium"
-              >
-                Free trial
-              </BottomButton> */}
             </RightSection>
           </MenuContainer>
 
           <Close onClick={() => setMenu(false)}>
             <img
-              src={
-                "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/29-09-2021/close.svg"
-              }
-              alt=""
+              src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/29-09-2021/close.svg"
+              alt="close"
             />
           </Close>
         </Cover>

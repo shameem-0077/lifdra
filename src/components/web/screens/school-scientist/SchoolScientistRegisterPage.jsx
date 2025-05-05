@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useAuthStore } from "../../../../store/authStore";
+import { useSchoolScientistStore } from "../../../../store/schoolScientistStore";
 import styled from "styled-components";
 import RequestLoader from "../../../learn/includes/authentication/general/RequestLoader";
 import {
@@ -13,7 +14,8 @@ import ReCAPTCHA from "react-google-recaptcha";
 import GreenLoader from "../../../learn/includes/authentication/general/GreenLoader";
 
 function SchoolScientistRegisterPage() {
-    const { user_data } = useSelector((state) => state);
+    const { user_data } = useAuthStore();
+    const { school_scientist_data, setSchoolScientistData } = useSchoolScientistStore();
     const recaptchaRef = useRef(null);
     const [isLoading, setLoading] = useState(false);
     const [isOtpModal, setOtpModal] = useState(false);
@@ -44,8 +46,6 @@ function SchoolScientistRegisterPage() {
     const [campusPk, setCampusPk] = useState("");
     const [campusErrorMessage, setCampusErrorMessage] = useState("");
     const [isTidio, setIsTidio] = useState(false);
-    const { school_scientist_data } = useSelector((state) => state);
-    const dispatch = useDispatch();
 
     //outside click
     function useOutsideAlerter(ref) {
@@ -190,36 +190,32 @@ function SchoolScientistRegisterPage() {
         formData.append("campus_pk", campusPk);
         formData.append("student_class", isClass);
         formData.append("has_computer", isTick);
-        accountsConfig
-            .post(`/api/v1/users/school-scientist/apply/form/`, formData, {
-                headers: {
-                    Authorization: "Bearer " + access_token,
-                },
-            })
-            .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
-                    setViewPhone(phone);
-                    setPhone("");
-                    setName("");
-                    setCampusPk("");
-                    setCampusName("");
-                    setSearchTerm("");
-                    setClass("5");
-                    setTick(false);
-                    // setOtpModal(true);
-                    setSuccessModal(true);
-                    setError("");
-                    setCampusErrorMessage("");
-                    setPnError("");
-                    setLoading(false);
-                } else if (6001) {
-                    setError("This field is required");
-                    setCampusErrorMessage("Campus not found");
-                    setPnError(data.message);
-                    setLoading(false);
+        
+        try {
+            const response = await accountsConfig.post(
+                `/api/v1/users/school-scientist/apply/form/`, 
+                formData,
+                {
+                    headers: {
+                        Authorization: "Bearer " + access_token,
+                    },
                 }
-            });
+            );
+            
+            const { StatusCode, data } = response.data;
+            if (StatusCode === 6000) {
+                setSchoolScientistData(data);
+                setSuccessModal(true);
+                setLoading(false);
+            } else {
+                setError("An error occurred");
+                setLoading(false);
+            }
+        } catch (error) {
+            console.log(error);
+            setError("An error occurred");
+            setLoading(false);
+        }
     };
 
     useEffect(() => {

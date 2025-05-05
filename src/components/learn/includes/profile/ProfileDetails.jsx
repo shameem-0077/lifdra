@@ -248,7 +248,7 @@ function ProfileDetails() {
           />
         </NameRow>
         <p>{errorMessage && errorMessage}</p>
-        <UserId>ID : {user_profile.user_id}</UserId>
+        <UserId>ID : {user_profile?.user_id}</UserId>
         <Details>
           <UserDetailCards onClick={handleEmailSubmit} className="active">
             <Left>

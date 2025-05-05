@@ -91,30 +91,6 @@ function AppRouter() {
 
   return (
     <>
-      {/* {!tidioSettings.isOpened && isToast && (
-        <BubbleCard
-          onClick={() => {
-            setToast(false);
-            handleTidioClick(true);
-          }}
-        >
-          <span className="shape"></span>
-          <Emoji>🥳</Emoji>
-          <Para>
-            Welcome to <span>Steyp!</span> <br />
-            We're here to assist you✨
-          </Para>
-          <Close
-            onClick={() => {
-              setToast(false);
-              handleTidioClick(true);
-            }}
-            src={require("../../assets/images/web/Landing-page/new/close-icon-gray.svg")}
-            alt="Icon"
-          />
-        </BubbleCard>
-      )} */}
-
       <Suspense fallback={<RouteLoading />}>
         <Routes>
           <Route path="/tos/" element={<SteypTermsAndCondition />} />

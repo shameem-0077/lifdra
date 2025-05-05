@@ -1,284 +1,153 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import auth from "../../../../routing/auth";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuthStore } from "../../../../../store/authStore";
 
-function DescriptionSections({ img_right, bgc, points, section, image }) {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const user_profile = useSelector((state) => state.user_profile);
-    // const { is_expired, is_subscription } = useSelector(
-    //     (state) => state.user_profile.prime_program_subscription
-    // );
+const DescriptionSections = ({ section }) => {
+  const { user_profile } = useAuthStore();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    function SectionContent() {
-        return (
-            <>
-                {section === "learn" ? (
-                    <>
-                        <Title>
-                            <span>What </span> are Prime <br /> Programs?
-                        </Title>
-
-                        <Description>
-                            Prime Programs are specially designed Full-stack
-                            Development program for college students, where they
-                            can explore their interests and skills in the wide
-                            range of programs offered and learn from the best!
-                        </Description>
-                    </>
-                ) : section === "pricing" ? (
-                    <>
-                        <Title>
-                            <span>Rs 10</span>/day!
-                        </Title>
-
-                        <Description>
-                            You can now avail the subscription to these
-                            well-organised courses under Prime Programs at just
-                            Rs 10 per day (for a yearly subscription).
-                        </Description>
-                    </>
-                ) : section === "limits" ? (
-                    <>
-                        <Title>
-                            <span>Learn </span>without limits
-                        </Title>
-
-                        <Description>
-                            Learn as much as you can without any limits on
-                            learning hours.
-                        </Description>
-                    </>
-                ) : section === "future_course" ? (
-                    <>
-                        <Title>
-                            <span>Never Miss</span>
-                            <br />
-                            Out on Any Future Courses
-                        </Title>
-
-                        <Description>
-                            You will be granted access to all the newly added
-                            courses to the Prime Programs in the future.
-                        </Description>
-                    </>
-                ) : null}
-            </>
-        );
+  const handleModal = () => {
+    if (user_profile?.user_id) {
+      navigate("/dashboard");
+    } else {
+      navigate({
+        pathname: location.pathname,
+        search: `action=login`,
+      });
     }
+  };
 
-    return (
-        <Container bgc={bgc}>
-            <Section className="wrapper">
-                <ImageSection img_right={img_right}>
-                    <img src={image} alt="Spotlight image" />
-                </ImageSection>
-                <ContentSection img_right={img_right}>
-                    {SectionContent()}
-                    {points &&
-                        points.map((data, index) => (
-                            <DetailPoints key={index}>
-                                <Tick>
-                                    <img
-                                        src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/prime-programs/16-03-2022/tick.svg"
-                                        alt="tick icon"
-                                    />
-                                </Tick>
-                                <span>{data.point}</span>
-                            </DetailPoints>
-                        ))}
-                    {user_profile.length > 0 ? (
-                        user_profile.prime_program_subscription
-                            .is_subscription &&
-                        !user_profile.prime_program_subscription.is_expired ? (
-                            <SubscribeButton
-                                onClick={(e) => {
-                                    navigate(`/prime-programs/courses/`);
-                                }}
-                            >
-                                Continue
-                            </SubscribeButton>
-                        ) : (
-                            <SubscribeButton
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    if (auth.isAuthenticated()) {
-                                        navigate(`/prime-programs/courses/?action=subscribe-prime-programs`);
-                                    } else {
-                                        navigate(`${location.pathname}?action=login&next=/prime-programs/courses?action=subscribe-prime-programs`);
-                                    }
-                                }}
-                            >
-                                Subscribe Now
-                            </SubscribeButton>
-                        )
-                    ) : (
-                        <SubscribeButton
-                            onClick={(e) => {
-                                e.preventDefault();
-                                if (auth.isAuthenticated()) {
-                                    navigate(`/prime-programs/courses/?action=subscribe-prime-programs`);
-                                } else {
-                                    navigate(`${location.pathname}?action=login&next=/prime-programs/courses?action=subscribe-prime-programs`);
-                                }
-                            }}
-                        >
-                            Subscribe Now
-                        </SubscribeButton>
-                    )}
-                </ContentSection>
-            </Section>
-        </Container>
-    );
-}
+  return (
+    <Container>
+      <Wrapper>
+        <LeftSection>
+          <Title>Prime Program Features</Title>
+          <Description>
+            Our Prime Program offers a comprehensive learning experience with
+            features designed to help you succeed:
+          </Description>
+          <FeatureList>
+            <FeatureItem>
+              <FeatureIcon>✓</FeatureIcon>
+              <FeatureText>Access to all courses</FeatureText>
+            </FeatureItem>
+            <FeatureItem>
+              <FeatureIcon>✓</FeatureIcon>
+              <FeatureText>Expert mentorship</FeatureText>
+            </FeatureItem>
+            <FeatureItem>
+              <FeatureIcon>✓</FeatureIcon>
+              <FeatureText>Career guidance</FeatureText>
+            </FeatureItem>
+            <FeatureItem>
+              <FeatureIcon>✓</FeatureIcon>
+              <FeatureText>Project-based learning</FeatureText>
+            </FeatureItem>
+          </FeatureList>
+          <Button onClick={handleModal}>
+            {user_profile?.user_id ? "Go to Dashboard" : "Join Now"}
+          </Button>
+        </LeftSection>
+        <RightSection>
+          <Image
+            src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/prime-program/features.png"
+            alt="Prime Program Features"
+          />
+        </RightSection>
+      </Wrapper>
+    </Container>
+  );
+};
 
 export default DescriptionSections;
 
 const Container = styled.div`
-    padding: 120px 0;
-    background-color: ${(props) => props.bgc};
-    @media all and (max-width: 980px) {
-        padding: 100px 0;
-    }
-    @media all and (max-width: 768px) {
-        padding: 80px 0;
-    }
-    @media all and (max-width: 640px) {
-        padding: 70px 0;
-    }
-    @media all and (max-width: 480px) {
-        padding: 60px 0;
-    }
-    @media all and (max-width: 360px) {
-        padding: 50px 0;
-    }
+  width: 100%;
+  padding: 80px 0;
+  background: #fff;
 `;
-const Section = styled.div`
-    padding: 0 5%;
-    display: grid;
-    grid-gap: 50px;
-    grid-template-columns: 1fr 1fr;
 
-    @media all and (max-width: 980px) {
-        @media all and (max-width: 980px) {
-            grid-gap: 30px;
-        }
-    }
-    @media all and (max-width: 768px) {
-        grid-template-columns: 1fr;
-        grid-gap: 0px;
-    }
+const Wrapper = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
 `;
-const ImageSection = styled.div`
-    order: ${(props) => (props.img_right ? 2 : 1)};
-    display: flex;
-    align-items: center;
 
-    img {
-        /* max-width: 500px;
-        margin: 0 auto; */
-        display: block;
-        width: 100%;
-    }
-    @media all and (max-width: 768px) {
-        margin-top: ${(props) => (props.img_right ? "50px" : 0)};
-    }
+const LeftSection = styled.div`
+  flex: 1;
+  padding-right: 40px;
 `;
-const ContentSection = styled.div`
-    order: ${(props) => (props.img_right ? 1 : 2)};
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    /* margin-right: 20px; */
-    &:nth-child(2n) {
-        margin-right: 0;
-        /* margin-left: 50px; */
-    }
-`;
+
 const Title = styled.h2`
-    font-family: gordita_medium;
-    font-size: 34px;
-    margin-bottom: 10px;
-    span {
-        color: #4ca473;
-    }
-    @media all and (max-width: 1100px) {
-        font-size: 32px;
-    }
-    @media all and (max-width: 768px) {
-        font-size: 28px;
-    }
-    @media all and (max-width: 480px) {
-        font-size: 24px;
-    }
-    @media all and (max-width: 360px) {
-        font-size: 22px;
-    }
+  font-size: 36px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 20px;
 `;
 
 const Description = styled.p`
-    max-width: 400px;
-    margin-bottom: 20px;
-    @media all and (max-width: 980px) {
-        font-size: 16px;
-    }
-    @media all and (max-width: 480px) {
-        font-size: 15px;
-    }
-`;
-const SubscribeButton = styled.span`
-    display: block;
-    width: 200px;
-    height: 55px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #4ca473;
-    border: 2px solid #fff;
-    color: #fff;
-    font-family: gordita_medium;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 30px;
-    transition: all 0.3s ease-in-out;
-    &:hover {
-        color: #4ca473;
-        background-color: #fff;
-        border: 2px solid #4ca473;
-    }
-    @media all and (max-width: 980px) {
-        margin-top: 20px;
-        font-size: 16px;
-    }
-    @media all and (max-width: 360px) {
-        margin-top: 20px;
-        width: 200px;
-        height: 50px;
-    }
+  font-size: 18px;
+  line-height: 1.6;
+  color: #666;
+  margin-bottom: 30px;
 `;
 
-const DetailPoints = styled.span`
-    display: flex;
-    margin-bottom: 10px;
-    color: #595959;
-    span {
-        font-size: 16px;
-    }
-    @media all and (max-width: 640px) {
-        span {
-            font-size: 15px;
-        }
-    }
+const FeatureList = styled.div`
+  margin-bottom: 30px;
 `;
-const Tick = styled.span`
-    display: block;
-    width: 20px;
-    margin-right: 15px;
-    img {
-        display: block;
-        width: 100%;
-    }
+
+const FeatureItem = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+`;
+
+const FeatureIcon = styled.span`
+  width: 24px;
+  height: 24px;
+  background: #4ca473;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  font-size: 14px;
+`;
+
+const FeatureText = styled.span`
+  font-size: 16px;
+  color: #333;
+`;
+
+const Button = styled.button`
+  padding: 12px 30px;
+  background: #4ca473;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #3d8b5f;
+  }
+`;
+
+const RightSection = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const Image = styled.img`
+  max-width: 100%;
+  height: auto;
 `;

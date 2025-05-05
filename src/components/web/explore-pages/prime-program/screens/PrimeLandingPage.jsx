@@ -13,13 +13,13 @@ import SubscriptionBanner from "./SubscriptionBanner";
 import PrimeSubcribeModal from "../Modals/PrimeSubcribeModal";
 import { useNavigate, useLocation } from "react-router-dom";
 import queryString from "query-string";
-import { useSelector } from "react-redux";
+import { useAuthStore } from "../../../../../store/authStore";
 
 // import Header from "../../general/Header";
 
 function PrimeLandingPage() {
     const location = useLocation();
-    const user_profile = useSelector((state) => state.user_profile);
+    const { user_profile } = useAuthStore();
     const [action, setAction] = useState("");
     const navigate = useNavigate();
 

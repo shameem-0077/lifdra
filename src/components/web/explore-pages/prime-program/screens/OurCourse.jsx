@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { learnConfig, primeprogramsConfig } from "../../../../../axiosConfig";
 import auth from "../../../../routing/auth";
 import PrimeProgramCourseCard from "../includes/PrimeProgramCourseCard";
+import { useAuthStore } from "../../../../../store/authStore";
 
 function OurCourse() {
     const [courses, setCourses] = useState([]);
     const navigate = useNavigate();
     const location = useLocation();
-    const user_profile = useSelector((state) => state.user_profile);
+    const { user_profile } = useAuthStore();
 
     useEffect(() => {
         function fetchData() {
@@ -40,7 +40,7 @@ function OurCourse() {
                     <PrimeProgramCourseCard data={data} />
                 ))}
             </CourseContainer>
-            {user_profile.length > 0 ? (
+            {user_profile ? (
                 user_profile.prime_program_subscription.is_subscription &&
                 !user_profile.prime_program_subscription.is_expired ? (
                     <SubscribeButton

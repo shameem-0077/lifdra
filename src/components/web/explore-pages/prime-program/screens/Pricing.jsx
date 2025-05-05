@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { primeprogramsConfig } from "../../../../../axiosConfig";
 import auth from "../../../../routing/auth";
+import tickIcon from "../../../../../assets/images/prime-explore/tick.svg";
 
 function Pricing() {
     const location = useLocation();
@@ -93,7 +93,7 @@ function Pricing() {
                               <DetailPoints key={data.id}>
                                   <Tick>
                                       <img
-                                          src={require("../../../../../assets/images/prime-explore/tick.svg")}
+                                          src={tickIcon}
                                           alt=""
                                       />
                                   </Tick>
@@ -105,7 +105,7 @@ function Pricing() {
                               <DetailPoints key={data.id}>
                                   <Tick>
                                       <img
-                                          src={require("../../../../../assets/images/prime-explore/tick.svg")}
+                                          src={tickIcon}
                                           alt=""
                                       />
                                   </Tick>

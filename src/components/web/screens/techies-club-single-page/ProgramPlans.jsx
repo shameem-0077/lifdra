@@ -3,12 +3,13 @@ import styled from "styled-components";
 import "../../../../assets/css/web/style.css";
 import Loader from "../../../learn/includes/techschooling/general/loaders/Loader";
 import { learnConfig } from "../../../../axiosConfig";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useHistory, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import queryString from "query-string";
 import ResponseModal from "../../../learn/includes/profile/modals/ResponseModal";
 import SubscribeModal from "../../../learn/includes/techschooling/subscribe/SubscribeModal";
 import AdditionalDetails from "../../../learn/includes/techschooling/subscribe/AdditionalDetails";
+import { useAuthStore } from "../../../../store/authStore";
 
 function ProgramPlans({ title, program }) {
     const id = 90;
@@ -21,6 +22,8 @@ function ProgramPlans({ title, program }) {
     const { user_profile, divMainClass, campus_data } = useSelector(
         (state) => state
     );
+    const { user_id } = useAuthStore();
+    const navigate = useNavigate();
 
     const location = useLocation();
     const [isModal, setModal] = useState("");
@@ -39,32 +42,6 @@ function ProgramPlans({ title, program }) {
         setSelectedProgramId(programPlan?.id);
     }, [programsState.programs.length]);
 
-    // useEffect(() => {
-    // 	const fetchData = () => {
-    // 		let { access_token } = user_data;
-    // 		learnConfig
-    // 			.get(`subscriptions/program/plans/${selectedProgramId}/`, {
-    // 				headers: { Authorization: `Bearer ${access_token}` },
-    // 			})
-    // 			.then((response) => {
-    // 				let { StatusCode, data } = response.data;
-    // 				if (StatusCode === 6000) {
-    // 					setPlans(
-    // 						data.filter(
-    // 							(item) =>
-    // 								item.plan_type === "renew_premium" ||
-    // 								item.plan_type === "first_premium"
-    // 						)
-    // 					);
-
-    // 					setLoading(false);
-    // 				} else {
-    // 					setLoading(false);
-    // 				}
-    // 			});
-    // 	};
-    // 	if (selectedProgramId) fetchData();
-    // }, [selectedProgramId]);
     const apiUrl =
         user_profile.is_old_student ||
         (!user_profile.is_old_student &&
@@ -147,6 +124,17 @@ function ProgramPlans({ title, program }) {
             pathname: "/feed/",
             search: "",
         });
+    };
+
+    const handleModal = () => {
+        if (user_id) {
+            navigate("/dashboard");
+        } else {
+            navigate({
+                pathname: location.pathname,
+                search: `action=login`,
+            });
+        }
     };
 
     return (
@@ -401,21 +389,10 @@ function ProgramPlans({ title, program }) {
                             <ButtonsBack onClick={handleBack}>Back</ButtonsBack>
                             {Object.keys(selectedPlan).length > 0 && (
                                 <Buttons
-                                    to={
-                                        user_data && user_data.access_token
-                                            ? `${location.pathname}?action=subscribe&status=confirm&plan=${selectedPlan.id}`
-                                            : `${location.pathname}?action=login`
-                                    }
-                                    onClick={() => {
-                                        setModal("additional-details");
-                                    }}
+                                    to={handleModal}
                                     className="continue"
                                 >
-                                    Continues ₹{" "}
-                                    {(
-                                        selectedPlan.coins *
-                                        selectedPlan.coin_value
-                                    ).toLocaleString()}
+                                    {user_id ? "Go to Dashboard" : "Join Now"}
                                 </Buttons>
                             )}
                         </Top>
