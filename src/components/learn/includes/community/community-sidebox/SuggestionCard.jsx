@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import SuggestionProfileCard from "./SuggestionProfileCard";
 
 function SuggestionCard({ setFollowCount, setIsFollow, isFollow }) {

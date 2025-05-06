@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import SuggestionCard from "../../includes/community/community-sidebox/SuggestionCard";
-import { accountsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import {
   PostRouteRegex,
   ProfilePostRedirctRegex,

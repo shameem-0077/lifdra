@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 
 function OptionModal({
   isOpen,

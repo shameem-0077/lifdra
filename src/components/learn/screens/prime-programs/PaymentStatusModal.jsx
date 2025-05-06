@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useAuthStore } from "../../../../store/authStore";
-import { primeprogramsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import { useNavigate } from "react-router-dom";
 import { getDateStr } from "../../../helpers/functions";
 import loader from "../../../../assets/lotties/modal/buttonloader.json";

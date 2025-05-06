@@ -9,12 +9,7 @@ import styled from "styled-components";
 import Header from "../../learn/includes/general/Header";
 import MessagePopUp from "../../learn/includes/general/MessagePopUp";
 import Sidebar from "../../learn/includes/general/Sidebar";
-import {
-  accountsConfig,
-  learnConfig,
-  notificationsConfig,
-  studentActivitiesConfig,
-} from "../../../axiosConfig";
+import { serverConfig } from "../../../axiosConfig";
 import WebSocketMessagesInstance from "../../../messages-socket";
 import { PrivateRoute } from "../PrivateRoute";
 import TechSchoolingStore from "../../contexts/stores/TechSchoolingStore";

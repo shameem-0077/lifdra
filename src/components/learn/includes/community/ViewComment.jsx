@@ -4,7 +4,7 @@ import moment from "moment";
 import Jdenticon from "react-jdenticon";
 import { useSelector } from "react-redux";
 import ViewReply from "./ViewReply";
-import { learnConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import PostCommentBox from "./PostCommentBox";
 import PostLoader from "../../includes/community/PostLoader";
 import OptionComments from "./modals/OptionComments";

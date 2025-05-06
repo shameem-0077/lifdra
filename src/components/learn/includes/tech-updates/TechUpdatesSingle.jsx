@@ -6,7 +6,7 @@ import "prismjs/themes/prism-tomorrow.css";
 import "prismjs/components/prism-javascript";
 import Blocks from "editorjs-blocks-react-renderer";
 import { Link, useHistory } from "react-router-dom";
-import { learnConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import RouteLoading from "../../../routing/RouteLoading";

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import LessonsCard from "./LessonsCard";
 import { useSelector } from "react-redux";
 import Loader from "../general/loaders/Loader";

@@ -5,7 +5,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import RequestLoader from "../general/RequestLoader";
 
 import { connect } from "react-redux";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import OtpCard from "../general/OtpCard";
 import auth from "../../../../routing/auth";
 import ResetModal from "../../auth/general/ResetModal";

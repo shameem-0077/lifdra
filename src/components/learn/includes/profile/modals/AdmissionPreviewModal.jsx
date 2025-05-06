@@ -3,7 +3,7 @@ import styled from "styled-components";
 import $ from "jquery";
 import ResponseModal from "./ResponseModal";
 import { useSelector } from "react-redux";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 
 const AdmissionPreviewModal = ({
     isPreviewModal,

@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Jdenticon from "react-jdenticon";
-import { accountsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import { db } from "../../../../firebase";
 import { doc, getDoc, Timestamp, updateDoc } from "firebase/firestore";
 

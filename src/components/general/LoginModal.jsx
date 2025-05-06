@@ -6,7 +6,7 @@ import RequestLoader from "../general/RequestLoader";
 import FlagDropDown from "../general/FlagDropDown";
 import CountrySelector from "../general/CountrySelector";
 
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { connect } from "react-redux";
 // ... existing code ...
 

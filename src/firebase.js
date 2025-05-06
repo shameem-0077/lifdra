@@ -4,7 +4,6 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
-import { notificationsConfig } from "./axiosConfig";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCNIkDllU37bAErK8IZV0SCT7LqNgxCZwE",

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { useEffect } from "react";
 
 function Membership() {

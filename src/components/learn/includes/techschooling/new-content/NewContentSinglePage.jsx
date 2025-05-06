@@ -5,7 +5,7 @@ import styled from "styled-components";
 import TopicSmallCard from "../../../includes/techschooling/lesson-topics/TopicSmallCard";
 import TopicAssetCard from "../../../includes/techschooling/lesson-topics/TopicAssetCard";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import Loader from "../../../includes/techschooling/general/loaders/Loader";
 import ModalScreen from "../../../includes/general/ModalScreen";
 import { formatBytes } from "../../../../helpers/functions";

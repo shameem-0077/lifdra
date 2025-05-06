@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { learnConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 
 const MemberShipFee = ({ type }) => {
     const [plans, setPlans] = useState([]);

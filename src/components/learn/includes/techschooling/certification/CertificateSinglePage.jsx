@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import html2canvas from "html2canvas";
 import queryString from "query-string";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { getDateStr } from "../../../../helpers/functions";
 import TalropEdtechHelmet from "../../../../helpers/TalropEdtechHelmet";

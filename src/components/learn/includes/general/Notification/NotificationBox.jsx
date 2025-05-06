@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import NotificationModal from "./Modal/NotifcationModal";
-import { notificationsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { useSelector } from "react-redux";
 import useInfiniteScroll from "./component/useInfiniteScroll";
 import usePolling from "./component/usePolling";

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Moment from "moment";
 import styled from "styled-components";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { useDispatch, useSelector } from "react-redux";
 import { format, parseISO } from "date-fns";
 import NoData from "../../../includes/general/NoData";

@@ -5,7 +5,7 @@ import SearchResult from "../components/SearchResult";
 import { useLocation } from "react-router-dom";
 import TalropEdtechHelmet from "../../../../helpers/TalropEdtechHelmet";
 import { useSelector } from "react-redux";
-import { accountsConfig, learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { toast } from "react-toastify";
 
 const GlobalSearchPage = () => {

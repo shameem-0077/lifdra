@@ -5,7 +5,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import Jdenticon from "react-jdenticon";
-import { accountsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 
 const UserFollowComponent = ({ item, setFollowCount, setModal }) => {
   const [isFollow, setIsFollow] = useState(item?.is_following || false);

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Link, NavLink } from "react-router-dom";
 import { connect, useDispatch } from "react-redux";
 import Jdenticon from "react-jdenticon";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 
 function mapStateToProps(state) {
     return {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link, useHistory, useParams } from "react-router-dom";
 import UpcomingListCard from "./UpcomingListCard";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { useSelector, useDispatch } from "react-redux";
 import Loader from "../general/loaders/Loader";
 

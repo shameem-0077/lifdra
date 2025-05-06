@@ -5,7 +5,7 @@ import FlagDropDown from "../../authentication/general/FlagDropDown";
 import CountrySelector from "../../authentication/general/CountrySelector";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import RequestLoader from "../../authentication/general/RequestLoader";
 import GeneralModal from "../../general/modals/GeneralModal";
 import Moment from "moment";

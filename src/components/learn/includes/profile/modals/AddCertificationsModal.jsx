@@ -4,7 +4,7 @@ import { useAuthStore } from "../../../../../store/authStore";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import RequestLoader from "../../authentication/general/RequestLoader";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import Moment from "moment";
 import { startTransition } from "react";
 

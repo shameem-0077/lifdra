@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { primeprogramsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import auth from "../../../../routing/auth";
 import tickIcon from "../../../../../assets/images/prime-explore/tick.svg";
 

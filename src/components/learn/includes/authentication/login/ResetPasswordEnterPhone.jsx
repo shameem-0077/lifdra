@@ -7,7 +7,7 @@ import FlagDropDown from "../general/FlagDropDown";
 import CountrySelector from "../general/CountrySelector";
 
 import { connect } from "react-redux";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import RequestLoader from "../general/RequestLoader";
 import ColorLogo from "../general/ColorLogo";
 import TalropEdtechHelmet from "../../../../helpers/TalropEdtechHelmet";

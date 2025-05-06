@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { learnConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import PostLoader from "./PostLoader";
 import PostCommentBox from "./PostCommentBox";
 import ViewComment from "./ViewComment";

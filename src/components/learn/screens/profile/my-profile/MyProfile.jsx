@@ -12,7 +12,7 @@ import guardiansImage from "../../../../../assets/images/profile-screen/gurdians
 import { parseISO, format } from "date-fns";
 import disVerified from "../../../../../assets/images/profile-screen/dis_verified_icon.svg";
 import { useSelector, useDispatch } from "react-redux";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import NewUpdatesProfileModal from "../../../includes/profile/modals/NewUpdatesProfileModal";
 import ProfileTop from "./ProfileTop";
 import Moment from "moment";

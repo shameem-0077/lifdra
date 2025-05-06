@@ -7,7 +7,7 @@ import "aos/dist/aos.css";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
 
-import { learnConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import { data } from "jquery";
 
 const PrimeProgrammes = () => {

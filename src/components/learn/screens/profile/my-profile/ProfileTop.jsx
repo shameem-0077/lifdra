@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import Jdenticon from "react-jdenticon";
 import RequestLoader from "../../../includes/authentication/general/RequestLoader";
 import ToastModal from "../../../includes/general/modals/ToastModal";

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import SuggestionProfileCard from "../../includes/community/community-sidebox/SuggestionProfileCard";
 import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { accountsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import styled from "styled-components";
 
 function CommunitySuggetionCard({ setFollowCount, setIsFollow, isFollow }) {

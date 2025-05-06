@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 
 export default function ProgramNavBar({ program_slug }) {
   const { user_profile, user_data, activeProgramNav } = useSelector(

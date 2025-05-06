@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
-import { primeprogramsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import PaymentStatusModal from "../../../../learn/screens/prime-programs/PaymentStatusModal";
 import $ from "jquery";
 import { PrimeProgramContext } from "../../../../contexts/stores/PrimeProgramStore";

@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Routes, Route, useLocation, useParams } from "react-router-dom";
 
 import styled from "styled-components";
-import { learnConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import { PracticeContext } from "../../../contexts/stores/PracticeStore";
 import Header from "../../../learn/includes/techschooling/practices/Header";
 

@@ -4,7 +4,7 @@ import styled from "styled-components";
 import DesignationCard from "../includes/DesignationCard";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { useEffect } from "react";
 
 function VacationSyllabus() {

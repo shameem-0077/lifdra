@@ -7,7 +7,7 @@ import Lottie from "react-lottie";
 import $ from "jquery";
 import { connect } from "react-redux";
 import queryString from "query-string";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import SignupLoader from "../../../../learn/includes/techschooling/general/loaders/SignupLoader";
 
 function mapStateToProps(state) {

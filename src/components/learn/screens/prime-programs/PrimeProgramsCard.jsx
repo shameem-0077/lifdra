@@ -5,7 +5,7 @@ import PlaceHolder from "../../../general/PlaceHolder";
 import { numberWithCommas, secondsTohm } from "../../../helpers/functions";
 import auth from "../../../routing/auth";
 import { useAuthStore } from "../../../../store/authStore";
-import { primeprogramsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import Lottie from "react-lottie";
 import loader from "../../../../assets/lotties/prime-progrmmes/voucherLoader.json";
 

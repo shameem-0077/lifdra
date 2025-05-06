@@ -3,7 +3,7 @@ import styled from "styled-components";
 import TermsService from "../general/TermsService";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import RequestLoader from "../general/RequestLoader";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import OtpCard from "../general/OtpCard";
 import { connect, useSelector } from "react-redux";
 import OtpIssue from "../general/OtpIssue";

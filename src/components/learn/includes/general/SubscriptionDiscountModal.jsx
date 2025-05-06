@@ -5,7 +5,7 @@ import Lottie from "react-lottie";
 
 import animationData from "../../../../assets/lotties/modal/tick.json";
 import LoadinganimationData from "../../../../assets/lotties/modal/loading_lottie.json";
-import { accountsConfig, communityConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 
 const SubscriptionDiscountModal = () => {
     const { user_data, updateUserData } = useAuthStore();

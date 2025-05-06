@@ -5,7 +5,7 @@ import { secondsTohm } from "../../../helpers/functions";
 import loader from "../../../../assets/lotties/modal/buttonloader.json";
 import Lottie from "react-lottie";
 import { useAuthStore } from "../../../../store/authStore";
-import { primeprogramsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import PlaceHolder from "../../../general/PlaceHolder";
 import StartNowModal from "./StartNowModal";
 

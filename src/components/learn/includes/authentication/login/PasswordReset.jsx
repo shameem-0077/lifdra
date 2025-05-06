@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import { Link } from "react-router-dom";
 import TermsService from "../general/TermsService";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { connect } from "react-redux";
 import ResetModal from "../../auth/general/ResetModal";
 import RequestLoader from "../general/RequestLoader";

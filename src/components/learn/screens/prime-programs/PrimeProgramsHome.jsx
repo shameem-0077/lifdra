@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import PrimeProgramsCard from "./PrimeProgramsCard";
-import { primeprogramsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import { useAuthStore } from "../../../../store/authStore";
 import Loader from "../../includes/techschooling/general/loaders/Loader";
 import Pagination from "../../../helpers/Pagination";

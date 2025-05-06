@@ -3,7 +3,7 @@ import AssetDownloadCard from "../../../general/AssetDownloadCard";
 import styled from "styled-components";
 import { connect, useSelector } from "react-redux";
 import { AssessmentContext } from "../../../../../contexts/stores/AssessmentStore";
-import { learnConfig } from "../../../../../../axiosConfig";
+import { serverConfig } from "../../../../../../axiosConfig";
 import RequestLoader from "../../../authentication/general/RequestLoader";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";

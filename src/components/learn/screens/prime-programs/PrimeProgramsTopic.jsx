@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PreviewModal from "./PreviewModal";
-import { primeprogramsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import { useAuthStore } from "../../../../store/authStore";
 import { numberWithCommas, secondsTohm } from "../../../helpers/functions";
 import Loader from "../../includes/techschooling/general/loaders/Loader";

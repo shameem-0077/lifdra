@@ -4,7 +4,7 @@ import styled from "styled-components";
 import $ from "jquery";
 import Slider from "react-slick";
 import { truncateString } from "../../../../../helpers/functions";
-import { learnConfig } from "../../../../../../axiosConfig";
+import { serverConfig } from "../../../../../../axiosConfig";
 import StoriesTestimonial from "../../../general/steyp-landing-page/modal/StoriesTestimonial";
 import quotes from "../../../../../../assets/images/web/test.svg";
 

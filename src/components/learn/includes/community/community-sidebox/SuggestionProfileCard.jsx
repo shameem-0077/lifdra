@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import ProficPic from "../../../../../assets/images/community/profile-pic.svg";
 import Jdenticon from "react-jdenticon";
 import FollowBT from "../FollowBT";

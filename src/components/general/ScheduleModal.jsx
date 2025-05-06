@@ -7,7 +7,7 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { TimePicker } from "@mui/lab";
 import TextField from "@mui/material/TextField";
-import { learnConfig } from "../../axiosConfig";
+import { serverConfig } from "../../axiosConfig";
 import RequestLoader from "../learn/includes/authentication/general/RequestLoader";
 function ScheduleModal({
   setModal,

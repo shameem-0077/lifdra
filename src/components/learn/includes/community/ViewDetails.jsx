@@ -5,7 +5,7 @@ import UserProfile from "./UserProfile";
 import PostCardContent from "./PostCardContent";
 import ModalActions from "./ModalActions";
 import ModalHeaderDetails from "./ModalHeaderDetails";
-import { accountsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 
 function ViewDetails({
   item,

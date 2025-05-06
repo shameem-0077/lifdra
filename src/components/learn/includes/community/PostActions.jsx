@@ -3,7 +3,7 @@ import styled from "styled-components";
 import PostCommentBox from "./PostCommentBox";
 import { useSelector } from "react-redux";
 import ViewComment from "./ViewComment";
-import { learnConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import PostLoader from "../../includes/community/PostLoader";
 import { tr } from "date-fns/locale";
 

@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import PostTop from "../../includes/community/PostTop";
 import TrendToggle from "../../includes/community/TrendToggle";
 import PostCard from "../../includes/community/PostCard";
-import { learnConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import CommunityNoDataFound from "../../includes/community/CommunityNoDataFound";
 import PostCardSkeleton from "../../includes/community/PostCardSkeleton";
 import PostDeleteModal from "../../includes/community/modals/PostDeleteModal";

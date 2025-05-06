@@ -5,7 +5,7 @@ import Jdenticon from "react-jdenticon";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import ProficPic from "../../../../assets/images/community/profile-pic.svg";
 import CreatePostModal from "./create-post/CreatePostModal";
-import { learnConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import { toast } from "react-toastify";
 import moment from "moment";
 

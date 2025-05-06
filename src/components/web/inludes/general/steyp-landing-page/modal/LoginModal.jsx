@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import $ from "jquery";
 import ReCAPTCHA from "react-google-recaptcha";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { setCredentials } from "../../../../../store/slices/authSlice";
 
 const LoginModal = ({ isModal, setModal }) => {

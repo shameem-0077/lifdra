@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import TermsService from "../general/TermsService";
 import { connect, useSelector } from "react-redux";
 import queryString from "query-string";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import auth from "../../../../routing/auth";
 import RequestLoader from "../general/RequestLoader";
 import ColorLogo from "../general/ColorLogo";

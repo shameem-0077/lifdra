@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import ReactPlayer from "react-player";
 import loader from "../../../../../assets/lotties/modal/buttonloader.json";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import $ from "jquery";
 
 function SubjectModal({

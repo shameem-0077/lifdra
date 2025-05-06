@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { useSelector, useDispatch } from "react-redux";
 import Loader from "../general/loaders/Loader";
 import TechDegreeForm from "../../../../web/inludes/general/steyp-landing-page/modal/TechDegreeForm";

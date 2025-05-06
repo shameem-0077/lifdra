@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import bg from "../../../../../assets/images/certificate/bg-image.svg";

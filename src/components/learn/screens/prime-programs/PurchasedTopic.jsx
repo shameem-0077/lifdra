@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { primeprogramsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import LessonBars from "./LessonBars";
 import { useAuthStore } from "../../../../store/authStore";
 import Loader from "../../includes/techschooling/general/loaders/Loader";

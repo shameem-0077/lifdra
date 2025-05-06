@@ -6,7 +6,7 @@ import queryString from "query-string";
 import TermsService from "../general/TermsService";
 import OtpCard from "../general/OtpCard";
 import { connect, useSelector } from "react-redux";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import auth from "../../../../routing/auth";
 import ColorLogo from "../general/ColorLogo";
 

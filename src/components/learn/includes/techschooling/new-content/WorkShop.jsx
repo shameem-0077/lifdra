@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link, useHistory, useParams } from "react-router-dom";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import Loader from "../general/loaders/Loader";
 import { useSelector } from "react-redux";
 import WorkshopListCard from "./WorkshopListCard";

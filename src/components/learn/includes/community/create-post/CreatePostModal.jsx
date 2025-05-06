@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import styled, { keyframes } from "styled-components";
 import Preview from "./ModalPreview";
 import Jdenticon from "react-jdenticon";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import RequestLoader from "../../authentication/general/RequestLoader";
 import DiscardModal from "../modals/DiscardModal";
 import FormattedTextarea from "./FormattedTextarea";

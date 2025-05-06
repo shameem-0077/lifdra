@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { Routes, Route, Navigate, useParams, NavLink } from "react-router-dom";
 // import styled from "styled-components";
-// import { learnConfig } from "../../../../axiosConfig";
+// import { serverConfig } from "../../../../axiosConfig";
 import NewAssessment from "../../../learn/includes/techschooling/new-content/NewAssessment";
 // import NewContent from "../../../learn/includes/techschooling/new-content/NewContent";
 import NewContentSinglePage from "../../../learn/includes/techschooling/new-content/NewContentSinglePage";

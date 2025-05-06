@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { accountsConfig } from "../../../axiosConfig";
+import { serverConfig } from "../../../axiosConfig";
 
 export default function SignupInfo(props) {
     const { phone } = useParams();

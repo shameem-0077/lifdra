@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import RequestLoader from "../../authentication/general/RequestLoader";
 
 function ReportCommentModal({ isReport, setReport, isSelectedId, toast }) {

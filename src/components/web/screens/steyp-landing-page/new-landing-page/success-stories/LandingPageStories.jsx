@@ -13,7 +13,7 @@ import Customers from "../../../../inludes/steyp-landing-page/new-landing-page/s
 import Footer from "../../Footer";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { learnConfig } from "../../../../../../axiosConfig";
+import { serverConfig } from "../../../../../../axiosConfig";
 import RouteLoading from "../../../../../routing/RouteLoading";
 
 function LandingPageStories() {

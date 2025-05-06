@@ -16,7 +16,7 @@ import {
   SinglePageRouteRegex,
 } from "../../learn/includes/community/RouteRegexPattern";
 import ProfileCard from "../../learn/includes/community/community-sidebox/ProfileCard";
-import { accountsConfig, learnConfig } from "../../../axiosConfig";
+import { serverConfig } from "../../../axiosConfig";
 import Skeleton from "react-loading-skeleton";
 import TalropEdtechHelmet from "../../helpers/TalropEdtechHelmet";
 import CommunityProfile from "../../learn/screens/community/CommunityProfile";

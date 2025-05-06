@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import ButtonLoader from "../../../../../assets/lotties/modal/buttonloader.json";
 import SuccessTick from "../../../../../assets/lotties/modal/successtick.json";
 

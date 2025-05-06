@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import "../../../../assets/css/web/style.css";
 import Loader from "../../../learn/includes/techschooling/general/loaders/Loader";
-import { learnConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import { Link, useHistory, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import queryString from "query-string";

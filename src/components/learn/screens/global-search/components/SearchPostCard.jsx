@@ -10,7 +10,7 @@ import VideoPlayer from "../../../../applications/video-player/src/VideoPlayer";
 import { SavedRouteRegex } from "../../../includes/community/RouteRegexPattern";
 import MultiImageViewer from "../../../includes/community/MultiImageViewer";
 import OgImageViewer from "../../../includes/community/OgImageViewer";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { useSelector } from "react-redux";
 import PostActions from "../../../includes/community/PostActions";
 

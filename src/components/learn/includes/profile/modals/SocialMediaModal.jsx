@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import SignupLoader from "../../techschooling/general/loaders/SignupLoader";
 import RequestLoader from "../../authentication/general/RequestLoader";
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import RequestLoader from "../../authentication/general/RequestLoader";

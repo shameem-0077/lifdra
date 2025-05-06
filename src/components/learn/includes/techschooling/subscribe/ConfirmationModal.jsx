@@ -4,7 +4,7 @@ import Lottie from "react-lottie";
 import loader from "../../../../../assets/lotties/modal/loading_lottie.json";
 import { useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import queryString from "query-string";
 import { getUserDateFromUTC } from "../../../../helpers/functions";
 import tick from "../../../../../assets/lotties/web/sucess.json";

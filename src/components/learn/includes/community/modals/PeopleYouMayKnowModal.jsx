@@ -4,7 +4,7 @@
 // import FollowBT from "../FollowBT";
 // import { truncateString } from "../../../../helpers/functions";
 // import { useSelector } from "react-redux";
-// import { accountsConfig } from "../../../../../axiosConfig";
+// import { serverConfig } from "../../../../../axiosConfig";
 // import PeopleYouMayKnowSkeleton from "../PeopleYouMayKnowSkeleton";
 
 // function PeopleYouMayKnowModal({

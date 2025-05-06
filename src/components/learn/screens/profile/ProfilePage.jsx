@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import Jdenticon from "react-jdenticon";
 import ProfileModal from "../../includes/profile/ProfileModal";
-import { accountsConfig, learnConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import CountCardComponent from "../../includes/profile/CountCardComponent";
 import TalropEdtechHelmet from "../../../helpers/TalropEdtechHelmet";
 import SubscriptionStatus from "./SubscriptionStatus";

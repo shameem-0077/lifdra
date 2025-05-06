@@ -4,7 +4,7 @@ import TechUpdatesNavBar from "../../../screens/tech-updates/TechUpdatesNavBar";
 import NotificationNavBar from "./NotificationNavBar";
 import NotificationCard from "./NotificationCard";
 import { useSelector } from "react-redux";
-import { notificationsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import Nodata from "./Nodata";
 import NotificationSkeleton from "./NotificationSkeleton";
 import useInfiniteScroll from "./component/useInfiniteScroll";

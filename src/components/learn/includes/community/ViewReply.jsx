@@ -4,7 +4,7 @@ import moment from "moment";
 import Jdenticon from "react-jdenticon";
 import { useSelector } from "react-redux";
 import PostCommentBox from "./PostCommentBox";
-import { learnConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import PropTypes from "prop-types";
 import OptionComments from "./modals/OptionComments";
 

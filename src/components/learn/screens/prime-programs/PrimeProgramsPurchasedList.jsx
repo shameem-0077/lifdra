@@ -3,7 +3,7 @@ import styled from "styled-components";
 import PrimeProgramsPurchaseCard from "./PrimeProgramsPurchaseCard";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../../store/authStore";
-import { primeprogramsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import Loader from "../../includes/techschooling/general/loaders/Loader";
 import Pagination from "../../../helpers/Pagination";
 import queryString from "query-string";

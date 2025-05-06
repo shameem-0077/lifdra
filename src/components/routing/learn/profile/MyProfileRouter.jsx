@@ -3,7 +3,7 @@ import { PrivateRoute } from "../../PrivateRoute";
 import ProfileTop from "../../../learn/screens/profile/my-profile/ProfileTop";
 import NewUpdatesProfileModal from "../../../learn/includes/profile/modals/NewUpdatesProfileModal";
 import { useDispatch, useSelector } from "react-redux";
-import { accountsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import RouteLoading from "../../RouteLoading";
 import { Switch } from "react-router-dom";
 

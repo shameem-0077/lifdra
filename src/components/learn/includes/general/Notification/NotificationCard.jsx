@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Jdenticon from "react-jdenticon";
 import FollowBT from "../../community/FollowBT";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { useSelector } from "react-redux";
 
 function NotificationCard({ data }) {

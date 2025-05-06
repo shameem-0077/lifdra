@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { createRipples } from "react-ripples";
-import { primeprogramsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import arrowImage from "../../../../assets/images/new-dashboard/arrow.svg";
 import learnImage from "../../../../assets/images/new-dashboard/learning.svg";
 import leaderImage from "../../../../assets/images/new-dashboard/leader-board.svg";

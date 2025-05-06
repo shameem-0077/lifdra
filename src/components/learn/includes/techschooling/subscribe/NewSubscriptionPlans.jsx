@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Lottie from "react-lottie";
 import Features from "./Features";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import dataAnimate from "../../../../../assets/lotties/tech-schooling/plans_placeholder.json";
 
 function useQuery() {

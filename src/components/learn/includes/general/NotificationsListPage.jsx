@@ -9,7 +9,7 @@ import { Link, useHistory, useLocation } from "react-router-dom";
 import auth from "../../../routing/auth";
 import PushNotification from "../../../../PushNotification";
 import logoImage from "../../../../assets/images/notification/logo.svg";
-import { notificationsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import BasicLoading from "./BasicLoading";
 
 function NotificationsListPage() {

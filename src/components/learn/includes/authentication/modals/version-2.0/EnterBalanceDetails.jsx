@@ -4,7 +4,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import RequestLoader from "../../general/RequestLoader";
 import TermsService from "../../general/TermsService";
 import { connect, useSelector } from "react-redux";
-import { accountsConfig } from "../../../../../../axiosConfig";
+import { serverConfig } from "../../../../../../axiosConfig";
 
 // Function used to get values from redux react
 function mapStatetoProps(state) {

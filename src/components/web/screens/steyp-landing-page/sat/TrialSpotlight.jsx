@@ -4,7 +4,7 @@ import SpotlightVideo from "./modal/SpotlightVideo";
 // import Bground from "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/27-04-2023/bg-round.svg";
 import Infoicon from "../../../../../assets/images/newlandingpage/information.svg";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import queryString from "query-string";
 import { connect } from "react-redux";
 

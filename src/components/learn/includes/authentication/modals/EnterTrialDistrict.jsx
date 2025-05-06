@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import TermsService from "../general/TermsService";
 import { connect, useSelector, useDispatch } from "react-redux";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import auth from "../../../../routing/auth";
 import RequestLoader from "../general/RequestLoader";
 import TalropEdtechHelmet from "../../../../helpers/TalropEdtechHelmet";

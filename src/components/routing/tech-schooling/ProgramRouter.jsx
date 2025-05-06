@@ -7,7 +7,7 @@ import queryString from "query-string";
 import PracticeStore from "../../contexts/stores/PracticeStore";
 import AssessmentStore from "../../contexts/stores/AssessmentStore";
 import SupportModal from "../../learn/includes/premium-assist/SupportModal";
-// import { learnConfig } from "../../../axiosConfig";
+// import { serverConfig } from "../../../axiosConfig";
 // import { SupportEngineerContext } from "../../contexts/stores/SupportEngineerStore";
 import { SubscriptionPrivateRoute } from "../SubscriptionPrivateRoute";
 import SubscribeModal from "../../learn/includes/techschooling/subscribe/SubscribeModal";

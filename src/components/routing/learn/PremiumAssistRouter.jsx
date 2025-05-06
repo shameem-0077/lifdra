@@ -5,7 +5,7 @@ import SupportRouter from "./SupportRouter";
 import { PrivateRoute } from "../PrivateRoute";
 import PremiumChat from "../../learn/screens/support/PremiumChat";
 import { SupportEngineerContext } from "../../contexts/stores/SupportEngineerStore";
-import { learnConfig } from "../../../axiosConfig";
+import { serverConfig } from "../../../axiosConfig";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import ChatList from "../../learn/screens/chat-with-support-engineer/ChatList";

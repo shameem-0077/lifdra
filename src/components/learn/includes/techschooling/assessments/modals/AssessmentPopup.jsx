@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import colors from "../../../../../../Colors";
-import { learnConfig } from "../../../../../../axiosConfig";
+import { serverConfig } from "../../../../../../axiosConfig";
 import { AssessmentContext } from "../../../../../contexts/stores/AssessmentStore";
 import RequestLoader from "../../../authentication/general/RequestLoader";
 

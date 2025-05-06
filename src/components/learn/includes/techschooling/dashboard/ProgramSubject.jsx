@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useAuthStore } from "../../../../../store/authStore";
 import { Link } from "react-router-dom";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import Moment from "moment";
 import RequestLoader from "../../authentication/general/RequestLoader";
 

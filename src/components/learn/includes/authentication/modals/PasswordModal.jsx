@@ -3,7 +3,7 @@ import styled from "styled-components";
 import TermsService from "../general/TermsService";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import RequestLoader from "../general/RequestLoader";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import auth from "../../../../routing/auth";
 import ReCAPTCHA from "react-google-recaptcha";
 import { Timestamp, setDoc, doc, getDoc, updateDoc } from "firebase/firestore";

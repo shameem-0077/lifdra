@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link, useParams } from "react-router-dom";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { useDispatch, useSelector } from "react-redux";
 import CertificateCard from "./CertificateCard";
 import PlaceHolder from "../../../../general/PlaceHolder";

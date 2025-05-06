@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
 import SearchModal from "./modals/SearchModal";
 import { useNavigate, useLocation } from "react-router-dom";
-import { accountsConfig, learnConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import { useSelector } from "react-redux";
 
 const HeaderSearch = ({

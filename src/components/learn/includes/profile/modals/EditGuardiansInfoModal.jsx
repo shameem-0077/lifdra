@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import FlagDropDown from "../../authentication/general/FlagDropDown";
 import CountrySelector from "../../authentication/general/CountrySelector";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import RequestLoader from "../../authentication/general/RequestLoader";
 import ConfirmDeleteModal from "../../general/modals/ConfirmDeleteModal";
 import ToastModal from "../../general/modals/ToastModal";

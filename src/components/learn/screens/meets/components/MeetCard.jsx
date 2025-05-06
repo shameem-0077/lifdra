@@ -10,7 +10,7 @@ import MeetMessage from "../components/MeetMessage";
 import { meetCardsData } from "../test";
 import MeetButton from "../../../includes/meet/MeetButton";
 import { useSelector } from "react-redux";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { ZoomMtg } from "@zoom/meetingsdk";
 
 ZoomMtg.preLoadWasm();

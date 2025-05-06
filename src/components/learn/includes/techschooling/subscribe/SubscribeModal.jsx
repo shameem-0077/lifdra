@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Lottie from "react-lottie";
 import styled from "styled-components";
-import { accountsConfig, learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import PlanCard from "./PlanCard";
 import successAnimate from "../../../../../assets/lotties/7698-success.json";
 import errorAnimate from "../../../../../assets/lotties/14331-error.json";

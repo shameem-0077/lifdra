@@ -4,7 +4,7 @@ import PopupBar from "./PopupBar";
 import styled from "styled-components";
 import { connect, useSelector } from "react-redux";
 import { AssessmentContext } from "../../../../../contexts/stores/AssessmentStore";
-import { learnConfig } from "../../../../../../axiosConfig";
+import { serverConfig } from "../../../../../../axiosConfig";
 import RequestLoader from "../../../authentication/general/RequestLoader";
 import ToggleButton from "../../../assessments/ToggleButton";
 

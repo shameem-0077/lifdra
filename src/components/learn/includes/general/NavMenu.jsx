@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import HeaderDropdown from "./modals/HeaderDropdown";
 
 function NavMenu() {
+  const location = useLocation();
   const [showModal, setShowModal] = useState(false);
   const [activeSubTab, setActiveSubTab] = useState("");
   const [activeTab, setActiveTab] = useState("");
-  const [backgroundPosition, setBackgroundPosition] = useState(0);
+  const [backgroundPosition, setBackgroundPosition] = useState({ left: 0, width: 0 });
   const tabRefs = useRef([]);
 
   const menuItems = [
@@ -65,37 +66,31 @@ function NavMenu() {
   ];
 
   useEffect(() => {
-    setActiveSubTab(window.location.pathname);
-  }, []);
+    // Update active tab based on current location
+    const currentPath = location.pathname;
+    const activeMenuItem = menuItems.find(item => 
+      item.path.some(path => currentPath.startsWith(path))
+    );
+    
+    if (activeMenuItem) {
+      setActiveTab(activeMenuItem.path[0]);
+      setActiveSubTab(currentPath);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
-    // Get the current path from the URL
-    const currentPath = window.location.pathname;
-
-    // Define the list of keys you want to match in the path
-    const keys = ["/feed/", "/nanodegree/", "/tech-updates/"];
-
-    // Find the first matching key or default to "/dashboard/"
-    const matchedKey =
-      keys.find((key) => currentPath.includes(key)) || "/feed/";
-    const activeTabElement = tabRefs.current[matchedKey];
-    const parentElement = activeTabElement?.parentElement;
-
-    if (activeTabElement && parentElement) {
-      requestAnimationFrame(() => {
-        const tabOffset = activeTabElement.offsetLeft;
-        const tabWidth = activeTabElement.offsetWidth;
-
-        const leftPercent = (tabOffset / parentElement.offsetWidth) * 100;
-        const widthPercent = (tabWidth / parentElement.offsetWidth) * 100;
-
-        setBackgroundPosition({
-          left: leftPercent,
-          width: widthPercent,
-        });
+    // Update background position when active tab changes
+    if (tabRefs.current[activeTab]) {
+      const activeElement = tabRefs.current[activeTab];
+      const { offsetLeft, offsetWidth } = activeElement;
+      const parentWidth = activeElement.parentElement.offsetWidth;
+      
+      setBackgroundPosition({
+        left: (offsetLeft / parentWidth) * 100,
+        width: (offsetWidth / parentWidth) * 100
       });
     }
-  }, [activeSubTab]);
+  }, [activeTab]);
 
   const handleMouseLeave = () => {
     setShowModal(false);
@@ -122,10 +117,7 @@ function NavMenu() {
             to={item.path[0]}
             end={item.path.includes("/feed/")}
             onClick={() => {
-              setActiveSubTab(item.path);
-              {
-                /* Storing the array of paths */
-              }
+              setActiveTab(item.path[0]);
               if (item.label === "Explore") {
                 setShowModal(true);
               }
@@ -146,12 +138,12 @@ function NavMenu() {
                 // setShowModal(true);
               }
             }}
-            className={item.path.includes(activeSubTab) ? "active" : ""}
+            className={({ isActive }) => isActive ? "active" : ""}
           >
             <MenuIconContainer>
               <MenuIcon
                 src={
-                  item.path.includes(activeSubTab)
+                  item.path.includes(activeTab)
                     ? item.active_icon
                     : item.icon
                 }

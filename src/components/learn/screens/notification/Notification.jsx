@@ -7,7 +7,7 @@ import styled from "styled-components";
 import TalropEdtechHelmet from "../../../helpers/TalropEdtechHelmet";
 import NotificationCard from "../../includes/notification/NotificationCard";
 import { getTimeStrFromDate, getDateStr } from "../../../helpers/functions";
-import { notificationsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import BasicLoading from "../../includes/general/BasicLoading";
 
 function mapStateToProps(state) {

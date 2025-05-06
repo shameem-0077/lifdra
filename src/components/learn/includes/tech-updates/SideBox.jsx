@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import styled from "styled-components";
 // import Search from "../../../../../src/assets/images/search.png";
 import { useLocation, Link, useHistory } from "react-router-dom";
-import { learnConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import { useSelector, useDispatch } from "react-redux";
 import RouteLoading from "../../../routing/RouteLoading";
 import Loader from "../techschooling/general/loaders/Loader";

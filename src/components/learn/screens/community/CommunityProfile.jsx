@@ -7,7 +7,7 @@ import ProfilePost from "../../includes/community/community-profile/ProfilePost"
 import SkillsBox from "../../includes/community/community-profile/SkillsBox";
 import EducationBox from "../../includes/community/community-profile/EducationBox";
 import CertificateBox from "../../includes/community/community-profile/CertificateBox";
-import { accountsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import ProfileAboutSectionSkeleton from "../../includes/community/community-profile/ProfileAboutSectionSkeleton";
 import UnfollowModal from "../../includes/community/modals/UnfollowModal";
 

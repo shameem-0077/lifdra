@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import Jdenticon from "react-jdenticon";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { accountsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import FollowBT from "./FollowBT";
 import moment from "moment";
 

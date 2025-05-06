@@ -7,7 +7,7 @@ import Tick from "../../../../assets/images/meet/Verified-tick.svg";
 import CardImgs from "../../../../assets/images/meet/2.svg";
 import MeetButton from "../../includes/meet/MeetButton";
 import MeetSuccessModal from "../../includes/meet/MeetSuccessModal";
-import { learnConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import { ZoomMtg } from "@zoom/meetingsdk";
 import auth from "../../../routing/auth";
 import ReactPaginate from "react-paginate";

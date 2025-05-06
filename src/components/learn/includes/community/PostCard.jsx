@@ -18,7 +18,7 @@ import {
 } from "../../includes/community/RouteRegexPattern";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { primeprogramsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import PostTop from "./PostTop";
 
 function PostCard({

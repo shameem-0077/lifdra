@@ -4,7 +4,7 @@ import TermsService from "../general/TermsService";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import RequestLoader from "../general/RequestLoader";
 
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { connect, useSelector } from "react-redux";
 
 // Function used to get values from redux react

@@ -8,7 +8,7 @@ import JoinRouter from "./JoinRouter";
 import RouteLoading from "../RouteLoading";
 import { Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { accountsConfig } from "../../../axiosConfig";
+import { serverConfig } from "../../../axiosConfig";
 
 export default function AuthRouter() {
   return (

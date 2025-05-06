@@ -6,7 +6,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import RequestLoader from "../authentication/general/RequestLoader";
 import { useDispatch, useSelector } from "react-redux";
-import { learnConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import $ from "jquery";
 import { useHistory } from "react-router-dom";
 

@@ -5,7 +5,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import RequestLoader from "../general/RequestLoader";
 import FlagDropDown from "../general/FlagDropDown";
 import CountrySelector from "../general/CountrySelector";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { connect, useSelector } from "react-redux";
 import SignupLoader from "../../techschooling/general/loaders/SignupLoader";
 

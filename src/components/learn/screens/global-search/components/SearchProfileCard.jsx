@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import FollowBT from "../../../includes/community/FollowBT";
 import { useSelector } from "react-redux";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Jdenticon from "react-jdenticon";

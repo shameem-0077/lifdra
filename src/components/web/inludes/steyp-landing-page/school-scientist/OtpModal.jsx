@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 // import successTick from "../../../../../../assets/images/job-desk/success-tick.svg";
 import closeImage from "../../../../../assets/images/school-scientist/close.svg";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import ReCAPTCHA from "react-google-recaptcha";
 import RequestLoader from "../../../../learn/includes/authentication/general/RequestLoader";
 // import { manageConfig } from "../../../../../../axiosConfig";

@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 import bg from "../../../../../assets/images/leader-board/leaderboard-bg.svg";
-import { accountsConfig, learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 
 function DayLeaderBoard({ subject_slug }) {
   const user_data = useSelector((state) => state.user_data);

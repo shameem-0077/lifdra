@@ -8,7 +8,7 @@ import React, {
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import debounce from "lodash/debounce";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import SearchComponent from "../community-sidebox/SearchComponent";
 import UserFollowComponent from "../UserFollowComponent";
 import UserFollowSkeletonLoader from "../../../../general/loaders/skeltons/UserFollowSkeletonLoader";

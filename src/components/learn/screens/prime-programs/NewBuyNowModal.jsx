@@ -6,7 +6,7 @@ import loader from "../../../../assets/lotties/modal/buttonloader.json";
 import applyLoader from "../../../../assets/lotties/prime-progrmmes/voucherLoader.json";
 import Lottie from "react-lottie";
 import { PrimeProgramContext } from "../../../contexts/stores/PrimeProgramStore";
-import { primeprogramsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import queryString from "query-string";
 import SignupLoader from "../../includes/techschooling/general/loaders/SignupLoader";
 import VoucherModal from "./VoucherModal";

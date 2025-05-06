@@ -8,7 +8,7 @@ import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { TimePicker } from "@mui/lab";
 // import { DesktopTimePicker } from "@mui/x-date-pickers/DesktopTimePicker";
 import TextField from "@mui/material/TextField";
-import { learnConfig } from "../../../../../../axiosConfig";
+import { serverConfig } from "../../../../../../axiosConfig";
 import animationData from "../../../../../../assets/lotties/modal/successtick.json";
 import { getUserTimeFromUTC } from "../../../../../helpers/functions";
 import Lottie from "react-lottie";

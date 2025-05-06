@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Jdenticon from "react-jdenticon";
 import auth from "../../../../routing/auth";
 import { useNavigate, NavLink } from "react-router-dom";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { doc, getDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { db } from "../../../../../firebase";
 

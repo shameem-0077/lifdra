@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router";
 import styled from "styled-components";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { useAuthStore } from "../../../../../store/authStore";
 
 export default function CountrySelector({

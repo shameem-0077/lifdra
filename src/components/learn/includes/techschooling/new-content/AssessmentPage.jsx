@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useHistory, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import AssessmentPopup from "../assessments/modals/AssessmentPopup";
 import ObjectiveQuestion from "../assessments/modals/ObjectiveQuestion";
 import DescriptiveQuestion from "../assessments/modals/DescriptiveQuestion";

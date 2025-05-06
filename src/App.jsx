@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./assets/css/LineAwesome.css";
-import { accountsConfig, notificationsConfig } from "./axiosConfig";
+import { serverConfig } from "./axiosConfig";
 import AppRouter from "./components/routing/AppRouter";
 import auth from "./components/routing/auth";
 import RouteLoading from "./components/routing/RouteLoading";

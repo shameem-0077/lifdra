@@ -5,7 +5,7 @@ import { Link, useHistory } from "react-router-dom";
 import TermsService from "../general/TermsService";
 import OtpCard from "../general/OtpCard";
 import { connect, useSelector } from "react-redux";
-import { accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import RequestLoader from "../general/RequestLoader";
 
 import ColorLogo from "../general/ColorLogo";

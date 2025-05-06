@@ -6,7 +6,7 @@ import { ProfileRouteRegex, PostRouteRegex } from "./RouteRegexPattern";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { primeprogramsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 
 function PostCardContent({ item, isSinglePost }) {
   const navigate = useNavigate();

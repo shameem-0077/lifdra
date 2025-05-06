@@ -12,7 +12,7 @@ import ActivityCard from "../practices/ActivityCard";
 import EmptyActivityCard from "../practices/EmptyActivityCard";
 import { PracticeContext } from "../../../../contexts/stores/PracticeStore";
 
-import { learnConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { findObjectFromArray } from "../../../../helpers/functions";
 import EnrollPopup from "../general/EnrollPopup";
 import Loader from "../general/loaders/Loader";
