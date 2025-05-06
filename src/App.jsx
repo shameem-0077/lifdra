@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./assets/css/LineAwesome.css";
 import { serverConfig } from "./axiosConfig";
-import AppRouter from "./components/routing/AppRouter";
-import auth from "./components/routing/auth";
-import RouteLoading from "./components/routing/RouteLoading";
+import AppRouter from "./components/general/routes/AppRouter";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "react-magic-slider-dots/dist/magic-dots.css";
@@ -14,6 +12,9 @@ import { doc, getDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { useAuthStore } from "./store/authStore";
 import { useUIStore } from "./store/uiStore";
 import { useNotificationStore } from "./store/notificationStore";
+import RouteLoading from "./components/general/conponents/RouteLoading";
+import auth from "./utils/auth";
+
 
 let hidden = null;
 let visibilityChange = null;
