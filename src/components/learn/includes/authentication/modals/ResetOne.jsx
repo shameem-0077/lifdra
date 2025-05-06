@@ -7,7 +7,7 @@ import FlagDropDown from "../general/FlagDropDown";
 import CountrySelector from "../general/CountrySelector";
 import { serverConfig } from "../../../../../axiosConfig";
 import { connect, useSelector } from "react-redux";
-import SignupLoader from "../../techschooling/general/loaders/SignupLoader";
+import SignupLoader from "../../general/loaders/SignupLoader";
 
 // Function used to fetch values from redux react
 function mapStatetoProps(state) {

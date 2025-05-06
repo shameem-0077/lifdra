@@ -7,7 +7,6 @@ import RequestLoader from "../general/RequestLoader";
 import FlagDropDown from "../general/FlagDropDown";
 import CountrySelector from "../general/CountrySelector";
 import { serverConfig } from "../../../../../axiosConfig";
-import SignupLoader from "../../techschooling/general/loaders/SignupLoader";
 import { useAuthStore } from "../../../../../store/authStore";
 import ReCAPTCHA from "react-google-recaptcha";
 

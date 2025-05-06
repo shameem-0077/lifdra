@@ -9,7 +9,6 @@ import PostMain from "../../learn/screens/community/PostMain";
 import styled from "styled-components";
 import PostSideBar from "../../learn/screens/community/PostSideBar";
 import { serverConfig } from "../../../axiosConfig";
-import Loader from "../../learn/includes/techschooling/general/loaders/Loader";
 import ProfileSectionSkeleton from "../../learn/includes/community/community-profile/ProfileSectionSkeleton";
 import UnfollowModal from "../../learn/includes/community/modals/UnfollowModal";
 import {

@@ -19,7 +19,7 @@ import PasswordModal from "../authentication/modals/PasswordModal";
 import LoginWithOTPModal from "../authentication/modals/LoginWithOTPModal";
 import EnterPhoneModal from "../authentication/modals/EnterPhoneModal";
 import EnterOTPModal from "../authentication/modals/EnterOTPModal";
-import EnterNameModal from "../authentication/modals/version-2.0/EnterNameModal";
+import EnterNameModal from "../authentication/modals/EnterNameModal";
 import SetPasswordModal from "../authentication/modals/SetPasswordModal";
 import EnterTrialDistrict from "../authentication/modals/EnterTrialDistrict";
 import auth from "../../../routing/auth";
@@ -27,7 +27,6 @@ import HeaderTimer from "./HeaderTimer";
 import ResetOne from "../authentication/modals/ResetOne";
 import ResetTwo from "../authentication/modals/ResetTwo";
 import ResetThree from "../authentication/modals/ResetThree";
-import EnterBalanceDetails from "../authentication/modals/version-2.0/EnterBalanceDetails";
 import SearchModal from "./modals/SearchModal";
 import NavMenu from "./NavMenu";
 import NotificationBox from "./Notification/NotificationBox";
@@ -289,8 +288,6 @@ const Header = () => {
         default:
           return null;
       }
-    } else if (action === "techschooling") {
-      return <EnterBalanceDetails key="techschooling-modal" action={action} nextPath={nextPath} closeModal={closeModal} isOpen={true} />;
     }
     return null;
   };

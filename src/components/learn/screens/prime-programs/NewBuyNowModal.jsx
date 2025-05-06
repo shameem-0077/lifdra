@@ -8,7 +8,7 @@ import Lottie from "react-lottie";
 import { PrimeProgramContext } from "../../../contexts/stores/PrimeProgramStore";
 import { serverConfig } from "../../../../axiosConfig";
 import queryString from "query-string";
-import SignupLoader from "../../includes/techschooling/general/loaders/SignupLoader";
+import SignupLoader from "../../includes/general/loaders/SignupLoader";
 import VoucherModal from "./VoucherModal";
 import { useParams } from "react-router-dom";
 import { getDateStr } from "../../../helpers/functions";

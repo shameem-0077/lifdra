@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import $ from "jquery";
-import SignupLoader from "../../techschooling/general/loaders/SignupLoader";
+import SignupLoader from "../../general/loaders/SignupLoader";
 
 function CampusModal({ campusData }) {
     return (

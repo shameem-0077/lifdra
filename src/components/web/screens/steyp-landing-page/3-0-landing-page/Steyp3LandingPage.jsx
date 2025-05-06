@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import "../../../../../assets/css/web/style.css";
-import WebHeader from "../../../inludes/general/steyp-landing-page/WebHeader";
 import Footer from "../Footer";
-import TrialSpotlight from "../sat/TrialSpotlight";
-import JobDesk from "../new-landing-page/JobDesk";
-import SatSection from "../new-landing-page/SatSection";
-import BrandAmbassador from "../new-landing-page/BrandAmbassador";
-import EngineeringProgram from "../new-landing-page/EngineeringProgram";
-import OurSyllabus from "../new-landing-page/OurSyllabus";
 import TalropEdtechHelmet from "../../../../helpers/TalropEdtechHelmet";
 import Header from "../../../../learn/includes/general/Header";
 

@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import ProfileSlider from "../../../screens/community/ProfileSlider";
 import { serverConfig } from "../../../../../axiosConfig";
-import Loader from "../../techschooling/general/loaders/Loader";
 import plus from "../../../../../assets/images/profile-screen/plus.svg";
 import ProfilePostSliderSkeleton from "./ProfilePostSliderSkeleton";
 import CommunityNoDataFound from "../CommunityNoDataFound";
