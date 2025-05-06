@@ -19,7 +19,7 @@ const Workshop = () => {
 
 	const fetchWorkshop = () => {
 		let { access_token } = user_data;
-		learnConfig
+		serverConfig
 			.get(`workshops/new-content/workshops/`, {
 				headers: {
 					Authorization: `Bearer ${access_token}`,
@@ -27,10 +27,10 @@ const Workshop = () => {
 			})
 			.then((response) => {
 				setLoading(false);
-				let { StatusCode, data } = response.data;
-				if (StatusCode === 6000) {
+				let { status_code, data } = response.data;
+				if (status_code === 6000) {
 					setWorkshops(data);
-				} else if (StatusCode === 6001) {
+				} else if (status_code === 6001) {
 				}
 			})
 			.catch((error) => {

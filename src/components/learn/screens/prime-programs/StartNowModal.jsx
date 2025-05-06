@@ -21,7 +21,7 @@ const StartNowModal = ({ topicId, setTopicId, isStartNowModal, setStartNowModal 
     const startCourse = async () => {
         setButtonLoading(true);
         const { access_token } = user_data;
-        await primeprogramsConfig
+        await serverConfig
             .post(
                 `learning/start-course/${topicId}/`,
                 {},

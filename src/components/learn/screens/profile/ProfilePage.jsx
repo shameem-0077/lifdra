@@ -57,13 +57,13 @@ function ProfilePage({
 
   const fetchProfile = () => {
     let { access_token } = user_data;
-    accountsConfig
+    serverConfig
       .get("/api/v1/users/profile/", {
         headers: { Authorization: `Bearer ${access_token}` },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           setProfile(data);
         } else {
         }
@@ -74,18 +74,18 @@ function ProfilePage({
   const fetchSupportCount = () => {
     let { access_token } = user_data;
 
-    learnConfig
+    serverConfig
       .get("/support/support-count/", {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
+        const { status_code, data } = response.data;
 
-        if (StatusCode === 6000) {
+        if (status_code === 6000) {
           setSupportCount(data.support_count);
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
         }
       })
       .catch((error) => {});
@@ -94,18 +94,18 @@ function ProfilePage({
   const fetchPracticeCount = () => {
     let { access_token } = user_data;
 
-    learnConfig
+    serverConfig
       .get("practices/student-attended-practice-count/", {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
+        const { status_code, data } = response.data;
 
-        if (StatusCode === 6000) {
+        if (status_code === 6000) {
           setPracticeCount(data.practice_count);
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
         }
       })
       .catch((error) => {
@@ -116,18 +116,18 @@ function ProfilePage({
   const fetchAssessmentCount = () => {
     let { access_token } = user_data;
 
-    learnConfig
+    serverConfig
       .get("assessments/student-attended-assessment-count/", {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
+        const { status_code, data } = response.data;
 
-        if (StatusCode === 6000) {
+        if (status_code === 6000) {
           setAssessmentCount(data.assessment_count);
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
         }
       })
       .catch((error) => {});
@@ -136,18 +136,18 @@ function ProfilePage({
   const fetchWorkshopCount = () => {
     let { access_token } = user_data;
 
-    learnConfig
+    serverConfig
       .get("workshops/student-attended-workshop-count/", {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
+        const { status_code, data } = response.data;
 
-        if (StatusCode === 6000) {
+        if (status_code === 6000) {
           setWorkshopCount(data.workshop_count);
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
         }
       })
       .catch((error) => {});
@@ -156,13 +156,13 @@ function ProfilePage({
   // Not used now
   // const fetchPromotions = () => {
   //     let { access_token } = user_data;
-  //     learnConfig
+  //     serverConfig
   //         .get("/promotions/student-promotion/count/", {
   //             headers: { Authorization: `Bearer ${access_token}` },
   //         })
   //         .then((response) => {
-  //             const { StatusCode, data, message } = response.data;
-  //             if (StatusCode === 6000) {
+  //             const { status_code, data, message } = response.data;
+  //             if (status_code === 6000) {
   //                 setPromotions(data);
   //             }
   //         })
@@ -238,7 +238,7 @@ function ProfilePage({
         error_message: "",
         isLoading: true,
       });
-      accountsConfig
+      serverConfig
         .post(
           "/api/v1/users/set-email/",
           {
@@ -251,9 +251,9 @@ function ProfilePage({
           }
         )
         .then((response) => {
-          const { StatusCode, data } = response.data;
+          const { status_code, data } = response.data;
           let { message } = data;
-          if (StatusCode === 6000) {
+          if (status_code === 6000) {
             setEmailData({
               is_error: false,
               error_message: "",
@@ -292,7 +292,7 @@ function ProfilePage({
         error_message: "",
         isLoading: true,
       });
-      accountsConfig
+      serverConfig
         .post(
           "/api/v1/users/verify-email/",
           {
@@ -305,9 +305,9 @@ function ProfilePage({
           }
         )
         .then((response) => {
-          const { StatusCode, data } = response.data;
+          const { status_code, data } = response.data;
           let { message } = data;
-          if (StatusCode === 6000) {
+          if (status_code === 6000) {
             setEmailData({
               is_error: false,
               error_message: "",
@@ -354,7 +354,7 @@ function ProfilePage({
         error_message: "",
         isLoading: true,
       });
-      accountsConfig
+      serverConfig
         .post(
           `/api/v1/users/update-name/`,
           { name: name },
@@ -365,8 +365,8 @@ function ProfilePage({
           }
         )
         .then((response) => {
-          const { StatusCode, message } = response.data;
-          if (StatusCode === 6000) {
+          const { status_code, message } = response.data;
+          if (status_code === 6000) {
             setNameData({
               is_error: false,
               error_message: "",
@@ -380,7 +380,7 @@ function ProfilePage({
             updateUserProfile(user_profile_new);
             fetchProfile();
             setSuccessModal((prev) => !prev);
-          } else if (StatusCode === 6001) {
+          } else if (status_code === 6001) {
             setNameData({
               is_error: true,
               error_message: message,

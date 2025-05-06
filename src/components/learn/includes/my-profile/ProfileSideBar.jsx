@@ -154,14 +154,14 @@ class ProfileSideBar extends Component {
     if (user_data) {
       let { access_token } = user_data;
       if (access_token) {
-        accountsConfig
+        serverConfig
           .get("/api/v1/users/profile/", {
             params: { response_type: "minimal" },
             headers: { Authorization: `Bearer ${access_token}` },
           })
           .then((response) => {
-            const { StatusCode, data } = response.data;
-            if (StatusCode === 6000) {
+            const { status_code, data } = response.data;
+            if (status_code === 6000) {
               this.props.updateUserProfile(data);
               //this.props.userProfileLoader();
             } else {
@@ -212,7 +212,7 @@ class ProfileSideBar extends Component {
   };
 
   onLogout = (user_data) => {
-    accountsConfig
+    serverConfig
       .post(
         "/authentication/logout/",
         {},
@@ -223,9 +223,9 @@ class ProfileSideBar extends Component {
         }
       )
       .then((response) => {
-        const { StatusCode, data } = response.data;
+        const { status_code, data } = response.data;
 
-        if (StatusCode === 6000) {
+        if (status_code === 6000) {
           // Handle successful logout
           this.removeChatUser(user_data);
         } else {

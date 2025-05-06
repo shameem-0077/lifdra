@@ -132,15 +132,15 @@ function PurchasedTopic() {
     );
 
     const getCourse = () => {
-        primeprogramsConfig
+        serverConfig
             .get(`learning/get-course/${topic_pk}/`, {
                 headers: {
                     Authorization: `Bearer ${user_data.access_token}`,
                 },
             })
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     history.push(`/prime-programs/${data.course}/info/`);
                 } else {
                     history.push(`/prime-programs/`);
@@ -152,7 +152,7 @@ function PurchasedTopic() {
     useEffect(() => {
         const { access_token } = user_data;
         const fetchData = async () => {
-            await primeprogramsConfig
+            await serverConfig
                 .get(`learning/topic/${topic_pk}/`, {
                     headers: {
                         Authorization: `Bearer ${access_token}`,
@@ -180,15 +180,15 @@ function PurchasedTopic() {
     const markCurrentTopic = (pk) => {
         setLoading(true);
         const { access_token } = user_data;
-        primeprogramsConfig
+        serverConfig
             .get(`learning/topic/set/current-topic/${pk}/`, {
                 headers: {
                     Authorization: `Bearer ${access_token}`,
                 },
             })
             .then((response) => {
-                const { StatusCode } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code } = response.data;
+                if (status_code === 6000) {
                     setLoading(false);
                 } else {
                     setLoading(false);
@@ -204,15 +204,15 @@ function PurchasedTopic() {
         const { access_token } = user_data;
         if (!isWatched && !isMarkAsLoading) {
             setMarkasLoading(true);
-            primeprogramsConfig
+            serverConfig
                 .get(`learning/topic/mark/viewed/${topic_pk}/`, {
                     headers: {
                         Authorization: `Bearer ${access_token}`,
                     },
                 })
                 .then((response) => {
-                    const { StatusCode, data } = response.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, data } = response.data;
+                    if (status_code === 6000) {
                         setWatched(true);
                         setMarkasLoading(false);
                         if (data.is_course_completed) {
@@ -235,15 +235,15 @@ function PurchasedTopic() {
     useEffect(() => {
         const fetchData = () => {
             let access_token = user_data.access_token;
-            primeprogramsConfig
+            serverConfig
                 .get(`learning/lessons/${topic.course}/`, {
                     headers: {
                         Authorization: `Bearer ${access_token}`,
                     },
                 })
                 .then((response) => {
-                    const { StatusCode, data } = response.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, data } = response.data;
+                    if (status_code === 6000) {
                         setLessons(data);
                     }
                 })

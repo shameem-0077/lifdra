@@ -16,14 +16,14 @@ function NewContent(props) {
 	useEffect(() => {
 		let { access_token } = user_data;
 
-		learnConfig
+		serverConfig
 			.get(`/learn/new-content/skills/tech-schooling/`, {
 				headers: { Authorization: `Bearer ${access_token}` },
 			})
 			.then((response) => {
 				setLoading(false);
-				let { StatusCode, data } = response.data;
-				if (StatusCode === 6000) {
+				let { status_code, data } = response.data;
+				if (status_code === 6000) {
 					setSkills(data);
 					let list = [];
 					data.forEach((item) => {

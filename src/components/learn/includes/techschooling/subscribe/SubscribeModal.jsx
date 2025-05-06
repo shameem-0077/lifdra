@@ -89,14 +89,14 @@ export default function SubscribeModal({
             let { access_token } = user_data;
             setSubscriptionLoading(true);
             if (access_token) {
-                learnConfig
+                serverConfig
                     .get("subscriptions/vacation-plan/", {
                         headers: { Authorization: `Bearer ${access_token}` },
                     })
                     .then((response) => {
                         setSubscriptionLoading(false);
-                        const { StatusCode, data } = response.data;
-                        if (StatusCode === 6000) {
+                        const { status_code, data } = response.data;
+                        if (status_code === 6000) {
                             setPlans(data);
                         }
                     })
@@ -107,17 +107,17 @@ export default function SubscribeModal({
         const verifyPlan = (plan) => {
             let { access_token } = user_data;
             if (access_token) {
-                learnConfig
+                serverConfig
                     .get(`/subscriptions/verify/coins/${plan}/`, {
                         headers: { Authorization: `Bearer ${access_token}` },
                     })
                     .then((response) => {
                         setCoinsLoading(false);
-                        const { StatusCode, data } = response.data;
+                        const { status_code, data } = response.data;
                         setCoinStatus(data);
-                        if (StatusCode === 6000) {
+                        if (status_code === 6000) {
                             setCoinStatus(data);
-                        } else if (StatusCode === 6001) {
+                        } else if (status_code === 6001) {
                         }
                     })
                     .catch((error) => console.log(error));
@@ -174,14 +174,14 @@ export default function SubscribeModal({
 
     const getSubscription = () => {
         let { access_token } = user_data;
-        learnConfig
+        serverConfig
             .get(`/subscriptions/info/minimal/`, {
                 headers: { Authorization: `Bearer ${access_token}` },
             })
             .then((response) => {
-                const { StatusCode, data } = response.data;
+                const { status_code, data } = response.data;
 
-                if (StatusCode === 6000) {
+                if (status_code === 6000) {
                     setSubscription(data);
                     dispatch({
                         type: "UPDATE_USER_DATA",
@@ -191,7 +191,7 @@ export default function SubscribeModal({
                         },
                     });
                     fetchProfile();
-                } else if (StatusCode === 6001) {
+                } else if (status_code === 6001) {
                 }
             })
             .catch((error) => {});
@@ -202,7 +202,7 @@ export default function SubscribeModal({
         setPlanDetailsLoading(true);
 
         if (access_token) {
-            learnConfig
+            serverConfig
                 .get(`/subscriptions/plan/${plan}/`, {
                     headers: {
                         Authorization: `Bearer ${access_token}`,
@@ -211,8 +211,8 @@ export default function SubscribeModal({
                 .then((response) => {
                     setPlanDetailsLoading(false);
 
-                    const { StatusCode, data } = response.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, data } = response.data;
+                    if (status_code === 6000) {
                         setPlanDetails(data);
                     }
                 })
@@ -224,7 +224,7 @@ export default function SubscribeModal({
         e.preventDefault();
         setCoinsLoading(true);
         let { access_token } = user_data;
-        learnConfig
+        serverConfig
             .post(
                 `/subscriptions/start/${plan}/`,
                 {
@@ -236,8 +236,8 @@ export default function SubscribeModal({
                 { headers: { Authorization: `Bearer ${access_token}` } }
             )
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     setCoinsLoading(false);
                     setResponseType("success");
                     setSuccessTitle("Payment successfull");
@@ -247,7 +247,7 @@ export default function SubscribeModal({
                             data.event ? `&event=${event}` : ``
                         }`,
                     });
-                } else if (StatusCode === 6001) {
+                } else if (status_code === 6001) {
                     if (data.data.is_insufficient_coins) {
                         window.location.href = data.data.payment_link;
                     } else {
@@ -265,7 +265,7 @@ export default function SubscribeModal({
 
     const fetchProfile = () => {
         let { access_token } = user_data;
-        accountsConfig
+        serverConfig
             .get("/api/v1/users/profile/", {
                 params: {
                     response_type: "minimal",
@@ -275,8 +275,8 @@ export default function SubscribeModal({
                 },
             })
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     dispatch({
                         type: "UPDATE_USER_PROFILE",
                         user_profile: data,

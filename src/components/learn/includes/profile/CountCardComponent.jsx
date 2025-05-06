@@ -35,14 +35,14 @@ export default function CountCardComponent() {
 
     const fetchData = () => {
         let { access_token } = user_data;
-        learnConfig
+        serverConfig
             .get("general/student-activities-count/", {
                 headers: {
                     Authorization: `Bearer ${access_token}`,
                 },
             })
             .then((response) => {
-                let { StatusCode, data } = response.data;
+                let { status_code, data } = response.data;
                 setCounts(data);
             });
     };

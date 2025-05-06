@@ -3,7 +3,7 @@ import styled from "styled-components";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import CardSlider from "react-slick";
-import { communityConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 
 export default function Experts() {
     const [page, setPage] = useState(1);
@@ -24,15 +24,15 @@ export default function Experts() {
     
     useEffect(() => {
         const fetchData = () => {
-            communityConfig
+            serverConfig
                 .get("/team/team-members/tech-schooling/", {
                     params: {
                         page: page,
                     },
                 })
                 .then((response) => {
-                    const { StatusCode, data, pagination_data } = response.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, data, pagination_data } = response.data;
+                    if (status_code === 6000) {
                         setTeam((prev) => prev.concat(data));
                         setPagination(pagination_data);
                     }

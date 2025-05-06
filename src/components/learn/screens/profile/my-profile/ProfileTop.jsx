@@ -49,7 +49,7 @@ function ProfileTop({ userProfileDetails, setReload, handleSocialMedia }) {
       const formData = new FormData();
       formData.append("designation", designation); // Add designation to the form data
 
-      const response = await accountsConfig.post(
+      const response = await serverConfig.post(
         "api/v1/users/update-designation/",
         formData,
         {
@@ -89,7 +89,7 @@ function ProfileTop({ userProfileDetails, setReload, handleSocialMedia }) {
         formData.append("photo", compressedImage);
       }
 
-      const response = await accountsConfig.post(
+      const response = await serverConfig.post(
         "api/v1/users/update-photo/",
         formData,
         {
@@ -97,11 +97,11 @@ function ProfileTop({ userProfileDetails, setReload, handleSocialMedia }) {
         }
       );
 
-      const { StatusCode, message } = response.data;
+      const { status_code, message } = response.data;
 
       setLoading(false);
 
-      if (StatusCode === 6000) {
+      if (status_code === 6000) {
         setProfileImage(null);
         setToastMessage(message?.message);
         setToastCondition("warning");

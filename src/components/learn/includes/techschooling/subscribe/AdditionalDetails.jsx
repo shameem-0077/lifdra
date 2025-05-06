@@ -59,11 +59,11 @@ function AdditionalDetails({
     //countries fetch api call
     useEffect(() => {
         const fetchCountries = () => {
-            accountsConfig
+            serverConfig
                 .get("/api/v1/users/settings/countries/")
                 .then((response) => {
-                    let { StatusCode, data } = response.data;
-                    if (StatusCode === 6000) {
+                    let { status_code, data } = response.data;
+                    if (status_code === 6000) {
                         setData(data);
                     }
                 })
@@ -78,13 +78,13 @@ function AdditionalDetails({
     useEffect(() => {
         const fetchStates = () => {
             const { access_token } = user_data;
-            accountsConfig
+            serverConfig
                 .get("/general/list-states", {
                     headers: { Authorization: `Bearer ${access_token}` },
                 })
                 .then((response) => {
-                    let { StatusCode, data } = response.data;
-                    if (StatusCode === 6000) {
+                    let { status_code, data } = response.data;
+                    if (status_code === 6000) {
                         setStatesData(data);
                     }
                 })

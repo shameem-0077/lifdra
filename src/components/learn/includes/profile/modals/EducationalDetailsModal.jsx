@@ -170,7 +170,7 @@ export default function EducationalDetailsModal({ isOffline }) {
                 : null;
             console.log("create-new-student-academic-history");
 
-            accountsConfig
+            serverConfig
                 .post(
                     "api/v1/users/create-new-student-academic-history/",
                     {
@@ -190,9 +190,9 @@ export default function EducationalDetailsModal({ isOffline }) {
                     }
                 )
                 .then((response) => {
-                    const { StatusCode, data, message } = response.data;
+                    const { status_code, data, message } = response.data;
                     setLoading(false);
-                    if (StatusCode === 6000) {
+                    if (status_code === 6000) {
                         handleSuccess();
                     } else {
                         setErrorMessage(message?.message);
@@ -224,7 +224,7 @@ export default function EducationalDetailsModal({ isOffline }) {
                 ? selectedSpecialities?.id
                 : "";
 
-            accountsConfig
+            serverConfig
                 .post(
                     `api/v1/users/update-academic-history/${selectedEditingMyProfileData?.id}/`,
                     {
@@ -244,9 +244,9 @@ export default function EducationalDetailsModal({ isOffline }) {
                     }
                 )
                 .then((response) => {
-                    const { StatusCode, data, message } = response.data;
+                    const { status_code, data, message } = response.data;
                     setLoading(false);
-                    if (StatusCode === 6000) {
+                    if (status_code === 6000) {
                         handleSuccess();
                         dispatch({
                             type: "UPDATE_MY_PROFILE_EDITING_DATA",
@@ -267,15 +267,15 @@ export default function EducationalDetailsModal({ isOffline }) {
 
     const getSchoolsList = (searchValue) => {
         setSchoolsLoading(true);
-        accountsConfig
+        serverConfig
             .get(`api/v1/campuses/schools/?q=${searchValue}`, {
                 headers: {
                     Authorization: `Bearer ${access_token}`,
                 },
             })
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     setAllSchools(data);
                     setSchoolsLoading(false);
                 } else {
@@ -292,15 +292,15 @@ export default function EducationalDetailsModal({ isOffline }) {
 
     const getStudentClassList = () => {
         setDegreeLoading(true);
-        accountsConfig
+        serverConfig
             .get("api/v1/campuses/student-classes/", {
                 headers: {
                     Authorization: `Bearer ${access_token}`,
                 },
             })
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     setStudentClass(data);
                     setDegreeLoading(false);
                 } else {
@@ -317,7 +317,7 @@ export default function EducationalDetailsModal({ isOffline }) {
     const getStudentSpecialities = (searchValue) => {
         setSpecialityLoading(true);
 
-        accountsConfig
+        serverConfig
             .get(
                 `api/v1/campuses/student-specialities/?q=${
                     searchValue ? searchValue : ""
@@ -329,8 +329,8 @@ export default function EducationalDetailsModal({ isOffline }) {
                 }
             )
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     setSpecialities(data);
                     setSpecialityLoading(false);
                 } else {
@@ -357,7 +357,7 @@ export default function EducationalDetailsModal({ isOffline }) {
             )
                 ? selectedSpecialities?.id
                 : "";
-            accountsConfig
+            serverConfig
                 .post(
                     "api/v1/users/campus-verification/create/",
                     {
@@ -377,9 +377,9 @@ export default function EducationalDetailsModal({ isOffline }) {
                     }
                 )
                 .then((response) => {
-                    const { StatusCode, message } = response.data;
+                    const { status_code, message } = response.data;
 
-                    if (StatusCode === 6000) {
+                    if (status_code === 6000) {
                         handleSuccess();
                         setLoading(false);
                     } else {
@@ -406,7 +406,7 @@ export default function EducationalDetailsModal({ isOffline }) {
             )
                 ? selectedSpecialities?.id
                 : "";
-            accountsConfig
+            serverConfig
                 .post(
                     `api/v1/users/campus-verification/update/${selectedEditingMyProfileData?.id}/`,
                     {
@@ -428,9 +428,9 @@ export default function EducationalDetailsModal({ isOffline }) {
                     }
                 )
                 .then((response) => {
-                    const { StatusCode, message } = response.data;
+                    const { status_code, message } = response.data;
 
-                    if (StatusCode === 6000) {
+                    if (status_code === 6000) {
                         handleSuccess();
                         setLoading(false);
                     } else {

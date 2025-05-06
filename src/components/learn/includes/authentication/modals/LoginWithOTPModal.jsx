@@ -96,7 +96,7 @@ function LoginWithOTPModal(props) {
   };
 
   const fetchProfile = (access_token) => {
-    accountsConfig
+    serverConfig
       .get("/api/v1/users/profile/", {
         params: {
           response_type: "minimal",
@@ -106,8 +106,8 @@ function LoginWithOTPModal(props) {
         },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           props.updateUserProfile(data);
         } else {
         }
@@ -116,14 +116,14 @@ function LoginWithOTPModal(props) {
   };
 
   const firebaseAuthenticate = (user_data, name, access_token) => {
-    accountsConfig
+    serverConfig
       .get("/api/v1/users/firebase/auth/login/", {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
+        const { status_code, data } = response.data;
 
         const token = data.token;
         signInWithCustomToken(firebaseAuth, token)
@@ -188,8 +188,8 @@ function LoginWithOTPModal(props) {
         setLoading(true);
 
         //user_data, service and otp is passed to the url
-        accountsConfig
-          .post("/authentication/login/verify/otp/", {
+        serverConfig
+          .post("/api/v1/users/login/verify/otp/", {
             otp: otpNumber,
             service: "learn",
             country: user_data.selectedCountry.web_code,
@@ -197,9 +197,9 @@ function LoginWithOTPModal(props) {
           })
 
           .then((response) => {
-            //From response.data the message and statuscode  will be taken.
-            const { StatusCode, message, signup_type } = response.data;
-            if (StatusCode === 6000) {
+            //From response.data the message and status_code  will be taken.
+            const { status_code, message, signup_type } = response.data;
+            if (status_code === 6000) {
               //stopped the loading function
               setUserDetails(response.data).then((resp) => {
                 auth.login(() => {
@@ -212,7 +212,7 @@ function LoginWithOTPModal(props) {
                   navigate("/feed/");
                 }
               });
-            } else if (StatusCode === 6001) {
+            } else if (status_code === 6001) {
               //When status is invalid error message will be saved in setState.
               setError(true);
               setErrorMessage(message);
@@ -247,7 +247,7 @@ function LoginWithOTPModal(props) {
     const token = await recaptchaRef.current.executeAsync();
 
     //user_data, service and country is passed through the url
-    accountsConfig
+    serverConfig
       .post("/authentication/login/resend/otp/", {
         country: user_data.selectedCountry.web_code,
         service: "learn",
@@ -256,13 +256,13 @@ function LoginWithOTPModal(props) {
       })
 
       .then((response) => {
-        //From response.data the message and statuscode  will be taken.
-        const { StatusCode, message } = response.data;
-        if (StatusCode === 6000) {
+        //From response.data the message and status_code  will be taken.
+        const { status_code, message } = response.data;
+        if (status_code === 6000) {
           //stopped the loading function
           setResendLoading(false);
           setResendSuccess(true);
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
           //When status is invalid error message will be saved in setState.
           setResendLoading(false);
           setResendSuccess(false);

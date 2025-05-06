@@ -51,15 +51,15 @@ function MyProfileRouter() {
 
   const getMyProfileDetails = () => {
     setLoading(true);
-    accountsConfig
+    serverConfig
       .get("/api/v1/users/profile/", {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           setUserProfileDetails(data);
 
           setLoading(false);

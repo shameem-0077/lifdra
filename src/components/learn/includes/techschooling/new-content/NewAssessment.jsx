@@ -14,7 +14,7 @@ const NewAssessment = () => {
 	const dispatch = useDispatch();
 	useEffect(() => {
 		let { access_token } = user_data;
-		learnConfig
+		serverConfig
 			.get(`/assessments/new-content/assessments/`, {
 				headers: {
 					Authorization: `Bearer ${access_token}`,
@@ -22,10 +22,10 @@ const NewAssessment = () => {
 			})
 			.then((response) => {
 				setLoading(false);
-				let { StatusCode, data } = response.data;
-				if (StatusCode === 6000) {
+				let { status_code, data } = response.data;
+				if (status_code === 6000) {
 					setAssessments(data);
-				} else if (StatusCode === 6001) {
+				} else if (status_code === 6001) {
 					setError(false);
 				}
 			})

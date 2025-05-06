@@ -61,7 +61,7 @@ function PasswordModal() {
     };
 
     const fetchProfile = (access_token) => {
-        accountsConfig
+        serverConfig
             .get("/api/v1/users/profile/", {
                 params: {
                     response_type: "minimal",
@@ -71,8 +71,8 @@ function PasswordModal() {
                 },
             })
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     updateUserProfile(data);
                 } else {
                 }
@@ -81,7 +81,7 @@ function PasswordModal() {
     };
 
     const firebaseAuthenticate = (user_data, name, access_token, pk) => {
-        accountsConfig
+        serverConfig
             .get("/api/v1/users/firebase/auth/login/", {
                 headers: {
                     Authorization: `Bearer ${access_token}`,
@@ -153,46 +153,55 @@ function PasswordModal() {
         }
         if (user_data.phone) {
             if (password) {
-                //After submission of userdata loading will starts.
                 setLoading(true);
 
-                //password, service and phone is passed to the url
-                accountsConfig
-                    .post("/authentication/login/verify/", {
+                serverConfig
+                    .post("/api/v1/users/login/verify/", {
                         password: password,
                         service: "learn",
                         phone: user_data.phone,
                         country: user_data.selectedCountry.web_code,
                     })
                     .then(async (response) => {
-                        //From response.data the message and status code  will be taken.
-                        const { StatusCode, message, data, signup_type } =
-                            response.data;
-                        if (StatusCode === 6000) {
+                        const { status_code, data, message } = response.data;
+                        if (status_code === 6000) {
                             if (data?.redirect_url) {
                                 setCampusData(data);
                                 setTimeout(() => {
-                                    window.location.href = `https://${
-                                        data.redirect_url
-                                    }`;
+                                    window.location.href = `https://${data.redirect_url}`;
                                 }, 1000);
                             } else {
-                                setUserDetails(data);
-                                auth.login(data.response.access_token);
+                                // Create user data object from the response
+                                const userData = {
+                                    access_token: data.access_token,
+                                    name: data.user_data.name,
+                                    phone: data.user_data.phone,
+                                    is_verified: true,
+                                    pk: data.user_data.id,
+                                    ...data.user_data
+                                };
+                                
+                                // Update user data in store
+                                updateUserData(userData);
+                                
+                                // Set auth token
+                                auth.login(data.access_token);
+                                
+                                // Navigate to feed
                                 navigate("/feed/");
                             }
                         } else {
                             setLoading(false);
                             setError(true);
-                            setErrorMessage(message);
+                            setErrorMessage(message?.message || "Login failed");
                         }
                     })
                     .catch((error) => {
                         setLoading(false);
                         setError(true);
                         setErrorMessage(
-                            error.response?.data?.message ||
-                                "Something went wrong"
+                            error.response?.data?.message?.message ||
+                            "Something went wrong"
                         );
                     });
             } else {
@@ -207,21 +216,21 @@ function PasswordModal() {
 
         const token = await recaptchaRef.current.executeAsync();
         //Country, service and phone is passed to the url
-        accountsConfig
-            .post("/authentication/login/enter/otp/", {
+        serverConfig
+            .post("/api/v1/users/login/enter/otp/", {
                 country: user_data.selectedCountry.web_code,
                 service: "learn",
                 phone: user_data.phone,
                 "g-recaptcha-response": token,
             })
             .then((response) => {
-                //From response.data the message and statuscode  will be taken.
-                const { StatusCode, message } = response.data;
-                if (StatusCode === 6000) {
+                //From response.data the message and status_code  will be taken.
+                const { status_code, message } = response.data;
+                if (status_code === 6000) {
                     setLoading(false);
                     navigate(`${location.pathname}?action=otp`);
                     //When status code reads true it will redirect to the next page.
-                } else if (StatusCode === 6001) {
+                } else if (status_code === 6001) {
                     //When status is invalid error message will be saved in setState.
                     setLoading(false);
                     setError(true);

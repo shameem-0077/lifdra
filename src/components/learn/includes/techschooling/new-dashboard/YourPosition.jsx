@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { studentActivitiesConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Avatar from "react-avatar";
@@ -11,14 +11,14 @@ function YourPosition({ subject_slug }) {
   const access_token = user_data.access_token;
   const name = user_data.name;
   useEffect(() => {
-    studentActivitiesConfig
+    serverConfig
       .get("leader-boards/my-position/", {
         headers: {
           authorization: `Bearer ${access_token}`,
         },
       })
       .then(function (res) {
-        if (res.data.StatusCode == 6000) {
+        if (res.data.status_code == 6000) {
           setMyData(res.data.data);
         }
       });

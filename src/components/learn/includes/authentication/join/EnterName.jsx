@@ -79,7 +79,7 @@ const EnterName = (props) => {
                 setLoading(true);
 
                 //name, service and authorization is passed through the url
-                accountsConfig
+                serverConfig
                     .post(
                         "/authentication/signup/set/name/",
                         {
@@ -96,9 +96,9 @@ const EnterName = (props) => {
                     )
 
                     .then((response) => {
-                        //From response.data the message and statuscode  will be taken.
-                        const { StatusCode, message } = response.data;
-                        if (StatusCode === 6000) {
+                        //From response.data the message and status_code  will be taken.
+                        const { status_code, message } = response.data;
+                        if (status_code === 6000) {
                             setLoading(false);
                             //When status code reads true it will redirect to the next page.
                             history.push("/auth/join/set/password/");
@@ -108,7 +108,7 @@ const EnterName = (props) => {
                                 name: name,
                                 password: null,
                             });
-                        } else if (StatusCode === 6001) {
+                        } else if (status_code === 6001) {
                             //When status is invalid error message will be saved in setState.
                             setLoading(false);
                             setError(true);

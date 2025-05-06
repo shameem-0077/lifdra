@@ -19,7 +19,7 @@ const ProgramSubject = ({ subject, isOffline }) => {
             setErrorMessage("Check your network connection");
         } else {
             setLoading(true);
-            accountsConfig
+            serverConfig
                 .post(
                     `/api/v1/users/update-student-subject/${subject?.id}/`,
                     {
@@ -31,8 +31,8 @@ const ProgramSubject = ({ subject, isOffline }) => {
                 )
                 .then((response) => {
                     setLoading(false);
-                    const { StatusCode, message } = response.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, message } = response.data;
+                    if (status_code === 6000) {
                         updateUserData({ selected_editing_my_profile_data: {} });
                     } else {
                         setErrorMessage(message?.message);

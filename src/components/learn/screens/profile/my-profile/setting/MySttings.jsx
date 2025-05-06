@@ -4,8 +4,8 @@ import styled from "styled-components";
 import LanguageSettings from "./component/LanguageSettings";
 import NotificationSettings from "./component/NotificationSettings";
 import {
-  accountsConfig,
-  notificationsConfig,
+  serverConfig,
+  serverConfig,
 } from "../../../../../../axiosConfig";
 import { useSelector } from "react-redux";
 
@@ -51,7 +51,7 @@ function MySttings() {
     formData.append(key_slug, Language?.name.toLowerCase());
 
     try {
-      const response = await accountsConfig.post(
+      const response = await serverConfig.post(
         "api/v1/users/profile/change/user-preffered-language/",
         formData,
         {
@@ -73,7 +73,7 @@ function MySttings() {
 
   const fetchNotificationSettings = async () => {
     try {
-      const response = await notificationsConfig.get(
+      const response = await serverConfig.get(
         "/main/list-notifications-groups/",
         {
           headers: { Authorization: `Bearer ${access_token}` },
@@ -108,7 +108,7 @@ function MySttings() {
 
   const handleNotification = async (id) => {
     try {
-      const response = await notificationsConfig.post(
+      const response = await serverConfig.post(
         `main/add-user-preference-notification/${id}/`,
         null, // No body required for this API
         {
@@ -133,7 +133,7 @@ function MySttings() {
   useEffect(() => {
     const fetchLanguage = async () => {
       try {
-        const response = await accountsConfig.get("/general/all-languages/", {
+        const response = await serverConfig.get("/general/all-languages/", {
           headers: {
             Authorization: `Bearer ${access_token}`,
           },
@@ -141,8 +141,8 @@ function MySttings() {
             type: "content_languages",
           },
         });
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           setSettingData(data);
         } else {
         }
@@ -150,7 +150,7 @@ function MySttings() {
     };
     const fetchprefferedLanguage = async () => {
       try {
-        const response = await accountsConfig.get(
+        const response = await serverConfig.get(
           "/api/v1/users/profile/list/user-preffered-language/",
           {
             headers: { Authorization: `Bearer ${access_token}` },

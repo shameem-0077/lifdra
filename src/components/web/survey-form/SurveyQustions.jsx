@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import styled from "styled-components";
-import { manageConfig } from "../../../axiosConfig";
+import { serverConfig } from "../../../axiosConfig";
 import RequestLoader from "../../learn/includes/authentication/general/RequestLoader";
 import SurveySuccessModal from "./SurveySuccessModal";
 
@@ -81,12 +81,12 @@ function SurveyQustions() {
 
   useEffect(() => {
     const fetchdata = () => {
-      manageConfig
+      serverConfig
         .get("surveys/questions/")
         .then(function (response) {
-          let { StatusCode, data, survey } = response.data;
+          let { status_code, data, survey } = response.data;
 
-          if (StatusCode === 6000) {
+          if (status_code === 6000) {
             setSurveyData(data);
             setPk(survey);
           }
@@ -127,18 +127,18 @@ function SurveyQustions() {
             : item.answer,
       };
     });
-    manageConfig
+    serverConfig
       .post(`surveys/submit-answer/${ispk}/`, {
         survey_list: answers,
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           setSuccessModal(true);
           setLoading(false);
           clearForm();
           setErrorMsg(false);
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
           // clearForm();
           setLoading(false);
           // setErrorMsg(response.data.message);

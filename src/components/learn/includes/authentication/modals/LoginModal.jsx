@@ -1,7 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import styled from "styled-components";
-import TermsService from "../general/TermsService";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import TermsService from "../general/TermsService";
 import RequestLoader from "../general/RequestLoader";
 import FlagDropDown from "../general/FlagDropDown";
 import CountrySelector from "../general/CountrySelector";
@@ -9,212 +9,185 @@ import { serverConfig } from "../../../../../axiosConfig";
 import SignupLoader from "../../techschooling/general/loaders/SignupLoader";
 import { useAuthStore } from "../../../../../store/authStore";
 
+// Constants
+const DEFAULT_COUNTRY = {
+  name: "India",
+  phone_code: "91",
+  number_length: 10,
+  web_code: "IN",
+  selected: false,
+  country_code: "IND",
+  flag: "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/flags/india.svg",
+};
+
+const PHONE_REGEX = /^[0-9\b]+$/;
+
 function LoginModal() {
   const navigate = useNavigate();
   const location = useLocation();
   const updateUserData = useAuthStore((state) => state.updateUserData);
 
-  const [country_details] = useState([
-    {
-      name: "India",
-      phone_code: "91",
-      number_length: 10,
-      web_code: "IN",
-      selected: false,
-      country_code: "IND",
-      flag: "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/flags/india.svg",
-    },
-  ]);
-
-  //storing selcted country to state
-  const [selectedCountry, setSelectedCountry] = useState("");
-
+  // State management
+  const [selectedCountry, setSelectedCountry] = useState(DEFAULT_COUNTRY);
   const [phone, setPhone] = useState("");
   const [countryselector, setCountryselector] = useState(false);
-  const [error, setError] = useState(false);
-  const [error_message, setErrorMessage] = useState("");
+  const [error, setError] = useState({ show: false, message: "" });
   const [isLoading, setLoading] = useState(false);
 
-  const handleShow = () => {
-    setCountryselector((prevValue) => !prevValue);
-  };
+  // Memoize country details to prevent unnecessary re-renders
+  const countryDetails = useMemo(() => [DEFAULT_COUNTRY], []);
 
-  const handleClose = () => {
-    // Remove the action=login from the URL and navigate back
-    const newPath = location.pathname;
-    navigate(newPath);
-  };
+  // Handlers
+  const handleClose = useCallback(() => {
+    navigate(location.pathname);
+  }, [navigate, location.pathname]);
 
-  //Preventing "Enter" key function
-  const handleKeyDown = (e) => {
+  const handleKeyDown = useCallback((e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      verifyService();
+      handleLogin();
     } else if (e.keyCode === 69) {
       e.preventDefault();
     }
-  };
+  }, []);
 
-  //Veryfing "learn" service
-  const verifyService = (e) => {
-    if (e) {
-      e.preventDefault();
+  const handlePhoneChange = useCallback((e) => {
+    setError({ show: false, message: "" });
+    const value = e.target.value;
+    if (value === "" || PHONE_REGEX.test(value)) {
+      setPhone(value);
     }
-    if (phone) {
-      setLoading(true);
-      //Service is passed to the url
-      accountsConfig
-        .get("/authentication/request/login/", {
-          params: {
-            service: "learn",
-          },
-        })
-        .then((response) => {
-          const { StatusCode, message } = response.data;
-          if (StatusCode === 6000) {
-            onEnter();
-          } else if (StatusCode === 6001) {
-            setLoading(false);
-            setError(true);
-            setErrorMessage(message);
-          }
-        })
-        .catch((error) => {
-          setLoading(false);
-          setError(true);
-          setErrorMessage("An error occurred, please try again later");
-        });
-    } else {
-      setError(true);
-      setErrorMessage("This field cannot be empty.");
-    }
-  };
+  }, []);
 
-  const onEnter = async () => {
-    //Service, country and phone is passed to the url
-    accountsConfig
-      .post("/authentication/login/enter/", {
+  const handleCountrySelect = useCallback((selected) => {
+    setSelectedCountry(selected);
+    updateUserData({ selectedCountry: selected });
+    setCountryselector(false); // Close selector after selection
+  }, [updateUserData]);
+
+  const toggleCountrySelector = useCallback(() => {
+    setCountryselector(prev => !prev);
+  }, []);
+
+  const handleLogin = useCallback(async () => {
+    if (!phone) {
+      setError({ show: true, message: "This field cannot be empty." });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await serverConfig.post("/api/v1/users/login/enter/", {
         country: selectedCountry.web_code,
         service: "learn",
         phone: phone,
-      })
-      .then((response) => {
-        //From response.data the message and statuscode  will be taken.
-        const { StatusCode, message } = response.data;
-        if (StatusCode === 6000) {
-          navigate(`${location.pathname}?action=password`);
-          setLoading(false);
-          updateUserData({
-            phone,
-            selectedCountry,
-          });
-        } else if (response.data.StatusCode === 6001) {
-          setLoading(false);
-          setError(true);
-          setErrorMessage(message);
-          if (message === "User Not Exists") {
-            navigate(`${location.pathname}?action=phone${phone ? `&phone=${phone}` : ""}`);
-          }
-        }
-      })
-      .catch((error) => {
-        setLoading(false);
-        //Saved error message will be shown.
-        setError(true);
-        setErrorMessage("An error occurred, please try again later");
       });
-  };
 
-  //Validating the function of entering the phone number
-  const onChange = (e) => {
-    setError(false);
-    const re = /^[0-9\b]+$/;
-    if (e.target.value === "" || re.test(e.target.value)) {
-      setPhone(e.target.value);
+      const { status_code, message } = response.data;
+      if (status_code === 6000) {
+        navigate(`${location.pathname}?action=password`);
+        setLoading(false);
+        updateUserData({ phone, selectedCountry });
+      } else {
+        // Handle error message that could be an object
+        const errorMessage = typeof message === 'object' ? message.message || message.title : message;
+        setError({ show: true, message: errorMessage || "An error occurred" });
+        setLoading(false);
+        if (errorMessage === "User not found") {
+          navigate(`${location.pathname}?action=phone${phone ? `&phone=${phone}` : ""}`);
+        }
+      }
+    } catch (error) {
+      // Handle error message that could be an object
+      const errorMessage = error.response?.data?.message;
+      const formattedMessage = typeof errorMessage === 'object' ? errorMessage.message || errorMessage.title : errorMessage;
+      setError({ 
+        show: true, 
+        message: formattedMessage || "An error occurred, please try again later" 
+      });
+      setLoading(false);
     }
-  };
+  }, [phone, selectedCountry, navigate, location.pathname, updateUserData]);
 
-  const onSelectHandler = (selected) => {
-    setSelectedCountry(selected);
-    updateUserData({ selectedCountry: selected });
-  };
+  if (!location.search.includes("action=login")) {
+    return null;
+  }
 
   return (
-    <Container className="container">
+    <Container>
       <JoinNow>
         <CloseIcon
           title="Close"
           className="las la-times-circle"
           onClick={handleClose}
-        ></CloseIcon>
+        />
         <ItemContainer>
-          {location.search.includes("action=login") && (
-            <>
-              <CountrySelector
-                show={countryselector}
-                handleClick={handleShow}
-                onSelectHandler={onSelectHandler}
-                selectedCountry={selectedCountry}
-                country_details={country_details}
-              />
-              <Content>
-                <Title className="g-medium">Login to your account</Title>
-                <Description className="g-medium">
-                  Enter your registered phone number
-                </Description>
-                <MiddleContainer>
-                  {!selectedCountry ? (
-                    <LoaderContainer>
-                      <SignupLoader />
-                    </LoaderContainer>
-                  ) : (
-                    <>
-                      <FlagDropDown
-                        handleClick={handleShow}
-                        selectedCountry={selectedCountry}
-                      />
-                      <InputContainer
-                        className="b-medium"
-                        style={{
-                          borderColor: error ? "#f32e2f" : "#2f3337",
-                        }}
-                      >
-                        <Icon
-                          src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/phone.svg"
-                          alt=""
-                          onClick={() => setError(!error)}
-                        />
-                        {`${selectedCountry.phone_code}`}
-                        <InputField
-                          autoFocus
-                          type="text"
-                          placeholder="Enter your phone number"
-                          value={phone}
-                          onChange={onChange}
-                          onKeyDown={handleKeyDown}
-                          maxLength={selectedCountry.number_length}
-                        />
-                      </InputContainer>
-                    </>
-                  )}
-                </MiddleContainer>
-                {error && <ErrorText>{error_message}</ErrorText>}
-                <BottomButton
-                  onClick={verifyService}
-                  className="g-medium white"
-                >
-                  {isLoading ? <RequestLoader /> : "Continue"}
-                </BottomButton>
-                <Forgot
-                  to={`${location.pathname}?action=signup`}
-                  className="g-medium"
-                >
-                  Don't have an account? Sign up
-                </Forgot>
-              </Content>
-              <TermsService />
-            </>
-          )}
+          <CountrySelector
+            show={countryselector}
+            handleClick={toggleCountrySelector}
+            onSelectHandler={handleCountrySelect}
+            selectedCountry={selectedCountry}
+            country_details={countryDetails}
+          />
+          <Content>
+            <Title className="g-medium">Login to your account</Title>
+            <Description className="g-medium">
+              Enter your registered phone number
+            </Description>
+            <MiddleContainer>
+              {!selectedCountry ? (
+                <LoaderContainer>
+                  <SignupLoader />
+                </LoaderContainer>
+              ) : (
+                <>
+                  <FlagDropDown
+                    handleClick={toggleCountrySelector}
+                    selectedCountry={selectedCountry}
+                  />
+                  <InputContainer
+                    className="b-medium"
+                    style={{
+                      borderColor: error.show ? "#f32e2f" : "#2f3337",
+                    }}
+                  >
+                    <Icon
+                      src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/phone.svg"
+                      alt=""
+                    />
+                    {`${selectedCountry.phone_code}`}
+                    <InputField
+                      autoFocus
+                      type="text"
+                      placeholder="Enter your phone number"
+                      value={phone}
+                      onChange={handlePhoneChange}
+                      onKeyDown={handleKeyDown}
+                      maxLength={selectedCountry.number_length}
+                    />
+                  </InputContainer>
+                </>
+              )}
+            </MiddleContainer>
+            {error.show && error.message && (
+              <ErrorText className="b-medium">
+                {typeof error.message === 'object' ? error.message.message || error.message.title : error.message}
+              </ErrorText>
+            )}
+            <BottomButton
+              onClick={handleLogin}
+              className="g-medium white"
+            >
+              {isLoading ? <RequestLoader /> : "Continue"}
+            </BottomButton>
+            <Forgot
+              to={`${location.pathname}?action=signup`}
+              className="g-medium"
+            >
+              Don't have an account? Sign up
+            </Forgot>
+          </Content>
+          <TermsService />
         </ItemContainer>
       </JoinNow>
     </Container>
@@ -381,10 +354,7 @@ const InputField = styled.input`
   }
   @media (max-width: 480px) {
     width: 80%;
-    // padding-left: 10.66667px;
     font-size: 16px;
-    // transform: scale(0.9375);
-    // transform-origin: left top;
   }
   @media (max-width: 380px) {
     font-size: 14px;
@@ -428,12 +398,15 @@ const ErrorText = styled.span`
   left: 0;
   color: #f46565;
   bottom: -27px;
+  display: block;
+  width: 100%;
+  text-align: left;
   @media (max-width: 480px) {
     font-size: 12px;
     bottom: -26px;
   }
 `;
-const BottomButton = styled(Link)`
+const BottomButton = styled.button`
   cursor: pointer;
   background: #5cc66a;
   display: block;
@@ -445,6 +418,8 @@ const BottomButton = styled(Link)`
   margin-top: 40px;
   color: #fff;
   min-height: 50px;
+  border: none;
+  width: 100%;
   @media (max-width: 640px) {
     height: 50px;
   }

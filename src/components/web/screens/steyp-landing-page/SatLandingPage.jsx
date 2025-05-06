@@ -22,7 +22,7 @@ import Students from "./Students";
 import CourseLibary from "../../explore-pages/prime-program/screens/CourseLibary";
 // import SatIntroduction from "./SatIntroduction";
 import SatCourseLibrary from "./SatCourseLibrary";
-import { manageConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import { useSelector } from "react-redux";
 import SatCampusModal from "../../inludes/SatCampusModal";
 import NewSpotling from "./sat/NewSpotling";
@@ -65,7 +65,7 @@ const SatLandingPage = () => {
     const submitData = () => {
         let { access_token } = user_profile;
         setLoading(true);
-        manageConfig
+        serverConfig
             .post(
                 `web/eligility-enquiry/enter/
 				`,
@@ -84,8 +84,8 @@ const SatLandingPage = () => {
                 }
             )
             .then((response) => {
-                const { StatusCode, data, message } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data, message } = response.data;
+                if (status_code === 6000) {
                     if (data.is_verified) {
                         setLoading(false);
                         setFormModal(false);
@@ -95,7 +95,7 @@ const SatLandingPage = () => {
                         setFormModal(false);
                         setConfirmModal(true);
                     }
-                } else if (StatusCode === 6001) {
+                } else if (status_code === 6001) {
                     if (name === "") {
                         setnameError(true);
                     }

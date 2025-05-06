@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import SearchModal from "./modals/SearchModal";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { serverConfig } from "../../../../axiosConfig";
-import { useSelector } from "react-redux";
+import { useAuthStore } from "../../../../store/authStore";
 
 const HeaderSearch = ({
   setGlobalSearch,
@@ -17,12 +17,13 @@ const HeaderSearch = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const user_data = useSelector((state) => state.user_data);
+  const { user_data } = useAuthStore();
   const { access_token } = user_data;
   const [isLoading, setLoading] = useState(false);
   const [isError, setError] = useState(false);
   const [searchData, setSearchData] = useState([]);
   const [searchPostData, setSearchPostData] = useState([]);
+  const [showResults, setShowResults] = useState(false);
 
   const addHistorytoStack = (searchWord) => {
     const trimmedSearchWord = searchWord.trim();
@@ -61,12 +62,24 @@ const HeaderSearch = ({
     }
   }, []);
 
+  useEffect(() => {
+    if (globalSearch?.length > 1) {
+      const debounceTimeout = setTimeout(() => {
+        fetchSearchData();
+      }, 400);
+
+      return () => clearTimeout(debounceTimeout);
+    } else {
+      setSearchData([]);
+    }
+  }, [globalSearch]);
+
   const fetchSearchData = async () => {
     setLoading(true);
     setError(false);
 
     try {
-      const { data } = await accountsConfig.get(
+      const { data } = await serverConfig.get(
         `/general/global-search/?q=${globalSearch}`,
         {
           headers: {
@@ -96,17 +109,16 @@ const HeaderSearch = ({
   //   setGlobalSearch("");
   // }, [location.pathname]);
 
-  useEffect(() => {
-    if (globalSearch?.length > 1) {
-      const debounceTimeout = setTimeout(() => {
-        fetchSearchData();
-      }, 400);
+  const handleSearch = (e) => {
+    setGlobalSearch(e.target.value);
+    setShowResults(true);
+  };
 
-      return () => clearTimeout(debounceTimeout);
-    } else {
-      setSearchData([]);
-    }
-  }, [globalSearch]);
+  const handleResultClick = (result) => {
+    setShowResults(false);
+    setGlobalSearch("");
+    navigate(`/learn/course/${result.slug}/`);
+  };
 
   return (
     <>
@@ -124,10 +136,7 @@ const HeaderSearch = ({
           placeholder="Search "
           value={globalSearch}
           maxLength="128"
-          onChange={(e) => {
-            setSearchModal(true);
-            setGlobalSearch(e.target.value);
-          }}
+          onChange={handleSearch}
           onFocus={(e) => {
             e.preventDefault();
             if (historyStack.length > 0 || globalSearch.length > 0) {
@@ -160,6 +169,24 @@ const HeaderSearch = ({
           </SearchButton>
         )}
       </SearchContainer>
+      {showResults && searchData.length > 0 && (
+        <ResultsContainer>
+          {searchData.map((result, index) => (
+            <ResultItem
+              key={index}
+              onClick={() => handleResultClick(result)}
+            >
+              <ResultImage src={result.thumbnail} alt="" />
+              <ResultContent>
+                <ResultTitle>{result.title}</ResultTitle>
+                <ResultDescription>
+                  {result.description}
+                </ResultDescription>
+              </ResultContent>
+            </ResultItem>
+          ))}
+        </ResultsContainer>
+      )}
     </>
   );
 };
@@ -252,4 +279,57 @@ const Closebutton = styled.button`
 const CloseIcon = styled.img`
   width: 100%;
   display: block;
+`;
+
+const ResultsContainer = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1000;
+`;
+
+const ResultItem = styled.div`
+  display: flex;
+  padding: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+`;
+
+const ResultImage = styled.img`
+  width: 60px;
+  height: 60px;
+  border-radius: 4px;
+  object-fit: cover;
+  margin-right: 12px;
+`;
+
+const ResultContent = styled.div`
+  flex: 1;
+`;
+
+const ResultTitle = styled.h4`
+  margin: 0 0 4px;
+  font-size: 14px;
+  color: #333;
+`;
+
+const ResultDescription = styled.p`
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 `;

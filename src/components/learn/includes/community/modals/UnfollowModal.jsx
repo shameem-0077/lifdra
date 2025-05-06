@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { serverConfig } from "../../../../../axiosConfig";
 import ButtonLoader from "../../../../general/loaders/ButtonLoader";
 import RequestLoader from "../../authentication/general/RequestLoader";
+import { useAuthStore } from "../../../../../store/authStore";
 
 function UnfollowModal({
   openModal,
@@ -14,8 +14,7 @@ function UnfollowModal({
   setIsFollow,
   isFollow,
 }) {
-  const user_data = useSelector((state) => state.user_data);
-  const { access_token } = user_data;
+  const { user_data } = useAuthStore();
   const [isLoading, setLoading] = useState(false);
 
   const handleClose = () => {
@@ -24,12 +23,12 @@ function UnfollowModal({
 
   const updateFollow = async (id) => {
     try {
-      const response = await accountsConfig.post(
+      const response = await serverConfig.post(
         `/api/v1/users/follow-user/${id}/`,
         {},
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${user_data?.access_token}`,
           },
         }
       );
@@ -64,7 +63,7 @@ function UnfollowModal({
           <ContentSection>
             <TopSection>
               <LeftTop>
-                <Heading>Unfollow {item.name}</Heading>
+                <Heading>Unfollow {item?.name}</Heading>
               </LeftTop>
               <RightTop>
                 <CloseButton onClick={() => setOpenModal(false)}>
@@ -79,7 +78,7 @@ function UnfollowModal({
             </TopSection>
             <Desc>
               Stop seeing posts from {item?.name} on your feed. {item?.name}{" "}
-              won’t be notified that you’ve unfollowed.
+              won't be notified that you've unfollowed.
             </Desc>
             <BottomSection>
               <ListItem>

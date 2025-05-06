@@ -131,7 +131,7 @@ const ViewAllFilter = ({
 
   useEffect(() => {
     let { access_token } = user_data;
-    learnConfig
+    serverConfig
       .get("/learn/designations/", {
         params: {
           response_type: "minimal",
@@ -141,10 +141,10 @@ const ViewAllFilter = ({
         },
       })
       .then((response) => {
-        let { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        let { status_code, data } = response.data;
+        if (status_code === 6000) {
           setProfessions(data);
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
         }
       })
       .catch((error) => {
@@ -155,7 +155,7 @@ const ViewAllFilter = ({
   const skillLoad = () => {
     let { access_token } = user_data;
     if (professionValue) {
-      learnConfig
+      serverConfig
         .get("/learn/skills/" + professionValue + "/", {
           params: {
             response_type: "minimal",
@@ -165,10 +165,10 @@ const ViewAllFilter = ({
           },
         })
         .then((response) => {
-          let { StatusCode, data } = response.data;
-          if (StatusCode === 6000) {
+          let { status_code, data } = response.data;
+          if (status_code === 6000) {
             setSkills(data);
-          } else if (StatusCode === 6001) {
+          } else if (status_code === 6001) {
             console.log("Could not fetch");
           }
         })
@@ -182,7 +182,7 @@ const ViewAllFilter = ({
     let { access_token } = user_data;
     setLessons([]);
     if (skillValue) {
-      learnConfig
+      serverConfig
         .get("/learn/lessons/" + skillValue + "/", {
           params: {
             response_type: "minimal",
@@ -192,10 +192,10 @@ const ViewAllFilter = ({
           },
         })
         .then((response) => {
-          let { StatusCode, data } = response.data;
-          if (StatusCode === 6000) {
+          let { status_code, data } = response.data;
+          if (status_code === 6000) {
             setLessons(data);
-          } else if (StatusCode === 6001) {
+          } else if (status_code === 6001) {
           }
         })
         .catch((error) => {

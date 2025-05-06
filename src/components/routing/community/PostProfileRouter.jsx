@@ -42,7 +42,7 @@ const PostProfileRouter = ({
     async function fetchMyProfileDetails() {
       setIsLoading(true);
       try {
-        const response = await accountsConfig.get(
+        const response = await serverConfig.get(
           "/api/v1/users/community-profiles/",
           {
             headers: {

@@ -102,7 +102,7 @@ const LoginWithOtp = (props) => {
       setLoading(true);
 
       //user_data, service and otp is passed to the url
-      accountsConfig
+      serverConfig
         .post("/authentication/login/verify/otp/", {
           otp: otpNumber,
           service: "learn",
@@ -112,8 +112,8 @@ const LoginWithOtp = (props) => {
 
         .then((response) => {
           //From response.data the message and status code  will be taken.
-          const { StatusCode, message } = response.data;
-          if (StatusCode === 6000) {
+          const { status_code, message } = response.data;
+          if (status_code === 6000) {
             //stopped the loading function
             setUserDetails(response.data).then((resp) => {
               auth.login(() => {
@@ -127,7 +127,7 @@ const LoginWithOtp = (props) => {
               }
             });
             setLoading(false);
-          } else if (StatusCode === 6001) {
+          } else if (status_code === 6001) {
             //When status is invalid error message will be saved in setState.
             setError(true);
             setErrorMessage(message);
@@ -154,7 +154,7 @@ const LoginWithOtp = (props) => {
     setResendLoading(true);
 
     //user_data, service and country is passed through the url
-    accountsConfig
+    serverConfig
       .post("/authentication/login/resend/otp/", {
         country: user_data.selectedCountry.web_code,
         service: "learn",
@@ -163,12 +163,12 @@ const LoginWithOtp = (props) => {
 
       .then((response) => {
         //From response.data the message and status code  will be taken.
-        const { StatusCode, message } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, message } = response.data;
+        if (status_code === 6000) {
           //stopped the loading function
           setResendLoading(false);
           setResendSuccess(true);
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
           //When status is invalid error message will be saved in setState.
           setResendLoading(false);
           setResendSuccess(false);

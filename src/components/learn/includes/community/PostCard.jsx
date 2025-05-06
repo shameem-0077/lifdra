@@ -153,15 +153,15 @@ function PostCard({
 
   const handleDelete = () => {
     const { access_token } = user_data;
-    primeprogramsConfig
-      .delete(`community/posts/${item.id}/`, {
+    serverConfig
+      .delete(`communityapi/v1/posts/${item.id}/`, {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
       })
       .then((response) => {
-        const { StatusCode } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code } = response.data;
+        if (status_code === 6000) {
           toast.success("Post deleted successfully");
           setPostData(postData.filter((item) => item.id !== this.props.item.id));
         }

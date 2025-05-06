@@ -90,7 +90,7 @@ function VacationPlanModal(props) {
 
     const fetchData = () => {
         setButtonLoading(true);
-        learnConfig
+        serverConfig
             .get(
                 "subscriptions/vacation-plan/e844a42e-1cef-48f8-9526-a2e29780fc00/",
                 {
@@ -117,7 +117,7 @@ function VacationPlanModal(props) {
 
     const onSubscribe = (plan) => {
         setCoinsLoading(true);
-        learnConfig
+        serverConfig
             .post(
                 `/subscriptions/start/${plan}/`,
                 {},
@@ -128,8 +128,8 @@ function VacationPlanModal(props) {
                 }
             )
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     setCoinsLoading(false);
                     setError(false);
                     history.push({
@@ -138,7 +138,7 @@ function VacationPlanModal(props) {
                             data.event ? `&event=${event}` : ``
                         }`,
                     });
-                } else if (StatusCode === 6001) {
+                } else if (status_code === 6001) {
                     setToast(true);
                     setError(true);
                     setErrorTitle(data.message);

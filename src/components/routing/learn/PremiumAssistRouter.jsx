@@ -34,16 +34,16 @@ function PremiumAssistRouter() {
                 type: "TOGGLE_PREVIOUS_ASSISTS_LOADING",
                 is_previous_assists_loading: true,
             });
-            learnConfig
+            serverConfig
                 .get("premium-assists/student/previous-assists/", {
                     headers: {
                         Authorization: `Bearer ${access_token}`,
                     },
                 })
                 .then((response) => {
-                    const { StatusCode, data } = response.data;
+                    const { status_code, data } = response.data;
 
-                    if (StatusCode === 6000) {
+                    if (status_code === 6000) {
                         supportEngineerDispatch({
                             type: "UPDATE_PREVIOUS_PREMIUM_ASSISTS",
                             previous_premium_assists: data,
@@ -76,16 +76,16 @@ function PremiumAssistRouter() {
         // Check active session
         const checkActive = () => {
             const { access_token } = user_data;
-            learnConfig
+            serverConfig
                 .get("premium-assists/check-active/", {
                     headers: {
                         Authorization: `Bearer ${access_token}`,
                     },
                 })
                 .then((response) => {
-                    const { StatusCode, data } = response.data;
+                    const { status_code, data } = response.data;
 
-                    if (StatusCode === 6000) {
+                    if (status_code === 6000) {
                         const { is_reviewed, ended_by, is_resolved } = data;
                         supportEngineerDispatch({
                             type: "UPDATE_ACTIVE_PREMIUM_ASSIST",

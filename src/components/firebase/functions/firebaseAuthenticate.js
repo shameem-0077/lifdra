@@ -13,11 +13,11 @@ export default function firebaseAuthenticate(name, access_token) {
       }
     )
     .then((response) => {
-      const { StatusCode, data } = response.data;
+      const { status_code, data } = response.data;
 
       const token = data.token;
 
-      if (StatusCode === 6000)
+      if (status_code === 6000)
         signInWithCustomToken(auth, token)
           .then((userCredential) => {
             // Signed in

@@ -6,7 +6,7 @@
 // import uploadImage from "../../../assets/images/job-desk/upload-clip.svg";
 // import rounderArrowImage from "../../../assets/images/job-desk/rounded-arrow.svg";
 // import CountrySelector from "../../learn/includes/authentication/general/CountrySelector";
-// import { manageConfig } from "../../../axiosConfig";
+// import { serverConfig } from "../../../axiosConfig";
 // import RequestLoader from "../../learn/includes/authentication/general/RequestLoader";
 // import JobDeskSuccessModal from "../inludes/general/steyp-landing-page/modal/JobDeskSuccessModal";
 // import JobDeskOtpModal from "../inludes/general/steyp-landing-page/modal/JobDeskOtpModal";
@@ -161,16 +161,16 @@
 //   // 	//     re.test(mail) === true
 //   // 	// ) {
 
-//   // 	manageConfig
+//   // 	serverConfig
 //   // 		.post(`web/job-desk/registration/`, formData)
 //   // 		.then((response) => {
-//   // 			const { StatusCode, data } = response.data;
-//   // 			if (StatusCode === 6000) {
+//   // 			const { status_code, data } = response.data;
+//   // 			if (status_code === 6000) {
 //   // 				window.localStorage.removeItem("referral_code");
 //   // 				setLoading(false);
 //   // 				setOtpModal(true);
 //   // 				setError(false);
-//   // 			} else if (StatusCode === 6001) {
+//   // 			} else if (status_code === 6001) {
 //   // 				setErrorMessage(data.message);
 //   // 				setLoading(false);
 //   // 			}
@@ -1204,7 +1204,7 @@ import { useState } from "react";
 import uploadImage from "../../../assets/images/job-desk/upload-clip.svg";
 import rounderArrowImage from "../../../assets/images/job-desk/rounded-arrow.svg";
 import CountrySelector from "../../learn/includes/authentication/general/CountrySelector";
-import { manageConfig } from "../../../axiosConfig";
+import { serverConfig } from "../../../axiosConfig";
 import RequestLoader from "../../learn/includes/authentication/general/RequestLoader";
 import JobDeskSuccessModal from "../inludes/general/steyp-landing-page/modal/JobDeskSuccessModal";
 import JobDeskOtpModal from "../inludes/general/steyp-landing-page/modal/JobDeskOtpModal";
@@ -1359,16 +1359,16 @@ export default function JobDeskApplicationForm() {
     // 	//     re.test(mail) === true
     // 	// ) {
 
-    // 	manageConfig
+    // 	serverConfig
     // 		.post(`web/job-desk/registration/`, formData)
     // 		.then((response) => {
-    // 			const { StatusCode, data } = response.data;
-    // 			if (StatusCode === 6000) {
+    // 			const { status_code, data } = response.data;
+    // 			if (status_code === 6000) {
     // 				window.localStorage.removeItem("referral_code");
     // 				setLoading(false);
     // 				setOtpModal(true);
     // 				setError(false);
-    // 			} else if (StatusCode === 6001) {
+    // 			} else if (status_code === 6001) {
     // 				setErrorMessage(data.message);
     // 				setLoading(false);
     // 			}

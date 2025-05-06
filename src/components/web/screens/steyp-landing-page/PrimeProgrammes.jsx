@@ -67,12 +67,12 @@ const PrimeProgrammes = () => {
 
     useEffect(() => {
         const fetchData = () => {
-            learnConfig
+            serverConfig
                 .get("/web/services/")
                 .then((response) => {
-                    let { StatusCode, data } = response.data;
+                    let { status_code, data } = response.data;
 
-                    if (StatusCode === 6000) {
+                    if (status_code === 6000) {
                         setLoading(false);
                         setPrimeData(data.filter((item) => item.title === "Prime Programs"));
                     }

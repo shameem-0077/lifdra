@@ -50,7 +50,7 @@ const AdmissionPreviewModal = ({
 
             formData.append("campus_id_back_side", idCardBack);
 
-            accountsConfig
+            serverConfig
                 .post("/api/v1/users/campus-verification/create/", formData, {
                     headers: {
                         Authorization: `Bearer ${access_token}`,
@@ -58,14 +58,14 @@ const AdmissionPreviewModal = ({
                     },
                 })
                 .then((response) => {
-                    const { StatusCode, data } = response.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, data } = response.data;
+                    if (status_code === 6000) {
                         setLoading(false);
                         setError(false);
                         setPreviewModal(false);
                         setResponseModal(true);
                         setBackError(false);
-                    } else if (StatusCode === 6001) {
+                    } else if (status_code === 6001) {
                         setError(false);
                         setBackError(true);
                         setPreviewModal(false);

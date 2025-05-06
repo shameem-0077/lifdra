@@ -63,15 +63,15 @@ const SliderCard = ({ index, card }) => {
 
   const handleDelete = () => {
     const { access_token } = user_profile;
-    primeprogramsConfig
-      .delete(`community/posts/${id}/`, {
+    serverConfig
+      .delete(`communityapi/v1/posts/${id}/`, {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
       })
       .then((response) => {
-        const { StatusCode } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code } = response.data;
+        if (status_code === 6000) {
           toast.success("Post deleted successfully");
           navigate("/feed");
         }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import pops from "../../../../../assets/images/new-dashboard/color-pops.svg";
 import { useSelector } from "react-redux";
-import { accountsConfig, activityConfig } from "../../../../../axiosConfig";
+import { serverConfig, activityConfig } from "../../../../../axiosConfig";
 import Avatar from "react-avatar";
 import { Link } from "react-router-dom";
 
@@ -11,17 +11,17 @@ function LeaderBoard() {
   const access_token = user_data.access_token;
   const [leaderboard, setLeaderboard] = useState([]);
   useEffect(() => {
-    accountsConfig
+    serverConfig
       .get("api/v1/users/leader-positions/", {
         headers: {
           authorization: `Bearer ${access_token}`,
         },
       })
       .then(function (res) {
-        const { StatusCode, data } = res.data;
-        if (StatusCode == 6000) {
+        const { status_code, data } = res.data;
+        if (status_code == 6000) {
           setLeaderboard(data);
-        } else if (StatusCode == 6001) {
+        } else if (status_code == 6001) {
         }
       })
       .catch((error) => {});

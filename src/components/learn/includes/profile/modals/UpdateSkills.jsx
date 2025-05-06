@@ -92,15 +92,15 @@ export default function UpdateSkills({ userProfileDetails, isOffline }) {
     const getTechnologySkills = () => {
         setSkillsLoading(true);
 
-        accountsConfig
+        serverConfig
             .get("general/technology-skills/", {
                 headers: {
                     Authorization: `Bearer ${access_token}`,
                 },
             })
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     setAllSkills(data);
                     setSkillsLoading(false);
                 } else {
@@ -115,13 +115,13 @@ export default function UpdateSkills({ userProfileDetails, isOffline }) {
     const getProgrammingLanguages = () => {
         setLanguagesLoading(true);
 
-        accountsConfig
+        serverConfig
             .get("general/programming-languages/", {
                 headers: { Authorization: `Bearer ${access_token}` },
             })
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     setAllProgrammingLanguages(data);
                     setLanguagesLoading(false);
                 } else {
@@ -154,7 +154,7 @@ export default function UpdateSkills({ userProfileDetails, isOffline }) {
                 (lang) => lang.name
             );
             const skillNames = selectedSkills.map((skill) => skill.name);
-            accountsConfig
+            serverConfig
                 .post(
                     "general/add-new-skills/",
                     {
@@ -166,8 +166,8 @@ export default function UpdateSkills({ userProfileDetails, isOffline }) {
                     }
                 )
                 .then((response) => {
-                    const { StatusCode, data } = response.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, data } = response.data;
+                    if (status_code === 6000) {
                         handleSuccess();
                         setLoading(false);
                     } else {

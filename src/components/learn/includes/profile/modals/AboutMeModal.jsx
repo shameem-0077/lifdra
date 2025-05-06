@@ -53,7 +53,7 @@ export default function AboutMeModal({ bio, isOffline }) {
             setErrorMessage("Check your network connection");
         } else if (aboutMetext && aboutMetext !== bio) {
             setLoading(true);
-            accountsConfig
+            serverConfig
                 .post(
                     "api/v1/users/update-biodata/",
                     { about_me: aboutMetext },
@@ -62,8 +62,8 @@ export default function AboutMeModal({ bio, isOffline }) {
                     }
                 )
                 .then((reponse) => {
-                    const { StatusCode, data } = reponse.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, data } = reponse.data;
+                    if (status_code === 6000) {
                         handleSuccess();
                         setLoading(false);
                     } else {

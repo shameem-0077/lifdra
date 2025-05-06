@@ -3,9 +3,9 @@ import styled from "styled-components";
 import Loader from "../../../../includes/techschooling/general/loaders/Loader";
 import NormalMedal from "../../../../../../assets/images/leader-board/Normal-medal.svg";
 import {
-  accountsConfig,
-  learnConfig,
-  studentActivitiesConfig,
+  serverConfig,
+  serverConfig,
+  serverConfig,
 } from "../../../../../../axiosConfig";
 import { useDispatch, useSelector } from "react-redux";
 import Avatar from "react-avatar";
@@ -21,7 +21,7 @@ function StudentsPosition() {
   function fetchStudentPosition() {
     const { access_token } = user_data;
     setStudentLoading(true);
-    learnConfig
+    serverConfig
       .get(`/learn/nano-degree/${slug}/student-positions/`, {
         headers: {
           Authorization: `Bearer ${access_token}`,

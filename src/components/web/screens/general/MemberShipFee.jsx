@@ -9,9 +9,9 @@ const MemberShipFee = ({ type }) => {
         fetchData();
     }, []);
     const fetchData = () => {
-        learnConfig.get(`subscriptions/plan-category/`).then((response) => {
-            let { StatusCode, data } = response.data;
-            if (StatusCode === 6000) {
+        serverConfig.get(`subscriptions/plan-category/`).then((response) => {
+            let { status_code, data } = response.data;
+            if (status_code === 6000) {
                 setPlans(data.filter((item) => item.name === type));
             }
         });

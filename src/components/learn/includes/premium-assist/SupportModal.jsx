@@ -7,7 +7,7 @@ import tickAnimationData from "../../../../assets/lotties/modal/tick.json";
 import CancelledAnimationData from "../../../../assets/lotties/modal/cancelled.json";
 import { SupportEngineerContext } from "../../../contexts/stores/SupportEngineerStore";
 import { useSelector } from "react-redux";
-import { coinsConfig, learnConfig } from "../../../../axiosConfig";
+import { serverConfig, serverConfig } from "../../../../axiosConfig";
 import animationData from "../../../../assets/lotties/auth/loader.json";
 import redLoader from "../../../../assets/lotties/red_spinner.json";
 import { zeroPad } from "../../../helpers/functions";
@@ -43,7 +43,7 @@ export default function SupportModal() {
     const onStartChat = () => {
         const { access_token } = user_data;
         setLoading(true);
-        learnConfig
+        serverConfig
             .post(
                 `/premium-assists/start/`,
                 {},
@@ -54,8 +54,8 @@ export default function SupportModal() {
                 }
             )
             .then((response) => {
-                const { StatusCode, data, message } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data, message } = response.data;
+                if (status_code === 6000) {
                     setLoading(false);
                     supportEngineerDispatch({
                         type: "UPDATE_MODAL",
@@ -82,16 +82,16 @@ export default function SupportModal() {
     // Check active premium assist
     const checkActive = () => {
         const { access_token } = user_data;
-        learnConfig
+        serverConfig
             .get("premium-assists/check-active/", {
                 headers: {
                     Authorization: `Bearer ${access_token}`,
                 },
             })
             .then((response) => {
-                const { StatusCode, data } = response.data;
+                const { status_code, data } = response.data;
 
-                if (StatusCode === 6000) {
+                if (status_code === 6000) {
                     supportEngineerDispatch({
                         type: "UPDATE_ACTIVE_PREMIUM_ASSIST",
                         active_premium_assist: data,
@@ -107,7 +107,7 @@ export default function SupportModal() {
         if (coinsCount) {
             if (coinsCount <= 4000) {
                 setLoading(true);
-                coinsConfig
+                serverConfig
                     .post(
                         `/purchases/create-order/`,
                         {
@@ -120,8 +120,8 @@ export default function SupportModal() {
                         }
                     )
                     .then((response) => {
-                        const { StatusCode, data, message } = response.data;
-                        if (StatusCode === 6000) {
+                        const { status_code, data, message } = response.data;
+                        if (status_code === 6000) {
                             window.location.href = data.paymentLink;
                             setLoading(false);
                         } else {
@@ -152,7 +152,7 @@ export default function SupportModal() {
         if (selected_package.coins) {
             if (selected_package.coins <= 4000) {
                 setLoading(true);
-                coinsConfig
+                serverConfig
                     .post(
                         `/purchases/pa-credit/create-order/${selected_package.id}/`,
                         {},
@@ -163,8 +163,8 @@ export default function SupportModal() {
                         }
                     )
                     .then((response) => {
-                        const { StatusCode, data, message } = response.data;
-                        if (StatusCode === 6000) {
+                        const { status_code, data, message } = response.data;
+                        if (status_code === 6000) {
                             window.location.href = data.paymentLink;
                             setLoading(false);
                         } else {
@@ -194,7 +194,7 @@ export default function SupportModal() {
     const onEndChat = (status) => {
         const { access_token } = user_data;
         setLoading(true);
-        learnConfig
+        serverConfig
             .post(
                 `/premium-assists/student/end-session/`,
                 { session_status: status },
@@ -205,8 +205,8 @@ export default function SupportModal() {
                 }
             )
             .then((response) => {
-                const { StatusCode, message } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, message } = response.data;
+                if (status_code === 6000) {
                     status === "resolved"
                         ? supportEngineerDispatch({
                               type: "UPDATE_MODAL",
@@ -234,7 +234,7 @@ export default function SupportModal() {
 
     const onRatePA = () => {
         const { access_token } = user_data;
-        learnConfig
+        serverConfig
             .post(
                 `/premium-assists/student/review-activity/${supportEngineerState.active_premium_assist.premium_assist}/`,
                 {
@@ -248,10 +248,10 @@ export default function SupportModal() {
                 }
             )
             .then((response) => {
-                const { StatusCode, data } = response.data;
+                const { status_code, data } = response.data;
                 const { total_request_count } = data;
 
-                if (StatusCode === 6000) {
+                if (status_code === 6000) {
                     modal_type !== "negative_rating" &&
                         supportEngineerDispatch({
                             type: "UPDATE_MODAL",
@@ -283,7 +283,7 @@ export default function SupportModal() {
                         type: "UPDATE_ACTIVE_PA_CHAT_SESSION_ID",
                         active_pa_chat_session_id: "",
                     });
-                } else if (StatusCode === 6001) {
+                } else if (status_code === 6001) {
                 }
             })
             .catch((error) => {});
@@ -291,7 +291,7 @@ export default function SupportModal() {
 
     const onReassign = (session_status) => {
         const { access_token } = user_data;
-        learnConfig
+        serverConfig
             .post(
                 `/premium-assists/reassign/`,
                 { session_status },
@@ -302,8 +302,8 @@ export default function SupportModal() {
                 }
             )
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     supportEngineerDispatch({
                         type: "UPDATE_MODAL",
                         is_modal: true,
@@ -327,7 +327,7 @@ export default function SupportModal() {
                             active_pa_chat_session_id: "",
                         });
                     }
-                } else if (StatusCode === 6001) {
+                } else if (status_code === 6001) {
                 }
             })
             .catch((error) => {});

@@ -18,7 +18,7 @@ function ReportCommentModal({ isReport, setReport, isSelectedId, toast }) {
 
   const fetchReasons = async () => {
     try {
-      const response = await learnConfig.get(`/posts/list-reasons/`, {
+      const response = await serverConfig.get(`api/v1/posts/list-reasons/`, {
         params: {},
         headers: {
           Authorization: `Bearer ${access_token}`,
@@ -60,8 +60,8 @@ function ReportCommentModal({ isReport, setReport, isSelectedId, toast }) {
       );
       formData.append("report_type", "post");
 
-      const response = await learnConfig.post(
-        `/posts/report-post/${isSelectedId}/`,
+      const response = await serverConfig.post(
+        `api/v1/posts/report-post/${isSelectedId}/`,
         formData,
         {
           headers: {

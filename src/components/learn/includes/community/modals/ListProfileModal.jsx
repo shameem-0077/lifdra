@@ -5,13 +5,13 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import { useSelector } from "react-redux";
 import styled from "styled-components";
 import debounce from "lodash/debounce";
 import { serverConfig } from "../../../../../axiosConfig";
 import SearchComponent from "../community-sidebox/SearchComponent";
 import UserFollowComponent from "../UserFollowComponent";
 import UserFollowSkeletonLoader from "../../../../general/loaders/skeltons/UserFollowSkeletonLoader";
+import { useAuthStore } from "../../../../../store/authStore";
 
 const ENDPOINTS = {
   following: "api/v1/users/list-following/",
@@ -28,11 +28,9 @@ const useUserList = (activeTab, access_token, username) => {
 
   const fetchUsers = useCallback(
     async (loadMore = false) => {
-      // if (!access_token || !activeTab || !username) return;
-
       setLoading(true);
       try {
-        const response = await accountsConfig.get(ENDPOINTS[activeTab], {
+        const response = await serverConfig.get(ENDPOINTS[activeTab], {
           params: {
             page: loadMore ? page + 1 : 1,
             type: "data",
@@ -82,13 +80,11 @@ const ListProfileModal = React.memo(
     setActiveTab,
     activeTab,
   }) => {
-    const {
-      user_data: { access_token },
-    } = useSelector((state) => state);
+    const { user_data } = useAuthStore();
     const listSectionRef = useRef(null);
 
     const { userDetails, isLoading, pagination, fetchUsers, setSearchTerm } =
-      useUserList(activeTab, access_token, username);
+      useUserList(activeTab, user_data?.access_token, username);
 
     const debouncedSearch = useMemo(
       () =>

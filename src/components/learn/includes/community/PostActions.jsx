@@ -65,8 +65,8 @@ function PostActions({
 
   const updateLikeCount = async (item) => {
     try {
-      await learnConfig.post(
-        `/posts/like/${item?.id}/`,
+      await serverConfig.post(
+        `api/v1/posts/like/${item?.id}/`,
         {},
         {
           headers: {
@@ -87,8 +87,8 @@ function PostActions({
       const formData = new FormData();
       formData.append("content", content);
 
-      const response = await learnConfig.post(
-        `/posts/create-comment/${item?.id}/`,
+      const response = await serverConfig.post(
+        `api/v1/posts/create-comment/${item?.id}/`,
         formData,
         {
           headers: {
@@ -111,7 +111,7 @@ function PostActions({
   const fetchComments = async (loadMore = false) => {
     setLoading(true);
     try {
-      const response = await learnConfig.get(`/posts/comments/${item?.id}/`, {
+      const response = await serverConfig.get(`api/v1/posts/comments/${item?.id}/`, {
         params: {
           page: loadMore ? page + 1 : 1,
         },

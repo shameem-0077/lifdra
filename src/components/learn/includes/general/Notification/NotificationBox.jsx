@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import NotificationModal from "./Modal/NotifcationModal";
 import { serverConfig } from "../../../../../axiosConfig";
-import { useSelector } from "react-redux";
+import { useAuthStore } from "../../../../../store/authStore";
 import useInfiniteScroll from "./component/useInfiniteScroll";
 import usePolling from "./component/usePolling";
 import { el } from "date-fns/locale";
@@ -17,12 +17,11 @@ function NotificationBox() {
   const buttonRef = useRef(null); // Reference to the container
   const fetchNotificationRef = useRef();
   const isFirstLoad = useRef(true);
+  const { user_data } = useAuthStore();
+  const { access_token } = user_data;
   const toggleMessagesModal = () => {
     setNotification(!isNotification);
   };
-  const {
-    user_data: { access_token },
-  } = useSelector((state) => state);
 
   const fetchNotification = useCallback(async (loadMore = false) => {
     if (isFirstLoad.current) {
@@ -31,9 +30,8 @@ function NotificationBox() {
       setLoading(true); // Show loading spinner for infinite scroll
     }
     try {
-      const response = await notificationsConfig.get(
+      const response = await serverConfig.get(
         `/main/list-notifications/`,
-
         {
           headers: {
             Authorization: `Bearer ${access_token}`,
@@ -81,7 +79,7 @@ function NotificationBox() {
       // setLoading(true);
       setInitialLoading(false); // Show initial loading spinner
 
-      const response = await notificationsConfig.post(
+      const response = await serverConfig.post(
         `/main/notification-mark-as-read/`,
         {},
         {

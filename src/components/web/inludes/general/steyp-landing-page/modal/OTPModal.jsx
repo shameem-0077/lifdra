@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { manageConfig } from "../../../../../../axiosConfig";
+import { serverConfig } from "../../../../../../axiosConfig";
 import Lottie from "react-lottie";
 import loader from "../../../../../../assets/lotties/modal/loading_lottie.json";
 import greenloader from "../../../../../../assets/lotties/web/green_loader.json";
@@ -27,20 +27,20 @@ const OTPModal = ({
 
     const verifyOtp = () => {
         setLoading(true);
-        manageConfig
+        serverConfig
             .post("web/verify-phone/service-referral/", {
                 country: "IN",
                 phone: phone,
                 otp: otp,
             })
             .then((res) => {
-                let { StatusCode, data } = res.data;
-                if (StatusCode === 6000) {
+                let { status_code, data } = res.data;
+                if (status_code === 6000) {
                     setModalType("");
                     setVerifed(true);
                     setVerfiedNumber(phone);
                     setLoading(false);
-                } else if (StatusCode === 6001) {
+                } else if (status_code === 6001) {
                     setError(true);
                     setErrorMessage(data.title);
                     setLoading(false);
@@ -55,16 +55,16 @@ const OTPModal = ({
     const resendOtp = function () {
         setResendLodaer(true);
 
-        manageConfig
+        serverConfig
             .post("web/resend-otp/service-referral/", {
                 country: "IN",
                 phone: phone,
             })
             .then((res) => {
-                let { StatusCode, data } = res.data;
-                if (StatusCode === 6000) {
+                let { status_code, data } = res.data;
+                if (status_code === 6000) {
                     setResendLodaer(false);
-                } else if (StatusCode === 6001) {
+                } else if (status_code === 6001) {
                     setResendLodaer(false);
                     isError(true);
                     errorMessage("Resend OTP failed. Please try again later.");

@@ -46,11 +46,11 @@ function LandingPageStories() {
 
                 const responsePromises = apiEndpoints.map(async (endpoint) => {
                     try {
-                        const response = await learnConfig.get(endpoint);
+                        const response = await serverConfig.get(endpoint);
                         return response.data;
                     } catch (error) {
                         console.log(error);
-                        return { StatusCode: 0, data: [] };
+                        return { status_code: 0, data: [] };
                     }
                 });
 
@@ -58,8 +58,8 @@ function LandingPageStories() {
 
                 responses.forEach((response, index) => {
                     setLoading(true);
-                    const { StatusCode, data } = response.value;
-                    if (StatusCode === 6000) {
+                    const { status_code, data } = response.value;
+                    if (status_code === 6000) {
                         switch (index) {
                             case 0:
                                 setMedia(data);

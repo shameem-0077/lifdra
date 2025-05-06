@@ -33,8 +33,8 @@ function OptionModal({
   const handleSave = async () => {
     setSaved(!isSaved);
     try {
-      const response = await learnConfig.post(
-        `/posts/save-post/${item?.id}/`,
+      const response = await serverConfig.post(
+        `api/v1/posts/save-post/${item?.id}/`,
         {},
         {
           headers: {

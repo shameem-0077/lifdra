@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
 import { serverConfig } from "../../../../../axiosConfig";
 import RequestLoader from "../../authentication/general/RequestLoader";
+import { useAuthStore } from "../../../../../store/authStore";
 
 function ReportModal({
   isReport,
@@ -13,8 +13,7 @@ function ReportModal({
   setSelectedId,
   toast,
 }) {
-  const user_data = useSelector((state) => state.user_data);
-  const { access_token } = user_data;
+  const { user_data } = useAuthStore();
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [isReasons, setReasons] = useState([]);
@@ -33,10 +32,10 @@ function ReportModal({
 
   const fetchReasons = async () => {
     try {
-      const response = await learnConfig.get(`/posts/list-reasons/`, {
+      const response = await serverConfig.get(`api/v1/posts/list-reasons/`, {
         params: {},
         headers: {
-          Authorization: `Bearer ${access_token}`,
+          Authorization: `Bearer ${user_data?.access_token}`,
         },
       });
       const { status_code, data } = response.data;
@@ -45,8 +44,7 @@ function ReportModal({
         setReasons(data);
       }
     } catch (error) {
-      console.error("Error fetching comments:", error);
-    } finally {
+      console.error("Error fetching reasons:", error);
     }
   };
 
@@ -79,12 +77,12 @@ function ReportModal({
       if (!postId) {
         throw new Error("No valid post ID provided");
       }
-      const response = await learnConfig.post(
-        `/posts/report-post/${postId}/`,
+      const response = await serverConfig.post(
+        `api/v1/posts/report-post/${postId}/`,
         formData,
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${user_data?.access_token}`,
             "Content-Type": "multipart/form-data",
           },
         }
@@ -151,23 +149,21 @@ function ReportModal({
               </TopSection>
               <SubHeading>Why are you reporting this post?</SubHeading>
               <MiddleSection ref={middleSectionRef}>
-                {/* <ReasonList>
+                <ReasonList>
                   {isReasons?.map((item, index) => (
-                    <>
-                      <ReasonItem>
-                        <RadioInput
-                          type="radio"
-                          id={`reason-${index}`}
-                          name="report-reason"
-                          value={item?.id}
-                          checked={selectedReason === item?.id}
-                          onChange={(e) => setSelectedReason(e.target.value)}
-                        />
-                        <RadioLabel htmlFor={`reason-${index}`}>
-                          {item?.title}
-                        </RadioLabel>
-                      </ReasonItem>
-                    </>
+                    <ReasonItem key={index}>
+                      <RadioInput
+                        type="radio"
+                        id={`reason-${index}`}
+                        name="report-reason"
+                        value={item?.id}
+                        checked={selectedReason === item?.id}
+                        onChange={(e) => setSelectedReason(e.target.value)}
+                      />
+                      <RadioLabel htmlFor={`reason-${index}`}>
+                        {item?.title}
+                      </RadioLabel>
+                    </ReasonItem>
                   ))}
                   <ReasonItem>
                     <RadioInput
@@ -182,54 +178,15 @@ function ReportModal({
                       {reasons}
                     </RadioLabel>
                   </ReasonItem>
-                </ReasonList> */}
-                <ReasonList>
-                  {isReasons?.map((item, index) => (
-                    <ReasonItem key={item?.id || index}>
-                      {" "}
-                      {/* Add a unique key here */}
-                      <RadioInput
-                        type="radio"
-                        id={`reason-${index}`}
-                        name="report-reason"
-                        value={item?.id}
-                        checked={selectedReason === item?.id}
-                        onChange={(e) => setSelectedReason(e.target.value)}
-                      />
-                      <RadioLabel htmlFor={`reason-${index}`}>
-                        {item?.title}
-                      </RadioLabel>
-                    </ReasonItem>
-                  ))}
-                  <ReasonItem key={reasons}>
-                    <RadioInput
-                      type="radio"
-                      id={`reason-${reasons}`}
-                      name="report-reason"
-                      value={reasons}
-                      checked={selectedReason === reasons}
-                      onChange={(e) => setSelectedReason(e.target.value)}
-                    />
-                    <RadioLabel htmlFor={`reason-${reasons}`}>
-                      {reasons}
-                    </RadioLabel>
-                  </ReasonItem>
                 </ReasonList>
-
-                <OtherReasonContainer isVisible={selectedReason === "Other"}>
-                  <OtherReasonTextarea
+                {selectedReason === "Other" && (
+                  <TextArea
                     ref={textareaRef}
+                    placeholder="Please specify the reason..."
                     value={otherReason}
-                    // onChange={(e) => setOtherReason(e.target.value)}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (value.trim() !== "") {
-                        setOtherReason(value);
-                      }
-                    }}
-                    placeholder="Please specify the reason"
+                    onChange={(e) => setOtherReason(e.target.value)}
                   />
-                </OtherReasonContainer>
+                )}
               </MiddleSection>
               <BottomSection>
                 <ButtonContainer>
@@ -441,14 +398,7 @@ const RadioLabel = styled.label`
   }
 `;
 
-const OtherReasonContainer = styled.div`
-  max-height: ${(props) => (props.isVisible ? "150px" : "0")};
-  opacity: ${(props) => (props.isVisible ? 1 : 0)};
-  overflow: hidden;
-  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
-`;
-
-const OtherReasonTextarea = styled.textarea`
+const TextArea = styled.textarea`
   width: 100%;
   height: 80px;
   background: #f8fafc;

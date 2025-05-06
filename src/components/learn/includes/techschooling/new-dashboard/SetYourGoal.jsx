@@ -18,21 +18,21 @@ function SetYourGoal({
 
     const sheduledTime = () => {};
     useEffect(() => {
-        learnConfig
+        serverConfig
             .get(`/schedules/view-schedule/`, {
                 headers: {
                     Authorization: `Bearer ${access_token}`,
                 },
             })
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     setDays([]);
                     setDays(data);
                     if (data.is_scheduled) {
                         setActive(true);
                     }
-                } else if (StatusCode === 6001) {
+                } else if (status_code === 6001) {
                     // setDays(data);
                 }
             })

@@ -36,13 +36,13 @@ function NewContentSinglePage(props) {
     let { access_token } = user_data;
     setLoading(true);
 
-    learnConfig
+    serverConfig
       .get("/learn/new-content/view/topic/" + id + "/", {
         headers: { Authorization: "Bearer " + access_token },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           let { playlists } = data;
           setPlaylist(playlists.auto.playlist);
           setTopic(data);
@@ -67,7 +67,7 @@ function NewContentSinglePage(props) {
   const fetchTopics = (topic) => {
     let { user_data } = props;
     let { access_token } = user_data;
-    learnConfig
+    serverConfig
       .get("/learn/new-content/topics/" + topic.lesson_pk + "/", {
         headers: { Authorization: "Bearer " + access_token },
         params: { response: "play_list" },
@@ -190,7 +190,7 @@ function NewContentSinglePage(props) {
     setMarkasLoading(true);
     let { user_data } = props;
     let { access_token } = user_data;
-    learnConfig
+    serverConfig
       .post(
         `/learn/new-content/topic/mark-as-complete/${id}/`,
         {},
@@ -199,8 +199,8 @@ function NewContentSinglePage(props) {
         }
       )
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           setMessage(
             "Completed the topic successfully, You can view this topic again from Tech Schooling syllabus"
           );
@@ -215,7 +215,7 @@ function NewContentSinglePage(props) {
           }
           setSuccessModal(true);
           setMarkasLoading(false);
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
           setMarkasLoading(false);
         }
       })

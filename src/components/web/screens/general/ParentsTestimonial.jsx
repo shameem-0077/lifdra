@@ -6,7 +6,7 @@ import MagicSliderDots from "react-magic-slider-dots";
 import { truncateString } from "../../../helpers/functions";
 import TestimonialModal from "../../inludes/general/steyp-landing-page/modal/TestimonialModal";
 import ParentsTestimonialModal from "../../inludes/general/steyp-landing-page/modal/ParentsTestimonialModal";
-import { communityConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 const ParentsTestimonial = ({ program }) => {
     const [isModal, setModal] = useState(false);
     const [ModalData, setModalData] = useState("");
@@ -58,15 +58,15 @@ const ParentsTestimonial = ({ program }) => {
     }, []);
 
     const fetchData = () => {
-        communityConfig
+        serverConfig
             .get("testimonials/happy-parents/", {
                 params: {
                     program: program,
                 },
             })
             .then((response) => {
-                let { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                let { status_code, data } = response.data;
+                if (status_code === 6000) {
                     setTestimonials(data);
                 } else {
                 }

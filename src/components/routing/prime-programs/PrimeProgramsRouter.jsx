@@ -15,7 +15,7 @@ import NewBuyNowModal from "../../learn/screens/prime-programs/NewBuyNowModal";
 import PrimeSubcribeModal from "../../web/explore-pages/prime-program/Modals/PrimeSubcribeModal";
 import queryString from "query-string";
 import TalropEdtechHelmet from "../../helpers/TalropEdtechHelmet";
-
+import Sidebar from "../../learn/includes/general/Sidebar";
 const PrimeProgramsPurchasedList = lazy(() =>
   import("../../learn/screens/prime-programs/PrimeProgramsPurchasedList")
 );
@@ -52,6 +52,7 @@ function PrimeProgramsRouter() {
     <>
       <TalropEdtechHelmet title="Prime Programs" />
       <div id="main" className={divMainClass}>
+        <Sidebar />
         <NewBuyNowModal
           location={location}
           action={action}

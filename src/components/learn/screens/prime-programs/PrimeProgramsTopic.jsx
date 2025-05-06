@@ -92,7 +92,7 @@ const PrimeProgramsTopic = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      const fetchSyllabus = primeprogramsConfig.get(
+      const fetchSyllabus = serverConfig.get(
         `learning/syllabus/${course_id}/`,
         {
           headers: {
@@ -101,7 +101,7 @@ const PrimeProgramsTopic = () => {
         }
       );
 
-      const fetchData = primeprogramsConfig.get(
+      const fetchData = serverConfig.get(
         `learning/course/${course_id}/`,
         {
           headers: {
@@ -112,10 +112,10 @@ const PrimeProgramsTopic = () => {
 
       Promise.all([fetchSyllabus, fetchData])
         .then(([syllabusRes, dataRes]) => {
-          const { StatusCode: syllabusStatusCode, data: syllabusData } = syllabusRes.data;
-          const { StatusCode: dataStatusCode, data: courseData } = dataRes.data;
+          const { status_code: syllabusstatus_code, data: syllabusData } = syllabusRes.data;
+          const { status_code: datastatus_code, data: courseData } = dataRes.data;
 
-          if (syllabusStatusCode === 6000 && dataStatusCode === 6000) {
+          if (syllabusstatus_code === 6000 && datastatus_code === 6000) {
             setTopics(courseData);
             setSyllabus(syllabusData);
             setLoading(false);

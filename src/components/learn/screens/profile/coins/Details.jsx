@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { coinsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { connect } from "react-redux";
 import RouteLoading from "../../../../routing/RouteLoading.jsx";
 import TalropEdtechHelmet from "../../../../helpers/TalropEdtechHelmet";
@@ -34,17 +34,17 @@ function Details({ updateActiveProfileMenu, user_data }) {
     let { access_token } = user_data;
     setLoading(true);
 
-    coinsConfig
+    serverConfig
       .get("/main/my-coin-deductions/", {
         headers: { Authorization: `Bearer ${access_token}` },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
+        const { status_code, data } = response.data;
 
-        if (StatusCode === 6000) {
+        if (status_code === 6000) {
           setDetails(data);
           setLoading(false);
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
           setLoading(false);
         }
       })

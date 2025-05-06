@@ -1,83 +1,38 @@
-import React, { useState, useEffect } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import React from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { createRipples } from "react-ripples";
-import { serverConfig } from "../../../../axiosConfig";
-import arrowImage from "../../../../assets/images/new-dashboard/arrow.svg";
-import learnImage from "../../../../assets/images/new-dashboard/learning.svg";
-import leaderImage from "../../../../assets/images/new-dashboard/leader-board.svg";
 import primeImage from "../../../../assets/images/new-dashboard/prime.svg";
 import supportImage from "../../../../assets/images/new-dashboard/support.svg";
-import meetImage from "../../../../assets/images/meet/videoconference 2.svg";
-import techImage from "../../../../assets/images/new-dashboard/techupdates.svg";
-import projects from "../../../../assets/images/projects-Image/projects.svg";
-import syllabusIcon from "../../../../assets/images/new-dashboard/syllabus.svg";
-import practiceIcon from "../../../../assets/images/new-dashboard/practice.svg";
-import workshopIcon from "../../../../assets/images/new-dashboard/workshop.svg";
-import assessmentIcon from "../../../../assets/images/new-dashboard/assessment.svg";
-import certificationIcon from "../../../../assets/images/new-dashboard/certification.svg";
-import supportIcon from "../../../../assets/images/support.svg";
-import { useAuthStore } from "../../../../store/authStore";
 
 const Sidebar = () => {
-  const { user_data, user_profile, updateUserData } = useAuthStore();
-  const [isSecondMenu, setSecondMenu] = useState(false);
   const location = useLocation();
-
-  const handleIdUploadModal = () => {
-    updateUserData({
-      type: "TOGGLE_STUDENT_UPLOAD_MODAL",
-    });
-  };
 
   return (
     <SidebarWrapper>
-      <SidebarContainer>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuLink to="/feed/">
-              <SidebarMenuIcon className="las la-home" />
-              <SidebarMenuText>Home</SidebarMenuText>
-            </SidebarMenuLink>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuLink to="/meet/">
-              <SidebarMenuIcon className="las la-video" />
-              <SidebarMenuText>Meet</SidebarMenuText>
-            </SidebarMenuLink>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuLink to="/tech-updates/">
-              <SidebarMenuIcon className="las la-newspaper" />
-              <SidebarMenuText>Tech Updates</SidebarMenuText>
-            </SidebarMenuLink>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuLink to="/projects/">
-              <SidebarMenuIcon className="las la-project-diagram" />
-              <SidebarMenuText>Projects</SidebarMenuText>
-            </SidebarMenuLink>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuLink to="/tech-schooling/">
-              <SidebarMenuIcon className="las la-graduation-cap" />
-              <SidebarMenuText>Tech Schooling</SidebarMenuText>
-            </SidebarMenuLink>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuLink to="/my-club/">
-              <SidebarMenuIcon className="las la-users" />
-              <SidebarMenuText>My Club</SidebarMenuText>
-            </SidebarMenuLink>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuLink to="/settings/">
-              <SidebarMenuIcon className="las la-cog" />
-              <SidebarMenuText>Settings</SidebarMenuText>
-            </SidebarMenuLink>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarContainer>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuLink
+            to="/prime-programs/"
+            className={location.pathname === "/prime-programs/" ? "active" : ""}
+          >
+            <SidebarMenuIcon>
+              <img src={primeImage} alt="Prime Programs" />
+            </SidebarMenuIcon>
+            <SidebarMenuText>Prime Programs</SidebarMenuText>
+          </SidebarMenuLink>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuLink
+            to="/prime-programs/support/"
+            className={location.pathname === "/prime-programs/support/" ? "active" : ""}
+          >
+            <SidebarMenuIcon>
+              <img src={supportImage} alt="Support" />
+            </SidebarMenuIcon>
+            <SidebarMenuText>Support</SidebarMenuText>
+          </SidebarMenuLink>
+        </SidebarMenuItem>
+      </SidebarMenu>
     </SidebarWrapper>
   );
 };
@@ -86,20 +41,13 @@ export default Sidebar;
 
 const SidebarWrapper = styled.div`
   position: fixed;
-  top: 0;
+  bottom: 0;
   left: 0;
-  width: 80px;
-  height: 100vh;
+  width: 260px;
+  height: calc(100vh - 82px);
   background: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-right: 1px solid #f0f0f0;
   z-index: 1000;
-`;
-
-const SidebarContainer = styled.div`
-  padding: 20px 0;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
 `;
 
 const SidebarMenu = styled.ul`
@@ -109,33 +57,48 @@ const SidebarMenu = styled.ul`
 `;
 
 const SidebarMenuItem = styled.li`
-  margin-bottom: 10px;
+  margin-bottom: 0;
 `;
 
-const SidebarMenuLink = styled(Link)`
+const SidebarMenuLink = styled(NavLink)`
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 10px;
-  color: #666;
+  padding: 24px 24px 24px 32px;
+  color: #222;
   text-decoration: none;
-  transition: all 0.3s ease;
-
-  &:hover {
-    color: #007bff;
-  }
+  font-size: 18px;
+  font-weight: 500;
+  border-left: 4px solid transparent;
+  background: transparent;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
 
   &.active {
-    color: #007bff;
+    background: #f8f6ff;
+    border-left: 4px solid #a02060;
+    color: #a02060;
+    font-weight: 700;
+  }
+
+  &:hover {
+    background: #f8f6ff;
+    color: #a02060;
   }
 `;
 
-const SidebarMenuIcon = styled.i`
-  font-size: 24px;
-  margin-bottom: 5px;
+const SidebarMenuIcon = styled.span`
+  display: flex;
+  align-items: center;
+  margin-right: 16px;
+  width: 28px;
+  height: 28px;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 `;
 
 const SidebarMenuText = styled.span`
-  font-size: 12px;
-  text-align: center;
+  font-size: 16px;
+  font-weight: inherit;
 `;

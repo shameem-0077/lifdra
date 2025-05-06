@@ -16,7 +16,7 @@ const Practices = () => {
 
 	useEffect(() => {
 		let { access_token } = user_data;
-		learnConfig
+		serverConfig
 			.get(`/practices/new-content/practices/`, {
 				headers: {
 					Authorization: `Bearer ${access_token}`,
@@ -24,10 +24,10 @@ const Practices = () => {
 			})
 			.then((response) => {
 				setLoading(false);
-				let { StatusCode, data } = response.data;
-				if (StatusCode === 6000) {
+				let { status_code, data } = response.data;
+				if (status_code === 6000) {
 					setPractices(data);
-				} else if (StatusCode === 6001) {
+				} else if (status_code === 6001) {
 					setError(false);
 				}
 			})

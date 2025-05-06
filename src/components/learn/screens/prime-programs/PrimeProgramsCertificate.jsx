@@ -57,12 +57,12 @@ const PrimeProgramsCertificate = () => {
         const id = values.id;
         setCertId(id);
         const getCertificateDetails = () => {
-            primeprogramsConfig
+            serverConfig
                 .get(`certifications/certificate/${id}/`)
                 .then((response) => {
                     setLoading(false);
-                    const { data, StatusCode } = response.data;
-                    if (StatusCode === 6000) {
+                    const { data, status_code } = response.data;
+                    if (status_code === 6000) {
                         setCertificateDetails(data);
                     } else {
                         navigate(`/prime-programs/`);
@@ -111,7 +111,7 @@ const PrimeProgramsCertificate = () => {
     useEffect(() => {
         const { access_token } = user_data;
         const fetchData = async () => {
-            await primeprogramsConfig
+            await serverConfig
                 .get(`learning/certificates/`, {
                     headers: {
                         Authorization: `Bearer ${access_token}`,

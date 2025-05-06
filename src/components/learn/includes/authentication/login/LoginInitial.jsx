@@ -78,19 +78,19 @@ const LoginInitial = (props) => {
         if (phone) {
             setLoading(true);
             //Service is passed to the url
-            accountsConfig
-                .get("/authentication/request/login/", {
+            serverConfig
+                .get("/api/v1/users/request/login/", {
                     params: {
                         service: "learn",
                     },
                 })
 
                 .then((response) => {
-                    //From response.data the message and statuscode  will be taken.
-                    const { StatusCode, message } = response.data;
-                    if (StatusCode === 6000) {
+                    //From response.data the message and status_code  will be taken.
+                    const { status_code, message } = response.data;
+                    if (status_code === 6000) {
                         onEnter();
-                    } else if (StatusCode === 6001) {
+                    } else if (status_code === 6001) {
                         //When status is invalid error message will be saved in setState.
                         setLoading(false);
                         setError(true);
@@ -113,27 +113,27 @@ const LoginInitial = (props) => {
 
     const onEnter = () => {
         //Service, country and phone is passed to the url
-        accountsConfig
-            .post("/authentication/login/enter/", {
+        serverConfig
+            .post("/api/v1/users/login/enter/", {
                 country: selectedCountry.web_code,
                 service: "learn",
                 phone: phone,
             })
             .then((response) => {
-                //From response.data the message and statuscode  will be taken.
-                const { StatusCode, message } = response.data;
+                //From response.data the message and status_code  will be taken.
+                const { status_code, message } = response.data;
                 props.updateUserData({
                     phone,
                     selectedCountry,
                 });
-                if (StatusCode === 6000) {
+                if (status_code === 6000) {
                     history.push({
                         pathname: "/auth/login/verify/",
                         search: nextPath ? `?next=${nextPath}` : "",
                     });
                     setLoading(false);
                     //When status code reads true it will redirect to the next page.
-                } else if (StatusCode === 6001) {
+                } else if (status_code === 6001) {
                     setLoading(false);
                     setError(true);
                     setErrorMessage(message);

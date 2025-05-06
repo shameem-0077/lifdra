@@ -4,7 +4,7 @@ import SelectProgram from "./SelectProgram";
 import EnterYourDetails from "./EnterYourDetails";
 import AddTeamMember from "./AddTeamMember";
 import SuccessfullRegistered from "./SuccessfullRegistered";
-import { scholarshipAccountsConfig } from "../../../../../axiosConfig";
+import { scholarshipserverConfig } from "../../../../../axiosConfig";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function RegistarationModal({ program, setProgarm }) {
@@ -75,11 +75,11 @@ export default function RegistarationModal({ program, setProgarm }) {
         const errorContains = validateValues();
 
         if (errorContains) {
-            scholarshipAccountsConfig
+            scholarshipserverConfig
                 .post(`school-scientist/apply-form/`, formData)
                 .then((response) => {
-                    const { StatusCode, data } = response.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, data } = response.data;
+                    if (status_code === 6000) {
                         setUserName("");
                         setMobile("");
                         setCampus("");
@@ -109,11 +109,11 @@ export default function RegistarationModal({ program, setProgarm }) {
         formData.append("program", programName);
         formData.append("members_data", JSON.stringify(stu_members));
 
-        scholarshipAccountsConfig
+        scholarshipserverConfig
             .post(`school-scientist/add-group-member/`, formData)
             .then((response) => {
-                const { data, StatusCode } = response.data;
-                if (StatusCode === 6000) {
+                const { data, status_code } = response.data;
+                if (status_code === 6000) {
                     setHeadContent("Successfully Registered");
                     setError(false);
                 } else {

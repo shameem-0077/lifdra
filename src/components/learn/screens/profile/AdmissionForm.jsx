@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { communityConfig, accountsConfig } from "../../../../axiosConfig";
+import { serverConfig, serverConfig } from "../../../../axiosConfig";
 import { Link, useParams } from "react-router-dom";
 import Jdenticon from "react-jdenticon";
 import ResponseModal from "../../includes/profile/modals/ResponseModal";
@@ -38,19 +38,19 @@ const AdmissionForm = () => {
     if (user_data && searchTerm) {
       let { access_token } = user_data;
       // setLoading(true);
-      communityConfig
+      serverConfig
         .get(`campuses/search-campuses/?q=${searchTerm}`, {
           headers: {
             Authorization: `Bearer ${access_token}`,
           },
         })
         .then((response) => {
-          const { StatusCode, data } = response.data;
-          if (StatusCode === 6000) {
+          const { status_code, data } = response.data;
+          if (status_code === 6000) {
             setSearchResults(data);
             setLoading(false);
             setError(false);
-          } else if (StatusCode === 6001) {
+          } else if (status_code === 6001) {
             setLoading(false);
             setError(true);
             setErrorMessage("An error occurred");
@@ -172,7 +172,7 @@ const AdmissionForm = () => {
 
       formData.append("campus_id_back_side", idCardBack);
 
-      accountsConfig
+      serverConfig
         .post("/api/v1/users/campus-verification/create/", formData, {
           headers: {
             Authorization: `Bearer ${access_token}`,
@@ -180,15 +180,15 @@ const AdmissionForm = () => {
           },
         })
         .then((response) => {
-          const { StatusCode, data } = response.data;
-          if (StatusCode === 6000) {
+          const { status_code, data } = response.data;
+          if (status_code === 6000) {
             setLoading(false);
             setError(false);
             setResponseModal(true);
             setBackError(false);
             setResponseType("success");
             setSuccessTitle("You've successfully updated your profile.");
-          } else if (StatusCode === 6001) {
+          } else if (status_code === 6001) {
             setLoading(false);
             setError(false);
             setBackError(true);

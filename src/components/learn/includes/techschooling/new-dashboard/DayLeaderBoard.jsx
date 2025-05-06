@@ -13,7 +13,7 @@ function DayLeaderBoard({ subject_slug }) {
 
   const [leaderboard, setLeaderboard] = useState([]);
   useEffect(() => {
-    learnConfig
+    serverConfig
       .get(`/learn/nano-degree/${slug}/leader-positions/`, {
         headers: {
           authorization: `Bearer ${access_token}`,

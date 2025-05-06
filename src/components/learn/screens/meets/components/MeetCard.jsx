@@ -88,7 +88,7 @@ const MeetCard = ({ datas, setShowSuccessModal }) => {
     // setButtonLoader(true);
     const { access_token } = user_data;
     if (id) {
-      learnConfig
+      serverConfig
         .post(
           `events/register/${id}/`,
           {},
@@ -116,7 +116,7 @@ const MeetCard = ({ datas, setShowSuccessModal }) => {
   const Onsubmit = (id) => {
     const { access_token } = user_data;
     if (id) {
-      learnConfig
+      serverConfig
         .post(
           `events/participate/${id}/`,
           {},

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { serverConfig } from "../../../../../axiosConfig";
 import ButtonLoader from "../../../../general/loaders/ButtonLoader";
 import RequestLoader from "../../authentication/general/RequestLoader";
+import { useAuthStore } from "../../../../../store/authStore";
 
 function PostDeleteModal({
   isDelete,
@@ -13,8 +13,7 @@ function PostDeleteModal({
   onDeleteSuccess,
   toast,
 }) {
-  const user_data = useSelector((state) => state.user_data);
-  const { access_token } = user_data;
+  const { user_data } = useAuthStore();
   const [isLoading, setLoading] = useState(false);
 
   const handleClose = () => {
@@ -24,12 +23,12 @@ function PostDeleteModal({
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const response = await learnConfig.post(
-        `/posts/delete/${isSelectedId}/`,
+      const response = await serverConfig.post(
+        `api/v1/posts/delete/${isSelectedId}/`,
         {},
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${user_data?.access_token}`,
             "Content-Type": "multipart/form-data",
           },
         }

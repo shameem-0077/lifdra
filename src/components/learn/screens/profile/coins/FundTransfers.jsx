@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { coinsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import {
     getUserDateFromUTC,
     getUserTimeFromUTC,
@@ -44,16 +44,16 @@ function FundTransfers({ updateActiveProfileMenu, user_data }) {
     const fetchFundTransfers = () => {
         let { access_token } = user_data;
         setLoading(true);
-        coinsConfig
+        serverConfig
             .get("/purchases/fund-transfers/", {
                 headers: { Authorization: `Bearer ${access_token}` },
             })
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     setFundTransfers(data);
                     setLoading(false);
-                } else if (StatusCode === 6001) {
+                } else if (status_code === 6001) {
                     setLoading(false);
                 }
             })

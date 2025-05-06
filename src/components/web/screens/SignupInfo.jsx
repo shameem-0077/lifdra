@@ -7,14 +7,14 @@ export default function SignupInfo(props) {
     const [studentInfo, setStudentInfo] = useState({});
     const [status, setStatus] = useState(true);
     useEffect(() => {
-        accountsConfig
+        serverConfig
             .get(
                 "/api/v1/users/get-info/referral-token/1ac9163b-41e2-4424-a40d-9b41daaa2965/",
                 { params: { phone: phone } }
             )
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     setStudentInfo(data);
                 } else {
                     setStatus(false);

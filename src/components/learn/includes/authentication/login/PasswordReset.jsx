@@ -147,7 +147,7 @@ function PasswordReset(props) {
                 setLoading(true);
 
                 //Password, service and authorization is passed to the url
-                accountsConfig
+                serverConfig
                     .post(
                         "/authentication/forget/password/reset/",
                         {
@@ -161,12 +161,12 @@ function PasswordReset(props) {
                         }
                     )
                     .then((response) => {
-                        const { StatusCode, message } = response.data;
-                        if (StatusCode === 6000) {
+                        const { status_code, message } = response.data;
+                        if (status_code === 6000) {
                             setLoading(false);
                             showModal();
                             localStorage.clear();
-                        } else if (StatusCode === 6001) {
+                        } else if (status_code === 6001) {
                             //When status is invalid error message will be saved in setState.
                             setError(true);
                             setErrorMessage(message);

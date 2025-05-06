@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Slider from "react-slick";
 import { truncateString } from "../../../helpers/functions";
 import MagicSliderDots from "react-magic-slider-dots";
-import { communityConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import TestimonialModal from "../../inludes/general/steyp-landing-page/modal/TestimonialModal";
 import { Link } from "react-router-dom";
 
@@ -88,14 +88,14 @@ const SatTestimonials = ({ title, program, setFormModal }) => {
     }, [pageNumber]);
 
     const fetchData = () => {
-        communityConfig("testimonials/tech-schooling/student/", {
+        serverConfig("testimonials/tech-schooling/student/", {
             params: {
                 page: pageNumber,
             },
         })
             .then((response) => {
-                let { StatusCode, data, pagination_data } = response.data;
-                if (StatusCode === 6000) {
+                let { status_code, data, pagination_data } = response.data;
+                if (status_code === 6000) {
                     setTestimonials((prev) => prev.concat(data));
                     setPagination(pagination_data);
                 }

@@ -85,7 +85,7 @@ function ScheduleModal({
 			localStartTime != localEndTime &&
 			localStartTime < localEndTime
 		) {
-			learnConfig
+			serverConfig
 				.post(
 					`/schedules/set-schedule/`,
 					{
@@ -100,13 +100,13 @@ function ScheduleModal({
 					}
 				)
 				.then((response) => {
-					const { StatusCode, data } = response.data;
+					const { status_code, data } = response.data;
 
-					if (StatusCode === 6000) {
+					if (status_code === 6000) {
 						setLoading(false);
 						setModalType("success");
 						// setSuccess(true);
-					} else if (StatusCode === 6001) {
+					} else if (status_code === 6001) {
 						setLoading(false);
 						setError(true);
 					}

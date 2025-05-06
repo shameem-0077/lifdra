@@ -16,11 +16,11 @@ function Customers() {
 
 	useEffect(() => {
 		const fetchData = () => {
-			learnConfig
+			serverConfig
 				.get(`promotions/testimonials`)
 				.then((response) => {
-					const { StatusCode, data } = response.data;
-					if (StatusCode === 6000) {
+					const { status_code, data } = response.data;
+					if (status_code === 6000) {
 						setTestimonials(data);
 					}
 				})

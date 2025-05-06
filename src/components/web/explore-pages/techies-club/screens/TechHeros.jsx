@@ -4,7 +4,7 @@ import WatchStoriesStudentsCard from "../includes/WatchStoriesStudentsCard";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import VideoModal from "../../general/VideoModal";
-import { communityConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import axios from "axios";
 
 const TechHeros = ({ type }) => {
@@ -14,11 +14,11 @@ const TechHeros = ({ type }) => {
 
     useEffect(() => {
         const fetchPlans = () => {
-            communityConfig
+            serverConfig
                 .get("testimonials/techies-club/")
                 .then((response) => {
-                    let { StatusCode, data } = response.data;
-                    if (StatusCode === 6000) {
+                    let { status_code, data } = response.data;
+                    if (status_code === 6000) {
                         setStudents(data);
                     }
                 });

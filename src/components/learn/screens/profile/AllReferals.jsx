@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Jdenticon from "react-jdenticon";
-import { coinsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import { useSelector } from "react-redux";
 import { getDateStr } from "../../../helpers/functions";
 import ReferLoader from "../../../merchandise/includes/loaders/ReferLoader";
@@ -85,7 +85,7 @@ export default function AllReferals() {
 
 			const access_token = user_data.access_token;
 
-			coinsConfig
+			serverConfig
 				.get(url, {
 					headers: {
 						Authorization: `Bearer ${access_token}`,
@@ -97,14 +97,14 @@ export default function AllReferals() {
 				})
 				.then((response) => {
 					const {
-						StatusCode,
+						status_code,
 						data,
 						pagination_data,
 						referral_count,
 						pending_referrals_count,
 						completed_referrals_count,
 					} = response.data;
-					if (StatusCode === 6000) {
+					if (status_code === 6000) {
 						setReferrals((current) =>
 							current.concat(data)
 						);

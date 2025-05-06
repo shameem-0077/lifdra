@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Link, useHistory } from "react-router-dom";
 import TermsService from "../general/TermsService";
 import { connect } from "react-redux";
-import { accountsConfig, coinsConfig } from "../../../../../axiosConfig";
+import { serverConfig, serverConfig } from "../../../../../axiosConfig";
 import auth from "../../../../routing/auth";
 import RequestLoader from "../general/RequestLoader";
 import ColorLogo from "../general/ColorLogo";
@@ -98,7 +98,7 @@ const EnterReferral = (props) => {
     let { access_token } = user_data;
     setLoading(true);
     if (referralCode) {
-      coinsConfig
+      serverConfig
         .post(
           "/tokens/apply-token/",
           {
@@ -112,11 +112,11 @@ const EnterReferral = (props) => {
           }
         )
         .then((response) => {
-          //From response.data the message and statuscode  will be taken.
-          const { StatusCode, data } = response.data;
-          if (StatusCode === 6000) {
+          //From response.data the message and status_code  will be taken.
+          const { status_code, data } = response.data;
+          if (status_code === 6000) {
             setUserDetails(data.has_active_subscription);
-          } else if (StatusCode === 6001) {
+          } else if (status_code === 6001) {
             //When status is invalid error message will be saved in setState.
             setError(true);
             setErrorMessage(data.message);

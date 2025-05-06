@@ -64,7 +64,7 @@ function Menu({ user_profile, active_profile_menu, user_data }) {
     ]);
 
     const onLogout = () => {
-        accountsConfig
+        serverConfig
             .post(
                 "/authentication/logout/",
                 {},
@@ -75,9 +75,9 @@ function Menu({ user_profile, active_profile_menu, user_data }) {
                 }
             )
             .then((response) => {
-                const { StatusCode, data } = response.data;
+                const { status_code, data } = response.data;
 
-                if (StatusCode === 6000) {
+                if (status_code === 6000) {
                     localStorage.clear();
                     window.location = "/";
                 } else {

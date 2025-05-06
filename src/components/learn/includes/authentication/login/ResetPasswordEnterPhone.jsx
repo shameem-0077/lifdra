@@ -83,16 +83,16 @@ const ResetPasswordEnterPhone = (props) => {
             setLoading(true);
 
             //Service, country and phone is passed to the url
-            accountsConfig
+            serverConfig
                 .post("/authentication/forget/password/enter/phone/", {
                     country: selectedCountry.web_code,
                     service: "learn",
                     phone: phone,
                 })
                 .then((response) => {
-                    //From response.data the message and statuscode  will be taken.
-                    const { StatusCode, message } = response.data;
-                    if (StatusCode === 6000) {
+                    //From response.data the message and status_code  will be taken.
+                    const { status_code, message } = response.data;
+                    if (status_code === 6000) {
                         setLoading(false);
                         //When status code reads true it will redirect to the next page.
                         history.push("/auth/reset/password/phone/verify/");
@@ -104,7 +104,7 @@ const ResetPasswordEnterPhone = (props) => {
                                 flag: selectedCountry.flag,
                             },
                         });
-                    } else if (StatusCode === 6001) {
+                    } else if (status_code === 6001) {
                         //When status is invalid error message will be saved in setState.
                         setError(true);
                         setErrorMessage(message);

@@ -6,18 +6,17 @@ import { useNavigate, NavLink } from "react-router-dom";
 import { serverConfig } from "../../../../../axiosConfig";
 import { doc, getDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { db } from "../../../../../firebase";
+import { useAuthStore } from "../../../../../store/authStore";
 
 const NavModal = ({
   setShowModal,
   showModal,
-  props,
   width,
   setProfileSideBar,
 }) => {
   const modalRef = useRef(null);
-  const { user_data } = props;
   const navigate = useNavigate();
-  // const [activeMenu, setActiveMenu] = useState(window.location.pathname);
+  const { user_data, user_profile } = useAuthStore();
 
   const menuItems = [
     {
@@ -83,7 +82,7 @@ const NavModal = ({
   };
 
   const onLogout = (user_data) => {
-    accountsConfig
+    serverConfig
       .post(
         "/authentication/logout/",
         {},
@@ -94,17 +93,14 @@ const NavModal = ({
         }
       )
       .then((response) => {
-        const { StatusCode, data } = response.data;
+        const { status_code, data } = response.data;
 
-        if (StatusCode === 6000) {
-          // Handle successful logout
+        if (status_code === 6000) {
           removeChatUser(user_data);
-        } else {
-          // Handle error during logout
         }
       })
       .catch((error) => {
-        // Handle network error or other exceptions
+        console.error("Logout error:", error);
       });
   };
 
@@ -116,9 +112,9 @@ const NavModal = ({
 
   const onSubscribe = () => {
     if (auth.isAuthenticated()) {
-      navigate(`${props.location.pathname}?action=subscribe`);
+      navigate(`${window.location.pathname}?action=subscribe`);
     } else {
-      navigate(`${props.location.pathname}?action=login`);
+      navigate(`${window.location.pathname}?action=login`);
     }
   };
 
@@ -129,7 +125,7 @@ const NavModal = ({
   };
 
   const renderPhoto = () => {
-    let { name, photo } = props.user_profile;
+    let { name, photo } = user_profile || {};
 
     if (photo) {
       return (
@@ -169,11 +165,12 @@ const NavModal = ({
       document.removeEventListener("mousedown", closeOnOutsideClick);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [showModal]); // Make sure to include setGlobalSearch in the dependency array
+  }, [showModal]);
 
   if (!showModal) {
     return null;
   }
+
   return (
     <>
       <MainContainer ref={modalRef}>
@@ -182,13 +179,10 @@ const NavModal = ({
             <Container>
               {width > 768
                 ? notification.map((item, i) => (
-                    <>
-                      <ItemContainer to={`${item.path}`} key={i}>
-                        <Img src={item.icon} alt="icon" />
-
-                        <Links onClick={handleClick}>{item.label}</Links>
-                      </ItemContainer>
-                    </>
+                    <ItemContainer to={`${item.path}`} key={i}>
+                      <Img src={item.icon} alt="icon" />
+                      <Links onClick={handleClick}>{item.label}</Links>
+                    </ItemContainer>
                   ))
                 : menuItems.map((item, i) => (
                     <ItemContainer
@@ -197,12 +191,10 @@ const NavModal = ({
                       onClick={handleClick}
                     >
                       <Img src={item.icon} alt="icon" />
-
                       <Links>{item.label}</Links>
                     </ItemContainer>
                   ))}
             </Container>
-
             <Hr />
           </>
         )}
@@ -211,7 +203,7 @@ const NavModal = ({
           <div style={{ display: "flex" }} onClick={handleRouteChange}>
             {renderPhoto()}
             <Name className="g-medium">
-              {props.user_profile.name ? "  Me " : "User"}
+              {user_profile?.name ? "  Me " : "User"}
             </Name>
           </div>
 
@@ -220,21 +212,6 @@ const NavModal = ({
             <span className="las la-sign-out-alt"></span>
           </LogoutContainer>
         </ProfileWrapper>
-
-        {/* <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            padding: "6px 12px",
-          }}
-        >
-          <SettingContainer to={"/profile/"} onClick={handleClick}>
-            Settings
-          </SettingContainer>
-          <LogoutContainer onClick={() => onLogout(user_data)}>
-            Logout
-          </LogoutContainer>
-        </div> */}
       </MainContainer>
       <BlurBackground />
     </>
@@ -321,7 +298,6 @@ const Profile = styled.div`
   min-width: 38px;
   align-items: center;
   justify-content: center;
-  /* padding-top: 10px; */
   object-fit: cover;
   img {
     display: block;
@@ -329,13 +305,11 @@ const Profile = styled.div`
   }
   @media (max-width: 768px) {
     overflow: hidden;
-    /* padding-top: 8px; */
   }
 `;
 
 const Links = styled.li`
   font-family: "gordita_medium";
-  /* color: #060505; */
   font-size: ${pxToRem(14)};
   padding: 8px 12px;
   list-style-type: none;
@@ -366,7 +340,6 @@ const MainContainer = styled.div`
     right: 4px;
   }
   @media (max-width: 440px) {
-    /* max-width: 320px; */
     width: 97%;
     right: 4px;
     left: 4px;
@@ -388,6 +361,7 @@ const ProfileWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
 `;
+
 const Name = styled.span`
   width: fit-content;
   padding: 10px;

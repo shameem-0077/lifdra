@@ -3,52 +3,29 @@ import styled from "styled-components";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import RequestLoader from "../../general/RequestLoader";
 import TermsService from "../../general/TermsService";
-import { connect, useSelector } from "react-redux";
 import { serverConfig } from "../../../../../../axiosConfig";
+import { useAuthStore } from "../../../../../../store/authStore";
 
-// Function used to get values from redux react
-function mapStatetoProps(state) {
-  return {
-    user_data: state.user_data,
-    signup_data: state.signup_data,
-  };
-}
-
-// Function used to update values from redux react
-function mapDispatchtoProps(dispatch) {
-  return {
-    updateUserData: (user_data) =>
-      dispatch({
-        type: "UPDATE_USER_DATA",
-        user_data: user_data,
-      }),
-    updateSignupData: (signup_data) =>
-      dispatch({
-        type: "UPDATE_SIGNUP_DATA",
-        signup_data: signup_data,
-      }),
-  };
-}
-
-function EnterNameModal(props) {
+const EnterNameModal = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user_data, updateUserData, signup_data, updateSignupData, nextPath } = useAuthStore();
+
   const [error, setError] = useState(false);
   const [error_message, setErrorMessage] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [designation, setDesignation] = useState("Member at Steyp");
 
-  const { signup_data } = useSelector((state) => state);
-
   useEffect(() => {
-    setName(signup_data.name);
-  }, [Object.keys(signup_data).length]);
+    if (signup_data?.name) {
+      setName(signup_data.name);
+    }
+  }, [signup_data]);
 
   //Validating the function of entering the name
   const onChange = (e) => {
     let value = e.target.value;
-
     value = value.replace(/[^A-Za-z, " "]/gi, "");
     setName(value);
     setError(false);
@@ -69,73 +46,75 @@ function EnterNameModal(props) {
     }
   };
 
-  const setUserDetails = () => {
-    let { user_data } = props;
-    user_data = {
-      ...user_data,
-      name: name,
-      country: signup_data.country,
-    };
-    props.updateUserData(user_data);
-  };
-
-  const onSubmit = (e) => {
-    setLoading(true);
+  const onSubmit = async (e) => {
+    console.log('onSubmit called', { name, designation, error, isLoading, signup_data });
     e && e.preventDefault();
+    setLoading(true);
 
-    //Phone number is taken as user data from redux store
-    let { user_data, signup_data } = props;
-    // access token will be saved
-    //  && gender && userCategory
+    // Initialize signup_data if it doesn't exist
+    if (!signup_data) {
+      updateSignupData({
+        name: '',
+        country: 'IN',
+        phone: user_data?.phone || '',
+        password: null
+      });
+    }
+
     if (name && designation) {
-      //After submission of user data loading will starts.
-      if (!(signup_data.name === name)) {
-        setLoading(true);
+      console.log('Name and designation present', { name, designation });
+      try {
+        console.log('Making API call');
+        const response = await serverConfig.post("/api/v1/users/signup/set/details/", {
+          name: name,
+          service: "learn",
+          phone: user_data?.phone || "",
+          country: signup_data?.country || "IN",
+          designation: designation,
+        });
 
-        //name, service and authorization is passed through the url
-        accountsConfig
-          .post("api/v1/users/signup/set/name/", {
+        console.log('API response', response.data);
+        const { status_code, message } = response.data;
+        if (status_code === 6000) {
+          setLoading(false);
+          navigate(`${location.pathname}?action=set-password${nextPath ? `&next=${nextPath}` : ""}`);
+          setUserDetails();
+          updateSignupData({
+            ...signup_data,
             name: name,
-            service: "learn",
-            phone: user_data.phone,
-            country: signup_data.country,
-            designation: designation,
-          })
-
-          .then((response) => {
-            //From response.data the message and status code  will be taken.
-            const { StatusCode, message } = response.data;
-            if (StatusCode === 6000) {
-              setLoading(false);
-              //When status code reads true it will redirect to the next page.
-              navigate(`${location.pathname}?action=set-password${props.nextPath ? `&next=${props.nextPath}` : ""}`);
-              setUserDetails();
-              props.updateSignupData({
-                ...signup_data,
-                name: name,
-                password: null,
-              });
-            } else if (StatusCode === 6001) {
-              //When status is invalid error message will be saved in setState.
-              setLoading(false);
-              setError(true);
-              setErrorMessage(message);
-            }
-          })
-          .catch((error) => {
-            //Saved error message will be shown.
-            setLoading(false);
-            setError(true);
-            setErrorMessage("An error occurred, please try again later");
+            password: null,
           });
-      } else {
-        navigate(`${location.pathname}?action=set-password`);
+        } else if (status_code === 6001) {
+          setLoading(false);
+          setError(true);
+          setErrorMessage(message);
+        }
+      } catch (error) {
+        console.error('API error', error);
+        setLoading(false);
+        setError(true);
+        setErrorMessage("An error occurred, please try again later");
       }
     } else {
+      console.log('Validation failed', { name, designation });
       setError(true);
       setLoading(false);
       setErrorMessage("This field cannot be left blank");
     }
+  };
+
+  const setUserDetails = () => {
+    if (!user_data) {
+      console.error('Missing user_data');
+      return;
+    }
+
+    let updatedUserData = {
+      ...user_data,
+      name: name,
+      country: signup_data?.country || "IN",
+    };
+    updateUserData(updatedUserData);
   };
 
   return (
@@ -144,7 +123,7 @@ function EnterNameModal(props) {
         <CloseIcon
           title="Close"
           className="las la-times-circle"
-          onClick={props.closeModal}
+          onClick={() => navigate(-1)}
         ></CloseIcon>
         <ItemContainer bg="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/decorator.svg">
           <Content>
@@ -180,7 +159,7 @@ function EnterNameModal(props) {
             <InputContainer
               className="b-medium"
               style={{
-                borderColor: error && !name ? "#f32e2f" : "#c3c3c3",
+                borderColor: error && !designation ? "#f32e2f" : "#c3c3c3",
               }}
             >
               <Icon
@@ -188,63 +167,47 @@ function EnterNameModal(props) {
                 alt=""
               />
               <InputField
-                autoFocus
                 className="b-medium"
                 placeholder="Enter your designation"
                 onKeyDown={handleKeyDown}
                 value={designation}
                 onChange={onDesignationChange}
               />
-              {error && !name && (
+              {error && !designation && (
                 <ErrorText className="b-medium">{error_message}</ErrorText>
               )}
             </InputContainer>
 
-            {/* <StudentDiv>
-                <ClassLi
-                  className="radio class-div"
-                  onClick={() => setStudentType("tech-schooling")}
-                >
-                  <input type="radio" name="student" value={studentType} />
-                  <span className="radio"></span>
-                  <span className="label">School Student</span>
-                </ClassLi>
-                <ClassLi
-                  className="radio class-div"
-                  onClick={() => {
-                    setStudentType("tech-degree");
-                    // setSelectedClass("");
-                  }}
-                >
-                  <input type="radio" name="student" value={studentType} />
-                  <span className="radio"></span>
-                  <span className="label">College Student</span>
-                </ClassLi> */}
-            {/* <ClassLi
-                  className="radio class-div"
-                  onClick={() => setStudentType("tech-grad")}
-                >
-                  <input type="radio" name="student" value={studentType} />
-                  <span class="radio"></span>
-                  <span class="label">Graduate</span>
-                </ClassLi> */}
-            {/* {error && !studentType && (
-                  <StudentDivError className="b-medium">
-                    {error_message}
-                  </StudentDivError>
-                )}
-              </StudentDiv> */}
-            <BottomButton to={""} className="b-medium white" onClick={onSubmit}>
+            <button 
+              onClick={onSubmit}
+              disabled={isLoading}
+              style={{
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                background: 'linear-gradient(127.01deg, #0fa76f -9.18%, #0f9ea7 129.96%)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: '6px',
+                height: '58px',
+                marginTop: '20px',
+                color: '#fff',
+                border: 'none',
+                width: '100%',
+                opacity: isLoading ? 0.7 : 1,
+                fontSize: '16px',
+                fontFamily: 'inherit'
+              }}
+            >
               {isLoading ? <RequestLoader /> : "Next"}
-            </BottomButton>
+            </button>
           </Content>
         </ItemContainer>
       </JoinNow>
     </Container>
   );
-}
+};
 
-export default connect(mapStatetoProps, mapDispatchtoProps)(EnterNameModal);
+export default EnterNameModal;
 
 const Container = styled.div`
   position: fixed;
@@ -419,7 +382,7 @@ const ErrorText = styled.span`
     bottom: -26px;
   }
 `;
-const BottomButton = styled(Link)`
+const BottomButton = styled.button`
   cursor: pointer;
   background: linear-gradient(127.01deg, #0fa76f -9.18%, #0f9ea7 129.96%);
   display: block;
@@ -430,6 +393,12 @@ const BottomButton = styled(Link)`
   align-items: center;
   margin-top: 20px;
   color: #fff;
+  border: none;
+  width: 100%;
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
   @media (max-width: 480px) {
     height: 44px;
     font-size: 15px;

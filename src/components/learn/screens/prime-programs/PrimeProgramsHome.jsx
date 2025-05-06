@@ -45,7 +45,7 @@ const PrimeProgramsHome = () => {
 
     useEffect(() => {
         const fetchData = (access_token = null) => {
-            primeprogramsConfig
+            serverConfig
                 .get("learning/courses/", {
                     headers: {
                         Authorization: `Bearer ${access_token}`,
@@ -53,12 +53,12 @@ const PrimeProgramsHome = () => {
                 })
                 .then((response) => {
                     const {
-                        StatusCode,
+                        status_code,
                         data,
                         pagination_data,
                         has_active_subscription,
                     } = response.data;
-                    if (StatusCode === 6000) {
+                    if (status_code === 6000) {
                         setCourses(data);
                         setPagination(pagination_data);
                         setLoading(false);

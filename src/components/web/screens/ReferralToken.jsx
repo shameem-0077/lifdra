@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { coinsConfig } from "../../../axiosConfig";
+import { serverConfig } from "../../../axiosConfig";
 import { getDateStr } from "../../helpers/functions";
 
 export default function ReferralToken(props) {
@@ -10,7 +10,7 @@ export default function ReferralToken(props) {
     const [status, setStatus] = useState(true);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-        coinsConfig
+        serverConfig
             .get(
                 "/tokens/get-info/promo-token/1ac9163b-41e2-4424-a40d-9b41daaa2965/",
                 {
@@ -18,8 +18,8 @@ export default function ReferralToken(props) {
                 }
             )
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     setStudentInfo(data);
                     setLoading(false);
                 } else {

@@ -46,7 +46,7 @@ function EnterBalanceDetails(props) {
     const [subscriptionType, setSubscriptionType] = useState("");
 
     const fetchProfile = () => {
-        accountsConfig
+        serverConfig
             .get("/api/v1/users/profile/", {
                 params: {
                     response_type: "minimal",
@@ -56,8 +56,8 @@ function EnterBalanceDetails(props) {
                 },
             })
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     props.updateUserProfile(data);
                     setTimeout(() => {
                         props.toggleSignupUser(true);
@@ -75,7 +75,7 @@ function EnterBalanceDetails(props) {
         let { user_data } = props;
         //access token will be saved
         if (userCategory) {
-            accountsConfig
+            serverConfig
                 .post(
                     "api/v1/users/tech-schooling-signup/",
                     {
@@ -91,8 +91,8 @@ function EnterBalanceDetails(props) {
 
                 .then(async (response) => {
                     //From response.data the message and status code  will be taken.
-                    const { StatusCode, message, data } = response.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, message, data } = response.data;
+                    if (status_code === 6000) {
                         props.updateUserData({
                             ...user_data,
                             signup_type: data.signup_type,

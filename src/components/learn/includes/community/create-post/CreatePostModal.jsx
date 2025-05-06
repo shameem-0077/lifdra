@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useAuthStore } from "../../../../../store/authStore";
 import styled, { keyframes } from "styled-components";
 import Preview from "./ModalPreview";
 import Jdenticon from "react-jdenticon";
@@ -17,7 +17,7 @@ function CreatePostModal({
   setUpdate,
   isUpdate,
 }) {
-  const { user_profile, user_data } = useSelector((state) => state);
+  const { user_profile, user_data } = useAuthStore();
   const { access_token } = user_data;
   const textareaRef = useRef(null);
 
@@ -83,8 +83,8 @@ function CreatePostModal({
         formData.append("video", file, file.name);
       }
 
-      const response = await learnConfig.post(
-        `/posts/upload-attachment/${isPostId}/`,
+      const response = await serverConfig.post(
+        `api/v1/posts/upload-attachment/${isPostId}/`,
         formData,
         {
           headers: {
@@ -147,7 +147,7 @@ function CreatePostModal({
     if (urls && urls.length > 0) {
       const lastUrl = urls[urls.length - 1];
       try {
-        const response = await learnConfig.get(
+        const response = await serverConfig.get(
           `/general/get-link-data/?link=${encodeURIComponent(lastUrl)}`,
           {
             headers: {
@@ -187,8 +187,8 @@ function CreatePostModal({
 
     if (removedAttachmentId) {
       try {
-        const response = await learnConfig.post(
-          `/posts/delete-attachment/${isPostId}/${removedAttachmentId}/`,
+        const response = await serverConfig.post(
+          `api/v1/posts/delete-attachment/${isPostId}/${removedAttachmentId}/`,
           {},
           {
             headers: {
@@ -211,8 +211,8 @@ function CreatePostModal({
       formData.append("status", "published");
       formData.append("content", description);
 
-      const response = await learnConfig.post(
-        `/posts/edit/${isPostId}/`,
+      const response = await serverConfig.post(
+        `api/v1/posts/edit/${isPostId}/`,
         formData,
         {
           headers: {
@@ -300,20 +300,20 @@ function CreatePostModal({
             <ContentSection>
               <DetailsSec>
                 <ProfileIcon>
-                  {user_profile.photo ? (
+                  {user_profile?.photo ? (
                     <ProfilePic
                       src={user_profile.photo}
-                      alt={user_profile.name}
+                      alt={user_profile?.name || 'Profile'}
                     />
                   ) : (
                     <PromImgWrap>
-                      <Jdenticon value={user_profile.name} />
+                      <Jdenticon value={user_profile?.name || 'User'} />
                     </PromImgWrap>
                   )}
                 </ProfileIcon>
                 <ProfileDiv>
-                  <UserName>{user_profile?.name ?? "--"}</UserName>
-                  <UserProgram>{user_profile?.designation ?? "--"}</UserProgram>
+                  <UserName>{user_profile?.name || "--"}</UserName>
+                  <UserProgram>{user_profile?.designation || "--"}</UserProgram>
                 </ProfileDiv>
               </DetailsSec>
               <TopDiv>

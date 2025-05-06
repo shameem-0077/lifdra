@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import download from "../../../../../assets/images/profile-screen/arrow-down.svg";
 import styled from "styled-components";
 import DropDownModal from "./Modals/DropDownModal";
-import { coinsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import { useSelector } from "react-redux";
 import Moment from "moment";
 import { parseISO, format } from "date-fns";
@@ -46,7 +46,7 @@ function PaymentHistory({ userProfileDetails }) {
 
     useEffect(() => {
         setLoading(true);
-        coinsConfig
+        serverConfig
             .get(
                 `/transactions/aep/payment_invoice/${userProfileDetails.user}/`,
                 {
@@ -56,8 +56,8 @@ function PaymentHistory({ userProfileDetails }) {
                 }
             )
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     setInvoiceList(data);
                     setLoading(false);
                 } else {

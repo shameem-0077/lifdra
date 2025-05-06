@@ -59,8 +59,8 @@ function ViewReply({
     }));
 
     try {
-      await learnConfig.post(
-        `/posts/like-comment/${replyId}/`,
+      await serverConfig.post(
+        `api/v1/posts/like-comment/${replyId}/`,
         {},
         {
           headers: {
@@ -80,8 +80,8 @@ function ViewReply({
       formData.append("parent", commentId);
       formData.append("reply_mention", authorname);
 
-      const response = await learnConfig.post(
-        `/posts/create-comment/${isPostId}/`,
+      const response = await serverConfig.post(
+        `api/v1/posts/create-comment/${isPostId}/`,
         formData,
         {
           headers: {

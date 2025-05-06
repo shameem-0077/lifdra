@@ -6,7 +6,7 @@ import Medal3 from "../../../../../../assets/images/leader-board/Third-medal.svg
 import NormalMedal from "../../../../../../assets/images/leader-board/Normal-medal.svg";
 import PointsSection from "./PointsSection";
 import { useDispatch, useSelector } from "react-redux";
-import { studentActivitiesConfig } from "../../../../../../axiosConfig";
+import { serverConfig } from "../../../../../../axiosConfig";
 import Avatar from "react-avatar";
 
 function YourPositionHorizontal() {
@@ -16,17 +16,17 @@ function YourPositionHorizontal() {
 	function fetchMyPosition() {
 		const { access_token } = user_data;
 
-		studentActivitiesConfig
+		serverConfig
 			.get("leader-boards/my-position/", {
 				headers: {
 					Authorization: `Bearer ${access_token}`,
 				},
 			})
 			.then((res) => {
-				const { StatusCode, data } = res.data;
-				if (StatusCode === 6000) {
+				const { status_code, data } = res.data;
+				if (status_code === 6000) {
 					setMyPosition(data);
-				} else if (StatusCode === 6001) {
+				} else if (status_code === 6001) {
 				}
 			})
 			.catch((err) => {

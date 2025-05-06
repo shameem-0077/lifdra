@@ -93,7 +93,7 @@ const AssessmentPopup = ({
 	const sendFirstQuestion = (e) => {
 		let { access_token } = user_data;
 		if (isImprovementTest) {
-			learnConfig
+			serverConfig
 				.post(
 					`assessments/send-first-improvement-question/${assessmentState.assessment.id}/`,
 					{},
@@ -104,8 +104,8 @@ const AssessmentPopup = ({
 					}
 				)
 				.then((response) => {
-					const { StatusCode, data } = response.data;
-					if (StatusCode === 6000) {
+					const { status_code, data } = response.data;
+					if (status_code === 6000) {
 						assessmentDispatch({
 							type: "UPDATE_CURRENT_QUESTION",
 							current_question: data,
@@ -114,7 +114,7 @@ const AssessmentPopup = ({
 				})
 				.catch((error) => {});
 		} else {
-			learnConfig
+			serverConfig
 				.post(
 					`assessments/send-first-question/${assessmentState.assessment.id}/`,
 					{},
@@ -125,8 +125,8 @@ const AssessmentPopup = ({
 					}
 				)
 				.then((response) => {
-					const { StatusCode, data } = response.data;
-					if (StatusCode === 6000) {
+					const { status_code, data } = response.data;
+					if (status_code === 6000) {
 						assessmentDispatch({
 							type: "UPDATE_CURRENT_QUESTION",
 							current_question: data,
@@ -142,7 +142,7 @@ const AssessmentPopup = ({
 		setStartLoading(true);
 		let { access_token } = user_data;
 		if (isImprovementTest) {
-			learnConfig
+			serverConfig
 				.post(
 					`/assessments/start-improvement/${assessmentState.assessment.id}/`,
 					{},
@@ -153,8 +153,8 @@ const AssessmentPopup = ({
 					}
 				)
 				.then((response) => {
-					const { StatusCode } = response.data;
-					if (StatusCode === 6000) {
+					const { status_code } = response.data;
+					if (status_code === 6000) {
 						sendFirstQuestion(e);
 						setStartLoading(false);
 					}
@@ -163,7 +163,7 @@ const AssessmentPopup = ({
 					setStartLoading(false);
 				});
 		} else {
-			learnConfig
+			serverConfig
 				.post(
 					`/assessments/start-assessment/${assessmentState.assessment.id}/`,
 					{},
@@ -174,8 +174,8 @@ const AssessmentPopup = ({
 					}
 				)
 				.then((response) => {
-					const { StatusCode } = response.data;
-					if (StatusCode === 6000) {
+					const { status_code } = response.data;
+					if (status_code === 6000) {
 						sendFirstQuestion(e);
 						setStartLoading(false);
 					}

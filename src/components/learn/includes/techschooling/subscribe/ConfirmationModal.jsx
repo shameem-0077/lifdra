@@ -31,15 +31,15 @@ const ConfirmationModal = ({
     const handleSubmit = () => {
         setLoading(true);
         let { access_token } = user_data;
-        learnConfig
+        serverConfig
             .post(
                 `/subscriptions/start/${plan}/`,
                 {},
                 { headers: { Authorization: `Bearer ${access_token}` } }
             )
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     setLoading(false);
                     history.push({
                         pathname: location.pathname,
@@ -47,7 +47,7 @@ const ConfirmationModal = ({
                             data.event ? `&event=${event}` : ``
                         }`,
                     });
-                } else if (StatusCode === 6001) {
+                } else if (status_code === 6001) {
                     setLoading(false);
                     if (data.data.is_insufficient_coins) {
                         window.location.href = data.data.payment_link;

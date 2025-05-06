@@ -60,7 +60,7 @@ function TechUpdatesSingle() {
   const updateReadCount = async (data) => {
     const { access_token } = user_data;
     try {
-      const response = await learnConfig.post(
+      const response = await serverConfig.post(
         `/tech-updates/update-read-count/${data}/`,
         {},
         {
@@ -78,7 +78,7 @@ function TechUpdatesSingle() {
     const formData = new FormData();
     formData.append("reaction", reaction);
     try {
-      const response = await learnConfig.post(
+      const response = await serverConfig.post(
         `/tech-updates/add-reaction/${pk}/`,
         formData,
         {
@@ -87,8 +87,8 @@ function TechUpdatesSingle() {
           },
         }
       );
-      const { StatusCode, data, message } = response.data;
-      if (StatusCode === 6000 && data) {
+      const { status_code, data, message } = response.data;
+      if (status_code === 6000 && data) {
       } else {
       }
     } catch (error) {}
@@ -113,7 +113,7 @@ function TechUpdatesSingle() {
       setArticleloading(true);
 
       try {
-        const response = await learnConfig.get(
+        const response = await serverConfig.get(
           `/tech-updates/article/${slug}/`,
           {
             headers: {
@@ -121,9 +121,9 @@ function TechUpdatesSingle() {
             },
           }
         );
-        const { StatusCode, data, message } = response.data;
+        const { status_code, data, message } = response.data;
 
-        if (StatusCode === 6000 && data) {
+        if (status_code === 6000 && data) {
           const articleData = data;
           setArticle(articleData);
           setArticleloading(false);
@@ -137,8 +137,8 @@ function TechUpdatesSingle() {
               console.error("Error parsing content:", error);
             }
           }
-        } else if (StatusCode === 6001) {
-          // Handle StatusCode 6001 if needed
+        } else if (status_code === 6001) {
+          // Handle status_code 6001 if needed
           setArticleloading(false);
           setErrorMessage(message.message);
           // Article not found

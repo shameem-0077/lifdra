@@ -123,7 +123,7 @@ function ProfileModal() {
 			setErrorMessage("Category already selected");
 		} else {
 			setLoading(true);
-			accountsConfig
+			serverConfig
 				.post(
 					`api/v1/users/update-student-category/`,
 					{ student_category: selectedCategory },
@@ -134,8 +134,8 @@ function ProfileModal() {
 					}
 				)
 				.then((res) => {
-					let { StatusCode } = res.data;
-					if (StatusCode === 6000) {
+					let { status_code } = res.data;
+					if (status_code === 6000) {
 						setSuccessMessage(
 							"You have successfully updated your Student category"
 						);
@@ -174,7 +174,7 @@ function ProfileModal() {
 			console.log("error ");
 		} else {
 			setLoading(true);
-			accountsConfig
+			serverConfig
 				.post(
 					`api/v1/users/update-gender/`,
 					{ gender: selectedGender },
@@ -185,8 +185,8 @@ function ProfileModal() {
 					}
 				)
 				.then((res) => {
-					let { StatusCode } = res.data;
-					if (StatusCode === 6000) {
+					let { status_code } = res.data;
+					if (status_code === 6000) {
 						setLoading(false);
 						setSuccessMessage(
 							"You have successfully updated your Gender"
@@ -230,7 +230,7 @@ function ProfileModal() {
 				console.log("error ");
 			} else {
 				setLoading(true);
-				accountsConfig
+				serverConfig
 					.post(
 						`/api/v1/users/set-email/`,
 						{ email: selectedEmail },
@@ -241,8 +241,8 @@ function ProfileModal() {
 						}
 					)
 					.then((res) => {
-						let { StatusCode } = res.data;
-						if (StatusCode === 6000) {
+						let { status_code } = res.data;
+						if (status_code === 6000) {
 							setSuccessMessage(
 								"You have successfully updated your Email"
 							);
@@ -280,7 +280,7 @@ function ProfileModal() {
 	const updateName = () => {
 		let { access_token } = user_data;
 		setLoading(true);
-		accountsConfig
+		serverConfig
 			.post(
 				`/api/v1/users/update-name/`,
 				{ name: selectedName },
@@ -291,9 +291,9 @@ function ProfileModal() {
 				}
 			)
 			.then((response) => {
-				const { StatusCode, data } = response.data;
+				const { status_code, data } = response.data;
 				let { message } = data;
-				if (StatusCode === 6000) {
+				if (status_code === 6000) {
 					setSuccessMessage(
 						"You have successfully updated your name"
 					);
@@ -332,7 +332,7 @@ function ProfileModal() {
 			console.log("error ");
 		}
 		setLoading(true);
-		accountsConfig
+		serverConfig
 			.post(
 				`/api/v1/users/verify-email/`,
 				{ otp: selectedOTP },
@@ -343,8 +343,8 @@ function ProfileModal() {
 				}
 			)
 			.then((res) => {
-				let { StatusCode, data } = res.data;
-				if (StatusCode === 6000) {
+				let { status_code, data } = res.data;
+				if (status_code === 6000) {
 					setSuccessMessage(
 						"You have successfully updated your email"
 					);
@@ -362,7 +362,7 @@ function ProfileModal() {
 					setError(false);
 
 					setLoading(false);
-				} else if (StatusCode === 6001) {
+				} else if (status_code === 6001) {
 					setError(true);
 					setErrorMessage(data.message);
 					setLoading(false);
@@ -382,7 +382,7 @@ function ProfileModal() {
 			console.log("error ");
 		} else {
 			setLoading(true);
-			accountsConfig
+			serverConfig
 				.post(
 					`api/v1/users/update-dob/`,
 					{ dob: dateOfBirth },
@@ -393,8 +393,8 @@ function ProfileModal() {
 					}
 				)
 				.then((res) => {
-					let { StatusCode } = res.data;
-					if (StatusCode === 6000) {
+					let { status_code } = res.data;
+					if (status_code === 6000) {
 						setSuccessMessage(
 							"You have successfully updated your Date of birth"
 						);

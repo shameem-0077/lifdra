@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
 import styled from "styled-components";
+import { useAuthStore } from "../../../../../store/authStore";
 
 export default function OtpIssue({ isNotMarginNeed, message }) {
-    const { user_data } = useSelector((state) => state);
+    const { user_data } = useAuthStore();
 
     useEffect(() => {
         (function () {
@@ -17,7 +17,7 @@ export default function OtpIssue({ isNotMarginNeed, message }) {
                             window.tidioChatApi.messageFromVisitor(
                                 `${message}`
                             );
-                        } else if (user_data.phone)
+                        } else if (user_data?.phone)
                             window.tidioChatApi.messageFromVisitor(
                                 `I'm facing an issue with the OTP, my phone number is ${user_data.phone}.`
                             );
@@ -29,7 +29,7 @@ export default function OtpIssue({ isNotMarginNeed, message }) {
                     }
                 });
         })();
-    }, []);
+    }, [message, user_data]);
 
     return (
         <Container className="g-medium" isNotMarginNeed={isNotMarginNeed}>

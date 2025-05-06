@@ -22,8 +22,8 @@ const StartChat = (props) => {
                 <ButtonIcon className="las la-comment-alt" />
                 <ButtonText>Ask your Question</ButtonText>
             </Button>
-            {props.startChatStatus.StatusCode &&
-                props.startChatStatus.StatusCode !== 6000 && (
+            {props.startChatStatus.status_code &&
+                props.startChatStatus.status_code !== 6000 && (
                     <RedText>{props.startChatStatus.title}</RedText>
                 )}
             <Text>*1 coin needed to solve your doubt.</Text>

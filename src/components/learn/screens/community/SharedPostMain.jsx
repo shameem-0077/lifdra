@@ -81,7 +81,7 @@ function SharedPostMain({
   //     const formData = new FormData();
   //     formData.append("status", "on_draft");
 
-  //     const response = await learnConfig.post(`/posts/create/`, formData, {
+  //     const response = await serverConfig.post(`api/v1/posts/create/`, formData, {
   //       headers: {
   //         Authorization: `Bearer ${access_token}`,
   //         "Content-Type": "multipart/form-data",
@@ -118,19 +118,19 @@ function SharedPostMain({
       setLoading(true);
     }
     try {
-      let url = `/posts/view/${slug}/`;
+      let url = `api/v1/posts/view/${slug}/`;
       let params = {};
-      // let url = "/posts/";
+      // let url = "api/v1/posts/";
       // let params = { type: selected, page };
 
       // if (location.pathname.match(SavedRouteRegex)) {
-      //   url = "/posts/profile-posts/";
+      //   url = "api/v1api/v1/posts/profile-posts/";
       //   params = { section: "saved", page };
       // } else if (
       //   location.pathname.match(PostRouteRegex) ||
       //   location.pathname.match(ProfilePostRedirctRegex)
       // ) {
-      //   url = "/posts/profile-posts/";
+      //   url = "api/v1api/v1/posts/profile-posts/";
       //   params = {
       //     section: "posts",
       //     page,
@@ -140,13 +140,13 @@ function SharedPostMain({
       //         : userProfileDetails?.user_id,
       //   };
       // } else if (location.pathname.match(ViewPostRouteRegex)) {
-      //   url = "/posts/view";
+      //   url = "api/v1/posts/view";
       //   params = {
       //     pk: "b8e5176e-2467-4047-a5a5-062d0cca486c",
       //   };
       // }
 
-      const response = await learnConfig.get(url, {
+      const response = await serverConfig.get(url, {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },

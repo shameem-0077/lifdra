@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import ProfileSlider from "../../../screens/community/ProfileSlider";
@@ -9,10 +8,12 @@ import plus from "../../../../../assets/images/profile-screen/plus.svg";
 import ProfilePostSliderSkeleton from "./ProfilePostSliderSkeleton";
 import CommunityNoDataFound from "../CommunityNoDataFound";
 import { toast } from "react-toastify";
+import { useAuthStore } from "../../../../../store/authStore";
 
 function ProfilePost({ userId }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user_data, user_profile } = useAuthStore();
 
   const [userPosts, setUserPosts] = useState([]);
   const [isLoading, setLoading] = useState(false);
@@ -21,21 +22,15 @@ function ProfilePost({ userId }) {
     navigate("/feed/", { state: { openModal: true } });
   };
 
-  const {
-    user_data: { access_token },
-  } = useSelector((state) => state);
-
-  const { user_profile } = useSelector((state) => state);
-
   useEffect(() => {
     let isMounted = true;
 
     async function fetchMyPosts() {
       setLoading(true);
       try {
-        const response = await learnConfig.get(`/posts/profile-posts/`, {
+        const response = await serverConfig.get(`api/v1/posts/profile-posts/`, {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${user_data?.access_token}`,
           },
           params: { section: "posts", profile_id: userId },
         });
@@ -60,21 +55,20 @@ function ProfilePost({ userId }) {
       }
     }
 
-    if (access_token) {
+    if (user_data?.access_token) {
       fetchMyPosts();
     }
 
     return () => {
       isMounted = false;
     };
-  }, [access_token, userId]);
+  }, [user_data?.access_token, userId]);
 
   const handleDelete = (postId) => {
-    const { access_token } = user_data;
-    learnConfig
-      .delete(`/posts/profile-posts/${postId}/`, {
+    serverConfig
+      .delete(`api/v1/posts/profile-posts/${postId}/`, {
         headers: {
-          Authorization: `Bearer ${access_token}`,
+          Authorization: `Bearer ${user_data?.access_token}`,
         },
       })
       .then((response) => {
@@ -85,7 +79,7 @@ function ProfilePost({ userId }) {
         }
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Error deleting post:", error);
       });
   };
 

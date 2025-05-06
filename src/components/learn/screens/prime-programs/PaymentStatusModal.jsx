@@ -34,7 +34,7 @@ const PaymentStatusModal = (props) => {
     const handleSuccess = () => {
         setButtonLoading(true);
         let access_token = user_data.access_token;
-        primeprogramsConfig
+        serverConfig
             .post(
                 `learning/course/${props.course_id}/purchase/`,
                 {
@@ -45,8 +45,8 @@ const PaymentStatusModal = (props) => {
                 }
             )
             .then((res) => {
-                let { StatusCode, data } = res.data;
-                if (StatusCode === 6000) {
+                let { status_code, data } = res.data;
+                if (status_code === 6000) {
                     updateUserData({
                         ...user_data,
                         total_purchased_coins: data.total_purchased_coins,

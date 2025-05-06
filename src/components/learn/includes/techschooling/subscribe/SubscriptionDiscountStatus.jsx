@@ -31,20 +31,20 @@ export default function SubscriptionDiscountStatus({
 	const fetchStudentPlans = () => {
 		let { access_token } = user_data;
 
-		accountsConfig
+		serverConfig
 			.get("api/v1/users/student/campus-verification-status/", {
 				headers: { Authorization: `Bearer ${access_token}` },
 			})
 			.then((response) => {
 				setLoading(false);
-				const { StatusCode, data } = response.data;
-				if (StatusCode === 6000) {
+				const { status_code, data } = response.data;
+				if (status_code === 6000) {
 					dispatch({
 						type: "UPDATE_SUBSCRIPTION_DISCOUNT_STATUS",
 						subscriptionDiscountStatus: data.status,
 					});
 					setRejectReason(data.reject_reason);
-				} else if (StatusCode === 6001) {
+				} else if (status_code === 6001) {
 				}
 			})
 			.catch((error) => {});

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
-import { scholarshipProgramsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import GreenLoader from "../../authentication/general/GreenLoader";
 
 function EnterYourDetails({
@@ -222,11 +222,11 @@ function EnterYourDetails({
     const campusSearch = () => {
         if (searchTerm) {
             setLoading(true);
-            scholarshipProgramsConfig
+            serverConfig
                 .get(`/campuses/?q=${searchTerm}`, {})
                 .then((response) => {
-                    const { StatusCode, data } = response.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, data } = response.data;
+                    if (status_code === 6000) {
                         setCampusData(data);
                         setLoading(false);
 
@@ -236,7 +236,7 @@ function EnterYourDetails({
                         } else {
                             setCampusErrorMessage("");
                         }
-                    } else if (StatusCode === 6001) {
+                    } else if (status_code === 6001) {
                         setCampusErrorMessage("");
                         setLoading(false);
 

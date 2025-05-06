@@ -29,7 +29,7 @@ function SubjectModal({
 	const startNow = (e) => {
 		setButtonLoading(true);
 		let { access_token } = user_data;
-		learnConfig
+		serverConfig
 			.post(
 				`/learn/start-subject/${selectedSubject.slug}/`,
 				{},
@@ -40,11 +40,11 @@ function SubjectModal({
 				}
 			)
 			.then((response) => {
-				const { StatusCode, data } = response.data;
-				if (StatusCode === 6000) {
+				const { status_code, data } = response.data;
+				if (status_code === 6000) {
 					navigate(`/${selectedSubject.slug}/`);
 					setButtonLoading(true);
-				} else if (StatusCode === 6001) {
+				} else if (status_code === 6001) {
 					setButtonLoading(false);
 				}
 			})

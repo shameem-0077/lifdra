@@ -36,16 +36,16 @@ function ScheduleModal({
   // ];
 
   useEffect(() => {
-    learnConfig
+    serverConfig
       .get(`/schedules/view-schedule/`, {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
       })
       .then((response) => {
-        if (response.data.StatusCode === 6000) {
+        if (response.data.status_code === 6000) {
           setDays(response.data.data);
-        } else if (response.data.StatusCode === 6001) {
+        } else if (response.data.status_code === 6001) {
           setDays(response.data.data);
         }
       })
@@ -75,7 +75,7 @@ function ScheduleModal({
 
   const setSchedule = () => {
     if (start_ist != end_ist) {
-      learnConfig
+      serverConfig
         .post(
           `/schedules/set-schedule/`,
           {
@@ -90,12 +90,12 @@ function ScheduleModal({
           }
         )
         .then((response) => {
-          const { StatusCode, data } = response.data;
-          if (StatusCode === 6000) {
+          const { status_code, data } = response.data;
+          if (status_code === 6000) {
             setLoading(false);
             setModal((prev) => !prev);
             setSuccess(true);
-          } else if (StatusCode === 6001) {
+          } else if (status_code === 6001) {
             setLoading(false);
           }
         })

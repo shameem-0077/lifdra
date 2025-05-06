@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { manageConfig } from "../../../axiosConfig";
+import { serverConfig } from "../../../axiosConfig";
 import $ from "jquery";
 import RequestLoader from "../../learn/includes/authentication/general/RequestLoader";
 
@@ -45,7 +45,7 @@ export default function EligibilityConfirmModal({
 	const submitOtp = () => {
 		let { access_token } = user_data;
 		setLoading(true);
-		manageConfig
+		serverConfig
 			.post(
 				`web/eligility-enquiry/verify/
 				`,
@@ -61,8 +61,8 @@ export default function EligibilityConfirmModal({
 				}
 			)
 			.then((response) => {
-				const { StatusCode, data, message } = response.data;
-				if (StatusCode === 6000) {
+				const { status_code, data, message } = response.data;
+				if (status_code === 6000) {
 					setName("");
 					// setPhone("");
 					setSelectedClass("");
@@ -72,7 +72,7 @@ export default function EligibilityConfirmModal({
 					setConfirmModal(false);
 					setResponseModal(true);
 					setOtpErrorMessage("");
-				} else if (StatusCode === 6001) {
+				} else if (status_code === 6001) {
 					setOtpErrorMessage(message);
 					setLoading(false);
 				}
@@ -87,7 +87,7 @@ export default function EligibilityConfirmModal({
 	const resendOtp = () => {
 		let { access_token } = user_data;
 		setLoading(true);
-		manageConfig
+		serverConfig
 			.post(
 				`web/eligility-enquiry/resend/otp/
 				`,
@@ -102,12 +102,12 @@ export default function EligibilityConfirmModal({
 				}
 			)
 			.then((response) => {
-				const { StatusCode, data } = response.data;
-				if (StatusCode === 6000) {
+				const { status_code, data } = response.data;
+				if (status_code === 6000) {
 					setLoading(false);
 					setOtpErrorMessage("");
 					setResendSuccess(true);
-				} else if (StatusCode === 6001) {
+				} else if (status_code === 6001) {
 					setOtpErrorMessage(data.message);
 					setLoading(false);
 					setResendSuccess(false);

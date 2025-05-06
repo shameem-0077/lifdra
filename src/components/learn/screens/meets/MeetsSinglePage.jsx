@@ -57,7 +57,7 @@ function MeetsSinglePage() {
   const getMeetsEventList = () => {
     const { access_token } = user_data;
     setLoading(true);
-    learnConfig
+    serverConfig
       .get(`events/`, {
         headers: {
           Authorization: `Bearer ${access_token}`,

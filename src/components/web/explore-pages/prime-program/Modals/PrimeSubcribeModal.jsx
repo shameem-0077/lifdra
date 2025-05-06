@@ -78,7 +78,7 @@ function PrimeSubcribeModal(props) {
 		setPaymentLoading(true);
 		const { access_token } = user_data;
 
-		primeprogramsConfig
+		serverConfig
 			.post(
 				`purchases/course-purchase/${plan.id}/`,
 				{
@@ -93,8 +93,8 @@ function PrimeSubcribeModal(props) {
 				}
 			)
 			.then((response) => {
-				const { StatusCode, data } = response.data;
-				if (StatusCode === 6000) {
+				const { status_code, data } = response.data;
+				if (status_code === 6000) {
 					setPaymentLoading(false);
 				} else {
 					if (data.payment_link) {
@@ -115,11 +115,11 @@ function PrimeSubcribeModal(props) {
 	//fetch subscription plan
 	// function fetchPlan() {
 	//     setLoading(true);
-	//     primeprogramsConfig
+	//     serverConfig
 	//         .get("purchases/subscription-plans/")
 	//         .then((res) => {
-	//             const { data, StatusCode } = res.data;
-	//             if (StatusCode === 6000) {
+	//             const { data, status_code } = res.data;
+	//             if (status_code === 6000) {
 	//                 setPlan(
 	//                     selectedPlan === "monthy"
 	//                         ? data.filter((item) => item.days === 30)[0]

@@ -39,7 +39,7 @@ const GlobalSearchPage = () => {
 
     setLoading(true);
     try {
-      const { data } = await accountsConfig.get(
+      const { data } = await serverConfig.get(
         `/general/global-search/?q=${searchQuery}`,
         {
           headers: {
@@ -73,8 +73,8 @@ const GlobalSearchPage = () => {
 
     setLoading(true);
     try {
-      const { data } = await learnConfig.get(
-        `/posts/global-search?q=${searchQuery}`,
+      const { data } = await serverConfig.get(
+        `api/v1/posts/global-search?q=${searchQuery}`,
         {
           headers: {
             Authorization: `Bearer ${access_token}`,

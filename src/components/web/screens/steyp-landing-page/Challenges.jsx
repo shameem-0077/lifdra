@@ -25,8 +25,8 @@ const Challenges = () => {
 
     const fetchData = () => {
         challengeConfig("competitions/all/").then((res) => {
-            let { StatusCode, data } = res.data;
-            if (StatusCode === 6000) {
+            let { status_code, data } = res.data;
+            if (status_code === 6000) {
                 setChallenges(data.competition_data);
             }
         });

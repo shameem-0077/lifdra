@@ -195,7 +195,7 @@ export default function EditGuardiansInfoModal({ setReload, isOffline }) {
                     ? "grand mother"
                     : selectedRelation;
             setLoading(true);
-            accountsConfig
+            serverConfig
                 .post(
                     "api/v1/users/create-new-student-guardian/",
                     {
@@ -211,10 +211,10 @@ export default function EditGuardiansInfoModal({ setReload, isOffline }) {
                     }
                 )
                 .then((response) => {
-                    const { StatusCode, data, message } = response.data;
+                    const { status_code, data, message } = response.data;
                     setLoading(false);
 
-                    if (StatusCode === 6000) {
+                    if (status_code === 6000) {
                         handleSuccess();
                     } else {
                         setErrorMessage(message?.message);
@@ -236,7 +236,7 @@ export default function EditGuardiansInfoModal({ setReload, isOffline }) {
     const deleteStudentGuardian = () => {
         setDeleteLoading(true);
         setToastErrorMessage("");
-        accountsConfig
+        serverConfig
             .post(
                 `api/v1/users/delete-student-guardian/${clickedGuardianId}/`,
                 {},
@@ -245,9 +245,9 @@ export default function EditGuardiansInfoModal({ setReload, isOffline }) {
                 }
             )
             .then((response) => {
-                const { StatusCode, data, message } = response.data;
+                const { status_code, data, message } = response.data;
 
-                if (StatusCode === 6000) {
+                if (status_code === 6000) {
                     setDeleteModal(false);
                     setDeleteLoading(false);
                     setToastCondition("success");
@@ -287,7 +287,7 @@ export default function EditGuardiansInfoModal({ setReload, isOffline }) {
                     ? "grand mother"
                     : selectedRelation;
             setLoading(true);
-            accountsConfig
+            serverConfig
                 .post(
                     `api/v1/users/update-student-guardian/${selectedEditingMyProfileData?.id}/`,
                     {
@@ -303,10 +303,10 @@ export default function EditGuardiansInfoModal({ setReload, isOffline }) {
                     }
                 )
                 .then((response) => {
-                    const { StatusCode, data, message } = response.data;
+                    const { status_code, data, message } = response.data;
                     setLoading(false);
 
-                    if (StatusCode === 6000) {
+                    if (status_code === 6000) {
                         handleSuccess();
                     } else {
                         setErrorMessage(message?.message);

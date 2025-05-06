@@ -155,7 +155,7 @@ function EnterTrialDistrict(props) {
 
     setLoading(true);
     if (selectedDistrict) {
-      accountsConfig
+      serverConfig
         .post(
           "/api/v1/users/set/district/",
           { district: selectedDistrict },
@@ -167,15 +167,15 @@ function EnterTrialDistrict(props) {
         )
 
         .then((response) => {
-          //From response.data the message and statuscode  will be taken.
-          const { StatusCode, data } = response.data;
-          if (StatusCode === 6000) {
+          //From response.data the message and status_code  will be taken.
+          const { status_code, data } = response.data;
+          if (status_code === 6000) {
             setUserDetails(data.has_active_subscription);
             dispatch({
               type: "TOGGLE_IS_TEIALSUCCESS_UPDATE",
               is_trialSuccess: !is_trialSuccess,
             });
-          } else if (StatusCode === 6001) {
+          } else if (status_code === 6001) {
             //When status is invalid error message will be saved in setState.
             setError(true);
             setErrorMessage(data.message);

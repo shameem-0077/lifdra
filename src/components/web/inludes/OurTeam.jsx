@@ -5,17 +5,17 @@ import Aos from "aos";
 import "aos/dist/aos.css";
 import "../../../assets/css/web/style.css";
 import bggradient from "../../../assets/images/web/color.png";
-import { communityConfig } from "../../../axiosConfig";
+import { serverConfig } from "../../../axiosConfig";
 
 export default function OurTeam() {
     const [team, setTeam] = useState([]);
     useEffect(() => {
         const getTeam = () => {
-            communityConfig
+            serverConfig
                 .get("/team/steyp-team-members/")
                 .then((response) => {
-                    const { StatusCode, data } = response.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, data } = response.data;
+                    if (status_code === 6000) {
                         setTeam(data);
                     }
                 })

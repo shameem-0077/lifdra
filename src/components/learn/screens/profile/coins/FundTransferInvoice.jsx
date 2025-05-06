@@ -4,7 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import queryString from "query-string";
 import TransactionResponse from "../TransactionResponse";
 import { connect } from "react-redux";
-import { coinsConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import RouteLoading from "../../../../routing/RouteLoading";
 import {
   getUserTimeFromUTC,
@@ -55,15 +55,15 @@ function FundTransferInvoice({
   const fetchFundTransfer = () => {
     let { access_token } = user_data;
     setIsLoading(true);
-    coinsConfig
+    serverConfig
       .get(`purchases/fund-transfers/receipt/${pk}/`, {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           setTransfer(data);
         }
         setIsLoading(false);

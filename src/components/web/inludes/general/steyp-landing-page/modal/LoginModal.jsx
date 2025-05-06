@@ -41,11 +41,11 @@ const LoginModal = ({ isModal, setModal }) => {
     setError(false);
     setErrorMessage("");
 
-    accountsConfig
+    serverConfig
       .post("/authentication/login/", formData)
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           dispatch(setCredentials(data));
           setModal(false);
           const searchParams = new URLSearchParams(location.search);

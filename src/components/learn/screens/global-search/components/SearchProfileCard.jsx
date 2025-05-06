@@ -20,7 +20,7 @@ const SearchProfileCard = ({ item }) => {
 
   const updateFollow = async (id) => {
     try {
-      const response = await accountsConfig.post(
+      const response = await serverConfig.post(
         `/api/v1/users/follow-user/${id}/`,
         {},
         {

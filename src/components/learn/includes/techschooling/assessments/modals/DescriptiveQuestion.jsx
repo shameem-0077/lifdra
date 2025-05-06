@@ -153,7 +153,7 @@ const DescriptiveQuestion = ({
     if (value) {
       setLoading(true);
       if (isImprovementTest) {
-        learnConfig
+        serverConfig
           .post(
             `assessments/submit-improvement-answer/${assessmentState.current_question.id}/`,
             {
@@ -167,7 +167,7 @@ const DescriptiveQuestion = ({
             }
           )
           .then((response) => {
-            let { data, StatusCode } = response.data;
+            let { data, status_code } = response.data;
             let {
               is_new_lesson,
               is_new_skill,
@@ -175,7 +175,7 @@ const DescriptiveQuestion = ({
               question_type,
               is_assessment_completed,
             } = data;
-            if (StatusCode === 6000) {
+            if (status_code === 6000) {
               if (question_type) {
                 if (is_assessment_completed) {
                   assessmentDispatch({
@@ -200,7 +200,7 @@ const DescriptiveQuestion = ({
               }
               inputEntry.current.value = "";
               setLoading(false);
-            } else if (StatusCode === 6001) {
+            } else if (status_code === 6001) {
               setLoading(false);
             }
           })
@@ -208,7 +208,7 @@ const DescriptiveQuestion = ({
             setLoading(false);
           });
       } else {
-        learnConfig
+        serverConfig
           .post(
             `assessments/submit-answer-with-slug/${subject_slug}/${assessmentState.current_question.id}/`,
             {
@@ -222,7 +222,7 @@ const DescriptiveQuestion = ({
             }
           )
           .then((response) => {
-            let { data, StatusCode } = response.data;
+            let { data, status_code } = response.data;
             let {
               is_new_lesson,
               is_new_skill,
@@ -230,7 +230,7 @@ const DescriptiveQuestion = ({
               question_type,
               is_assessment_completed,
             } = data;
-            if (StatusCode === 6000) {
+            if (status_code === 6000) {
               if (data?.is_new_day || data?.next_student_day_pk) {
                 updateDaysLocal(data.next_student_day_pk, data.day_pk);
               }
@@ -258,7 +258,7 @@ const DescriptiveQuestion = ({
               }
               inputEntry.current.value = "";
               setLoading(false);
-            } else if (StatusCode === 6001) {
+            } else if (status_code === 6001) {
               setLoading(false);
             }
           })

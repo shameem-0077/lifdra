@@ -11,15 +11,15 @@ function ProgressBanner({ activeDayId }) {
 
     const fetchStudentStatus = () => {
         const { access_token } = user_data;
-        learnConfig
+        serverConfig
             .get(`learn/get-student-learning-status/${activeDayId}`, {
                 headers: {
                     Authorization: `Bearer ${access_token}`,
                 },
             })
             .then((res) => {
-                const { StatusCode, data } = res.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = res.data;
+                if (status_code === 6000) {
                     setStatus(data);
                 }
             });

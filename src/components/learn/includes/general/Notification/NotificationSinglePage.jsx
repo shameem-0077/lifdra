@@ -29,7 +29,7 @@ const NotificationSinglePage = () => {
       setLoading(true);
     }
     try {
-      const response = await notificationsConfig.get(
+      const response = await serverConfig.get(
         `/main/list-notifications/`,
         {
           headers: {

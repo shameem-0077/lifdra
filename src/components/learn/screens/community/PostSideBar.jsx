@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useAuthStore } from "../../../../store/authStore";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import SuggestionCard from "../../includes/community/community-sidebox/SuggestionCard";
@@ -15,7 +15,7 @@ import {
 
 function PostSideBar({ setFollowCount, followCount, setModal, setUsername }) {
   const location = useLocation();
-  const user_data = useSelector((state) => state.user_data);
+  const { user_data } = useAuthStore();
   const { access_token } = user_data;
 
   const [profileData, setProfileData] = useState("");
@@ -26,7 +26,7 @@ function PostSideBar({ setFollowCount, followCount, setModal, setUsername }) {
     let isMounted = true;
     async function fetchProfile() {
       try {
-        const response = await accountsConfig.get(
+        const response = await serverConfig.get(
           `/api/v1/users/community-profiles/`,
           {
             headers: {

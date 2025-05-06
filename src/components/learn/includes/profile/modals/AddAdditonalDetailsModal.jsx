@@ -152,15 +152,15 @@ export default function AddAddionalDetails({ userProfileDetails }) {
 
   const getAllLanguages = () => {
     setLanguagesLoading(true);
-    accountsConfig
+    serverConfig
       .get("general/all-languages/", {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           setAllLanguages(data);
           setLanguagesLoading(false);
         } else {
@@ -187,7 +187,7 @@ export default function AddAddionalDetails({ userProfileDetails }) {
 
       const languagesNameList = selectedLanguage.map((lang) => lang?.name);
 
-      accountsConfig
+      serverConfig
         .post(
           "api/v1/users/add-additional-info/",
           {
@@ -207,8 +207,8 @@ export default function AddAddionalDetails({ userProfileDetails }) {
         )
         .then((response) => {
           setLoading(false);
-          const { StatusCode, data } = response.data;
-          if (StatusCode === 6000) {
+          const { status_code, data } = response.data;
+          if (status_code === 6000) {
             handleSuccess();
           } else {
           }
@@ -224,14 +224,14 @@ export default function AddAddionalDetails({ userProfileDetails }) {
   const getDistrictList = (searchValue) => {
     setDistrictLoading(true);
 
-    accountsConfig
+    serverConfig
       .get(`general/list-districts/`, {
         headers: { Authorization: `Bearer ${access_token}` },
         params: { q: searchValue, state: selectedState?.id },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           setDistricts(data);
           setDistrictLoading(false);
         } else {
@@ -248,13 +248,13 @@ export default function AddAddionalDetails({ userProfileDetails }) {
   const getStateList = (searchValue) => {
     setStateLoading(true);
 
-    accountsConfig
+    serverConfig
       .get(`general/list-states/?q=${searchValue ? searchValue : ""}`, {
         headers: { Authorization: `Bearer ${access_token}` },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           setStates(data);
           setStateLoading(false);
         } else {
@@ -271,7 +271,7 @@ export default function AddAddionalDetails({ userProfileDetails }) {
   const getLocalBodies = (searchValue) => {
     setlocalbodyLoading(true);
 
-    accountsConfig
+    serverConfig
       .get(`general/list-localbodies/`, {
         headers: { Authorization: `Bearer ${access_token}` },
         params: {
@@ -281,8 +281,8 @@ export default function AddAddionalDetails({ userProfileDetails }) {
         },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           setAllLocalbodies(data);
           setlocalbodyLoading(false);
         } else {
@@ -299,14 +299,14 @@ export default function AddAddionalDetails({ userProfileDetails }) {
   const getWardList = (searchValue) => {
     setwardLoading(true);
 
-    accountsConfig
+    serverConfig
       .get("general/list-wards/", {
         headers: { Authorization: `Bearer ${access_token}` },
         params: { q: searchValue, localbody: selectedLocalBody?.id },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           setWards(data);
           setwardLoading(false);
         } else {

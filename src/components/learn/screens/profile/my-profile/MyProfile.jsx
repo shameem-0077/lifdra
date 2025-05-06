@@ -54,7 +54,7 @@ function MyProfile({ userProfileDetails, isLoading }) {
 
   const verifiedDeleteCampus = () => {
     setDeleteLoading(true);
-    accountsConfig
+    serverConfig
       .post(
         `api/v1/users/delete-academic-history/${selectedid}/`,
         {},
@@ -65,8 +65,8 @@ function MyProfile({ userProfileDetails, isLoading }) {
         }
       )
       .then((response) => {
-        const { StatusCode, data, message } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data, message } = response.data;
+        if (status_code === 6000) {
           setDeleteModal(false);
           setDeleteLoading(false);
           setToastCondition("success");
@@ -93,7 +93,7 @@ function MyProfile({ userProfileDetails, isLoading }) {
   //---unverified campus delete---//
   const unVerifiedDeleteCampus = () => {
     setDeleteLoading(true);
-    accountsConfig
+    serverConfig
       .post(
         `api/v1/users/campus-verification/delete/${selectedid}/`,
         {},
@@ -104,8 +104,8 @@ function MyProfile({ userProfileDetails, isLoading }) {
         }
       )
       .then((response) => {
-        const { StatusCode, data, message } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data, message } = response.data;
+        if (status_code === 6000) {
           setDeleteModal(false);
           setDeleteLoading(false);
           setToastCondition("success");
@@ -132,7 +132,7 @@ function MyProfile({ userProfileDetails, isLoading }) {
   //---certificate delete api---//
   const studentCertificateDelete = () => {
     setDeleteLoading(true);
-    accountsConfig
+    serverConfig
       .post(
         `api/v1/users/delete-student-certificate/${selectedid}/`,
         {},
@@ -143,8 +143,8 @@ function MyProfile({ userProfileDetails, isLoading }) {
         }
       )
       .then((response) => {
-        const { StatusCode, data, message } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data, message } = response.data;
+        if (status_code === 6000) {
           setDeleteModal(false);
           setDeleteLoading(false);
           setToastCondition("success");

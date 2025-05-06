@@ -23,14 +23,14 @@ function ProgramSubject() {
 
     const fetchSubjects = () => {
         setLoading(true);
-        accountsConfig
+        serverConfig
             .get("/api/v1/users/get-student-subjects/", {
                 headers: { Authorization: `Bearer ${access_token}` },
             })
             .then((response) => {
                 setLoading(false);
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     setSubjects(data);
                 } else {
                     setErrorMessage("Failed to fetch subjects");
@@ -44,7 +44,7 @@ function ProgramSubject() {
 
     const handleSubjectClick = (subject) => {
         setLoading(true);
-        accountsConfig
+        serverConfig
             .post(
                 `/api/v1/users/update-student-subject/${subject?.id}/`,
                 {
@@ -56,8 +56,8 @@ function ProgramSubject() {
             )
             .then((response) => {
                 setLoading(false);
-                const { StatusCode, message } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, message } = response.data;
+                if (status_code === 6000) {
                     fetchSubjects();
                 } else {
                     setErrorMessage(message?.message);

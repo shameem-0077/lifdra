@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useAuthStore } from "../../../../../store/authStore";
 import styled from "styled-components";
 import { serverConfig } from "../../../../../axiosConfig";
 import ButtonLoader from "../../../../general/loaders/ButtonLoader";
@@ -13,7 +13,7 @@ function DiscardModal({
   onDeleteSuccess,
   setModal,
 }) {
-  const user_data = useSelector((state) => state.user_data);
+  const { user_data } = useAuthStore();
   const { access_token } = user_data;
   const [isLoading, setLoading] = useState(false);
 

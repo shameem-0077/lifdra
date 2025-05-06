@@ -20,7 +20,7 @@ function CommunitySuggetionCard({ setFollowCount, setIsFollow, isFollow }) {
     setLoading(true);
     async function fetchPeopleMayYouKnow() {
       try {
-        const response = await accountsConfig.get(
+        const response = await serverConfig.get(
           "/api/v1/users/community-profiles/",
           {
             headers: {

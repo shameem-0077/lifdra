@@ -35,11 +35,11 @@ function Pricing() {
     // }, [plan]);
 
     function fetchPlan() {
-        primeprogramsConfig
+        serverConfig
             .get("purchases/subscription-plans/")
             .then((res) => {
-                const { data, StatusCode } = res.data;
-                if (StatusCode === 6000) {
+                const { data, status_code } = res.data;
+                if (status_code === 6000) {
                     setPlans(
                         selectedPlan === "monthy"
                             ? data.filter((item) => item.days === 30)[0]

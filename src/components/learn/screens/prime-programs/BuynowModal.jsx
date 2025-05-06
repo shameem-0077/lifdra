@@ -71,7 +71,7 @@ const BuynowModal = (props) => {
     useEffect(() => {
         const { access_token } = user_data;
         const fetchData = async () => {
-            await primeprogramsConfig
+            await serverConfig
                 .get(`learning/course/${courseId}/`, {
                     headers: {
                         Authorization: `Bearer ${access_token}`,
@@ -118,7 +118,7 @@ const BuynowModal = (props) => {
         setApplyLoading(true);
         setError(false);
         let access_token = user_data.access_token;
-        primeprogramsConfig
+        serverConfig
             .post(
                 `coupons/validate-coupon/${courseId}/`,
                 {
@@ -129,14 +129,14 @@ const BuynowModal = (props) => {
                 }
             )
             .then((res) => {
-                let { StatusCode, data } = res.data;
-                if (StatusCode === 6000) {
+                let { status_code, data } = res.data;
+                if (status_code === 6000) {
                     setVoucherApplied(true);
                     setVoucherModal(true);
                     setApplyLoading(false);
                     setCouponData(data);
                     setCouponId(data.coupon_pk);
-                } else if (StatusCode === 6001) {
+                } else if (status_code === 6001) {
                     setVoucherApplied(false);
                     setError(true);
                     setToast(true);

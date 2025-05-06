@@ -87,17 +87,17 @@ const LoginEnterPassword = (props) => {
       //After submission of userdata loading will starts.
       setLoading(true);
       //password, service and phone is passed to the url
-      accountsConfig
-        .post("/authentication/login/verify/", {
+      serverConfig
+        .post("/api/v1/users/login/verify/", {
           password: password,
           service: "learn",
           phone: user_data.phone,
           country: user_data.selectedCountry.web_code,
         })
         .then((response) => {
-          //From response.data the message and statuscode  will be taken.
-          const { StatusCode, message } = response.data;
-          if (StatusCode === 6000) {
+          //From response.data the message and status_code  will be taken.
+          const { status_code, message } = response.data;
+          if (status_code === 6000) {
             //When status code reads true it will redirect to the next page.
             auth.login(() => {
               return "Success";
@@ -111,7 +111,7 @@ const LoginEnterPassword = (props) => {
                 navigate("/feed/");
               }
             });
-          } else if (StatusCode === 6001) {
+          } else if (status_code === 6001) {
             //When status is invalid error message will be saved in setState.
             setLoading(false);
             setError(true);
@@ -134,20 +134,20 @@ const LoginEnterPassword = (props) => {
     let { user_data } = props;
     setLoading(true);
     //Country, service and phone is passed to the url
-    accountsConfig
-      .post("/authentication/login/enter/otp/", {
+    serverConfig
+      .post("/api/v1/users/login/enter/otp/", {
         country: user_data.selectedCountry.web_code,
         service: "learn",
         phone: user_data.phone,
       })
       .then((response) => {
-        //From response.data the message and statuscode  will be taken.
-        const { StatusCode, message } = response.data;
-        if (StatusCode === 6000) {
+        //From response.data the message and status_code  will be taken.
+        const { status_code, message } = response.data;
+        if (status_code === 6000) {
           setLoading(false);
           navigate(`/auth/login/verify-otp/${nextPath ? `?next=${nextPath}` : ""}`);
           //When status code reads true it will redirect to the next page.
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
           //When status is invalid error message will be saved in setState.
           setLoading(false);
           setError(true);

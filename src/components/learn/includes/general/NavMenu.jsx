@@ -29,7 +29,7 @@ function NavMenu() {
       arrow_icon: null,
     },
     {
-      path: ["/feed/"],
+      path: ["/tech-updates/"],
       label: "Explore",
       icon: "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/07-10-2024/explore_icon.svg",
       active_icon:

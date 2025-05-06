@@ -5,37 +5,16 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import RequestLoader from "../general/RequestLoader";
 import { serverConfig } from "../../../../../axiosConfig";
 import OtpCard from "../general/OtpCard";
-import { connect, useSelector } from "react-redux";
 import OtpIssue from "../general/OtpIssue";
 import ReCAPTCHA from "react-google-recaptcha";
+import { useAuthStore } from "../../../../../store/authStore";
 
-// Function used to get values from redux react
-function mapStatetoProps(state) {
-  return {
-    user_data: state.user_data,
-    signup_data: state.signup_data,
-  };
-}
-// Function used to update values from redux react
-function mapDispatchtoProps(dispatch) {
-  return {
-    updateUserData: (user_data) =>
-      dispatch({
-        type: "UPDATE_USER_DATA",
-        user_data: user_data,
-      }),
-    updateSignupData: (signup_data) =>
-      dispatch({
-        type: "UPDATE_SIGNUP_DATA",
-        signup_data: signup_data,
-      }),
-  };
-}
-
-function EnterOTPModal(props) {
+const EnterOTPModal = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const recaptchaRef = useRef(null);
+  const { user_data, updateUserData, signup_data, updateSignupData, nextPath } = useAuthStore();
+
   const [error, setError] = useState(false);
   const [error_message, setErrorMessage] = useState("");
   const [isLoading, setLoading] = useState(false);
@@ -43,19 +22,17 @@ function EnterOTPModal(props) {
   const [isResendSuccess, setResendSuccess] = useState(null);
   const [otp, setOtp] = useState("");
 
-  const { signup_data } = useSelector((state) => state);
-
   useEffect(() => {
-    if (signup_data.otp) {
+    if (signup_data?.otp) {
       setOtp(signup_data.otp);
     }
-  }, [Object.keys(signup_data).length]);
+  }, [signup_data]);
 
   //Entering otp values will read in the setstate, after it occupies 4 value it will call submit function
   const onChange = (e) => {
     const length = e.target.value.toString().length;
     const otp_value = e.target.value;
-    if (length <= 4) {
+    if (length <= 6) {
       setError(false);
       setOtp(otp_value);
       if (length === 4) {
@@ -74,66 +51,54 @@ function EnterOTPModal(props) {
     }
   };
 
-  //access_token and refresh_token will be saved in the redux store
+  //access_token and refresh_token will be saved in the store
   const setUserDetails = (data) => {
-    let { user_data } = props;
-    user_data = {
+    let user_data = {
       ...data,
     };
-    props.updateUserData(user_data);
+    updateUserData(user_data);
   };
 
-  const onSubmit = (e, otp_value) => {
+  const onSubmit = async (e, otp_value) => {
     if (e) {
       e.preventDefault();
     }
 
-    //Phone number is taken as user data from redux store
-    let { user_data, signup_data } = props;
     const otpNumber = otp_value ? otp_value : otp;
-    if (user_data.phone) {
+    if (user_data?.phone) {
       if (otpNumber) {
-        if (!(signup_data.otp === otpNumber)) {
-          //After submission of userdata loading will starts.
+        if (!(signup_data?.otp === otpNumber)) {
           setLoading(true);
-          //user_data, service and otp is passed to the url
-          accountsConfig
-            .post("/authentication/signup/verify/phone/", {
+          try {
+            const response = await serverConfig.post("/api/v1/users/signup/verify/phone/", {
               otp: otpNumber,
               service: "learn",
               phone: user_data.phone,
               country: user_data.selectedCountry.web_code,
-            })
-            .then((response) => {
-              //From response.data the message and statuscode  will be taken.
-              const { StatusCode, message } = response.data;
-              if (StatusCode === 6000) {
-                //stopped the loading function
-                setLoading(false);
-                //When status code reads true it will redirect to the next page.
-                navigate(`${location.pathname}?action=name${props.nextPath ? `&next=${props.nextPath}` : ""}`);
-                //setUserDetails will be called from response.data
-                setUserDetails(response.data);
-                props.updateUserData(user_data);
-                props.updateSignupData({
-                  ...signup_data,
-                  otp: otpNumber,
-                  name: null,
-                  password: null,
-                });
-              } else if (StatusCode === 6001) {
-                //When status is invalid error message will be saved in setState.
-                setError(true);
-                setErrorMessage(message);
-                setLoading(false);
-              }
-            })
-            .catch((error) => {
-              //Saved error message will be shown.
-              setError(true);
-              setErrorMessage("An error occurred, please try again later");
-              setLoading(false);
             });
+
+            const { status_code, message } = response.data;
+            if (status_code === 6000) {
+              setLoading(false);
+              navigate(`${location.pathname}?action=name${nextPath ? `&next=${nextPath}` : ""}`);
+              setUserDetails(response.data);
+              updateUserData(user_data);
+              updateSignupData({
+                ...signup_data,
+                otp: otpNumber,
+                name: null,
+                password: null,
+              });
+            } else if (status_code === 6001) {
+              setError(true);
+              setErrorMessage(message);
+              setLoading(false);
+            }
+          } catch (error) {
+            setError(true);
+            setErrorMessage("An error occurred, please try again later");
+            setLoading(false);
+          }
         } else {
           navigate(`${location.pathname}?action=name`);
         }
@@ -152,40 +117,29 @@ function EnterOTPModal(props) {
 
   // function used to resend otp.
   const onResend = async () => {
-    //Phone number is taken as user data from redux store
-    let { user_data } = props;
-    //After submission of userdata loading will starts.
     setResendLoading(true);
-
-    //user_data, service and country is passed through the url
-    const token = await recaptchaRef.current.executeAsync();
-    accountsConfig
-      .post("/authentication/signup/resend/otp/", {
+    try {
+      const token = await recaptchaRef.current.executeAsync();
+      const response = await serverConfig.post("/api/v1/users/signup/resend/otp/", {
         country: user_data.selectedCountry.web_code,
         service: "learn",
         phone: user_data.phone,
         "g-recaptcha-response": token,
-      })
+      });
 
-      .then((response) => {
-        //From response.data the message and statuscode  will be taken.
-        const { StatusCode, message } = response.data;
-        if (StatusCode === 6000) {
-          //stopped the loading function
-          setResendLoading(false);
-          setResendSuccess(true);
-          props.updateUserData(user_data);
-        } else if (StatusCode === 6001) {
-          //When status is invalid error message will be saved in setState.
-          setResendLoading(false);
-          setResendSuccess(false);
-        }
-      })
-      .catch((error) => {
-        //Saved error message will be shown.
+      const { status_code } = response.data;
+      if (status_code === 6000) {
+        setResendLoading(false);
+        setResendSuccess(true);
+        updateUserData(user_data);
+      } else if (status_code === 6001) {
         setResendLoading(false);
         setResendSuccess(false);
-      });
+      }
+    } catch (error) {
+      setResendLoading(false);
+      setResendSuccess(false);
+    }
   };
 
   return (
@@ -194,7 +148,7 @@ function EnterOTPModal(props) {
         <CloseIcon
           title="Close"
           className="las la-times-circle"
-          onClick={props.closeModal}
+          onClick={() => navigate(-1)}
         ></CloseIcon>
         <ItemContainer bg="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/decorator.svg">
           <Content>
@@ -202,7 +156,7 @@ function EnterOTPModal(props) {
               A One Time Password has been sent!
             </Title>
             <Description className="b-medium">
-              Please enter the four-digit number which has been sent to the
+              Please enter the six-digit number which has been sent to the
               registered mobile number.
             </Description>
             <OtpCard
@@ -218,7 +172,6 @@ function EnterOTPModal(props) {
             <OtpIssue />
             <ReCAPTCHA
               ref={recaptchaRef}
-              //This ref can be used to call captcha related functions in case you need.
               sitekey="6Ld-4_ohAAAAAPmNLvidUquNeF7UYZXz4AiGzWdc"
               size="invisible"
               badge="bottomleft"
@@ -240,14 +193,13 @@ function EnterOTPModal(props) {
               </RowItem>
             </BottomRow>
           </Content>
-          {/* <TermsService /> */}
         </ItemContainer>
       </JoinNow>
     </Container>
   );
-}
+};
 
-export default connect(mapStatetoProps, mapDispatchtoProps)(EnterOTPModal);
+export default EnterOTPModal;
 
 const Container = styled.div`
   position: fixed;

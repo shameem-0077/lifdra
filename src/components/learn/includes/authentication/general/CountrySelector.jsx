@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "react-router";
 import styled from "styled-components";
 import { serverConfig } from "../../../../../axiosConfig";
@@ -26,7 +26,7 @@ export default function CountrySelector({
             return () => {
                 document.removeEventListener("mousedown", handleClickOutside);
             };
-        }, [ref]);
+        }, [ref, handleClick]);
     }
 
     const wrapperRef = useRef(null);
@@ -36,14 +36,14 @@ export default function CountrySelector({
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [countryDetails, setCountryDetails] = useState([]);
-    const [countryselector, setCountryselector] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleChange = (event) => {
+    const handleChange = useCallback((event) => {
         setSearchTerm(event.target.value);
-    };
+    }, []);
 
     useEffect(() => {
-        const results = countryDetails.filter(
+        const results = countryDetails?.filter(
             (item) =>
                 item.name.includes(searchTerm) ||
                 item.name.toLowerCase().includes(searchTerm) ||
@@ -52,38 +52,43 @@ export default function CountrySelector({
         setSearchResults(results);
     }, [searchTerm, countryDetails]);
 
-    useEffect(() => {
-        const fetchCountries = () => {
-            accountsConfig
-                .get("/api/v1/users/settings/countries/")
-                .then((response) => {
-                    let { StatusCode, data } = response.data;
-                    if (StatusCode === 6000) {
-                        setCountryDetails(data);
-                        let selected_country_code = selectedwebCode
-                            ? selectedwebCode
-                            : user_data
-                            ? user_data.selectedCountry
-                                ? user_data.selectedCountry.web_code
-                                    ? user_data.selectedCountry.web_code
-                                    : "IN"
-                                : "IN"
-                            : "IN";
+    const fetchCountries = useCallback(async () => {
+        if (isLoading) return;
+        
+        setIsLoading(true);
+        try {
+            const response = await serverConfig.get("/api/v1/users/settings/countries/");
+            const { status_code, data } = response.data;
+            
+            if (status_code === 6000) {
+                setCountryDetails(data);
+                const selected_country_code = selectedwebCode
+                    ? selectedwebCode
+                    : user_data?.selectedCountry?.web_code || "IN";
 
-                        let selected_country = data.find(
-                            (item) => item.web_code === selected_country_code
-                        );
-                        if (selected_country && onSelectHandler) {
-                            onSelectHandler(selected_country);
-                        }
-                    }
-                });
-        };
-        fetchCountries();
+                const selected_country = data?.find(
+                    (item) => item.web_code === selected_country_code
+                );
+                
+                if (selected_country && onSelectHandler) {
+                    onSelectHandler(selected_country);
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching countries:", error);
+        } finally {
+            setIsLoading(false);
+        }
     }, [selectedwebCode, user_data, onSelectHandler]);
 
+    useEffect(() => {
+        if (show && countryDetails.length === 0) {
+            fetchCountries();
+        }
+    }, [show, countryDetails.length, fetchCountries]);
+
     //maping countries
-    const renderCountries = searchResults.map((item, index) => (
+    const renderCountries = searchResults?.map((item, index) => (
         <CountryItem
             key={index}
             style={{

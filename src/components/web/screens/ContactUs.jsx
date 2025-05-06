@@ -5,7 +5,7 @@ import "aos/dist/aos.css";
 import "../../../assets/css/web/style.css";
 import Footer from "./steyp-landing-page/Footer";
 import WebHeader from "../inludes/general/steyp-landing-page/WebHeader";
-import { manageConfig } from "../../../axiosConfig";
+import { serverConfig } from "../../../axiosConfig";
 import { useSelector } from "react-redux";
 import CountrySelector from "../../learn/includes/authentication/general/CountrySelector";
 import CartLoader from "../../merchandise/includes/loaders/CartLoader";
@@ -118,7 +118,7 @@ export default function ContactUs() {
         }
 
         if (!isError) {
-            manageConfig
+            serverConfig
 
                 .post(
                     `web/submit/contact-enquiry/`,
@@ -136,8 +136,8 @@ export default function ContactUs() {
                     }
                 )
                 .then((response) => {
-                    const { StatusCode, data } = response.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, data } = response.data;
+                    if (status_code === 6000) {
                         setToast(true);
                         setLoading(false);
                         if (response.data.is_verified) {
@@ -148,7 +148,7 @@ export default function ContactUs() {
                             setOtpModal(true);
                             setLoading(false);
                         }
-                    } else if (StatusCode === 6001) {
+                    } else if (status_code === 6001) {
                         setIsError(true);
                         setToast(true);
                         setLoading(false);

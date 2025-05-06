@@ -5,54 +5,55 @@ import { Link, useHistory, useLocation } from "react-router-dom";
 import FlagDropDown from "../general/FlagDropDown";
 import TermsService from "../general/TermsService";
 import CountrySelector from "../general/CountrySelector";
-import { connect, useSelector } from "react-redux";
+import { useAuthStore } from "../../../../../store/authStore";
 import { serverConfig } from "../../../../../axiosConfig";
 import RequestLoader from "../general/RequestLoader";
 import ColorLogo from "../general/ColorLogo";
 import TalropEdtechHelmet from "../../../../helpers/TalropEdtechHelmet";
 import SignupLoader from "../../techschooling/general/loaders/SignupLoader";
 
-// Function used to fetch values from redux react
-function mapStatetoProps(state) {
-    return {
-        signup_data: state.signup_data,
-    };
-}
-
-// Function used to update values from redux react
-function mapDispatchtoProps(dispatch) {
-    return {
-        updateUserData: (user_data) =>
-            dispatch({
-                type: "UPDATE_USER_DATA",
-                user_data: user_data,
-            }),
-        updateSignupData: (signup_data) =>
-            dispatch({
-                type: "UPDATE_SIGNUP_DATA",
-                signup_data: signup_data,
-            }),
-    };
-}
-
-const EnterPhone = (props) => {
+const EnterPhone = () => {
     const history = useHistory();
+    const location = useLocation();
+    const { user_data, updateUserData, signup_data, updateSignupData } = useAuthStore();
 
     //storing selcted country to state
-    const [selectedCountry, setSelectedCountry] = useState("");
+    const [selectedCountry, setSelectedCountry] = useState(null);
     const [country_code, setCountry] = useState("");
     const [countryselector, setCountryselector] = useState(false);
     const [error, setError] = useState(false);
     const [error_message, setErrorMessage] = useState("");
-    const handleShow = () => {
-        setCountryselector((prevValue) => !prevValue);
-    };
     const [phone, setPhone] = useState("");
     const [referralcode, setRefferalCode] = useState("");
     const [isLoading, setLoading] = useState(false);
+    const [isInitializing, setIsInitializing] = useState(true);
+
+    const handleShow = () => {
+        setCountryselector((prevValue) => !prevValue);
+    };
 
     useEffect(() => {
-        let { signup_data, location } = props;
+        const initializeCountry = async () => {
+            try {
+                // Get default country from API
+                const response = await serverConfig.get("/api/v1/users/settings/countries/");
+                if (response.data && response.data.length > 0) {
+                    const defaultCountry = response.data[0]; // Get first country as default
+                    setSelectedCountry(defaultCountry);
+                    setCountry(defaultCountry.web_code);
+                    updateUserData({ selectedCountry: defaultCountry });
+                }
+            } catch (error) {
+                console.error("Error fetching default country:", error);
+            } finally {
+                setIsInitializing(false);
+            }
+        };
+
+        initializeCountry();
+    }, [updateUserData]);
+
+    useEffect(() => {
         if (signup_data) {
             setPhone(signup_data.phone);
         }
@@ -61,14 +62,7 @@ const EnterPhone = (props) => {
         const phone = values.phone;
         setPhone(phone);
         setRefferalCode(values.token);
-        // setCountry(user_data.selectedCountry.web_code);
-    }, []);
-
-    // useEffect(() => {
-    //     if (phone) {
-    //         onSubmit(null, phone);
-    //     }
-    // }, [selectedCountry]);
+    }, [signup_data, location]);
 
     //Validating the function of entering the phone number
     const onChange = (e) => {
@@ -89,57 +83,45 @@ const EnterPhone = (props) => {
         }
     };
 
-    const onSubmit = (e, phone = phone) => {
+    const onSubmit = async (e, phone = phone) => {
         e && e.preventDefault();
-        let { signup_data } = props;
         if (phone) {
-            if (!(signup_data.phone === phone)) {
-                //After submission of userdata loading will starts.
+            if (!(signup_data?.phone === phone)) {
                 setLoading(true);
-                //Country,service and phone is passed through the url
-
-                accountsConfig
-                    .post("/authentication/signup/enter/phone/", {
+                try {
+                    const response = await serverConfig.post("/api/v1/users/signup/enter/phone/", {
                         country: selectedCountry.web_code,
                         service: "learn",
                         phone: phone,
-                    })
-
-                    .then((response) => {
-                        //From response.data the message and statuscode  will be taken.
-                        const { StatusCode, message } = response.data;
-                        if (StatusCode === 6000) {
-                            setLoading(false);
-                            //When status code reads true it will redirect to the next page.
-                            history.push("/auth/join/verify/phone/");
-                            let user_data = {
-                                phone,
-                                selectedCountry,
-                            };
-                            props.updateUserData(user_data);
-                            props.updateSignupData({
-                                ...signup_data,
-                                phone: phone,
-                                otp: null,
-                                name: null,
-                                password: null,
-                                referralcode: referralcode,
-                            });
-                        } else if (StatusCode === 6001) {
-                            //When status is invalid error message will be saved in setState.
-                            setError(true);
-                            setErrorMessage(message);
-                            setLoading(false);
-                        }
-                    })
-                    .catch((error) => {
-                        //Saved error message will be shown.
-                        setError(true);
-                        setErrorMessage(
-                            "An error occurred, please try again later"
-                        );
-                        setLoading(false);
                     });
+
+                    const { status_code, message } = response.data;
+                    if (status_code === 6000) {
+                        setLoading(false);
+                        history.push("/auth/join/verify/phone/");
+                        let user_data = {
+                            phone,
+                            selectedCountry,
+                        };
+                        updateUserData(user_data);
+                        updateSignupData({
+                            ...signup_data,
+                            phone: phone,
+                            otp: null,
+                            name: null,
+                            password: null,
+                            referralcode: referralcode,
+                        });
+                    } else if (status_code === 6001) {
+                        setError(true);
+                        setErrorMessage(message);
+                        setLoading(false);
+                    }
+                } catch (error) {
+                    setError(true);
+                    setErrorMessage("An error occurred, please try again later");
+                    setLoading(false);
+                }
             } else {
                 history.push("/auth/join/verify/phone/");
             }
@@ -151,7 +133,7 @@ const EnterPhone = (props) => {
 
     const onSelectHandler = (selected) => {
         setSelectedCountry(selected);
-        props.updateUserData({ selectedCountry: selected });
+        updateUserData({ selectedCountry: selected });
     };
 
     return (
@@ -188,7 +170,7 @@ const EnterPhone = (props) => {
                     revolution....
                 </Description>
                 <MiddleContainer>
-                    {!selectedCountry ? (
+                    {isInitializing || !selectedCountry ? (
                         <LoaderContainer>
                             <SignupLoader />
                         </LoaderContainer>
@@ -209,10 +191,8 @@ const EnterPhone = (props) => {
                                         "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/phone.svg"
                                     }
                                     alt=""
-                                    onClick={() => setError(!error)}
                                 />
                                 {selectedCountry && selectedCountry.phone_code}
-
                                 <InputField
                                     autoFocus
                                     className="g-medium"
@@ -221,11 +201,11 @@ const EnterPhone = (props) => {
                                     value={phone}
                                     onKeyDown={handleKeyDown}
                                 />
-                                {error ? (
+                                {error && (
                                     <ErrorText className="b-medium">
                                         {error_message}
                                     </ErrorText>
-                                ) : null}
+                                )}
                             </InputContainer>
                         </>
                     )}
@@ -250,7 +230,7 @@ const EnterPhone = (props) => {
     );
 };
 
-export default connect(mapStatetoProps, mapDispatchtoProps)(EnterPhone);
+export default EnterPhone;
 
 const Container = styled.div`
     background: url("https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/decorator.svg");

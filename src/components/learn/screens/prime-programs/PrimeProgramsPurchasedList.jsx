@@ -49,15 +49,15 @@ const PrimeProgramsPurchasedList = () => {
         const fetchData = async () => {
             setButtonLoading(true);
             const { access_token } = user_data;
-            await primeprogramsConfig
+            await serverConfig
                 .get("learning/purchased-courses/", {
                     headers: {
                         Authorization: `Bearer ${access_token}`,
                     },
                 })
                 .then((response) => {
-                    const { StatusCode, data, pagination_data } = response.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, data, pagination_data } = response.data;
+                    if (status_code === 6000) {
                         setPurchased(data);
                         setPagination(pagination_data);
                         setLoading(false);

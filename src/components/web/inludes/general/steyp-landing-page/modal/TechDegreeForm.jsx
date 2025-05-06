@@ -9,7 +9,7 @@ import loader from "../../../../../../assets/lotties/modal/loading_lottie.json";
 import tick from "../../../../../../assets/lotties/web/sucess.json";
 import error from "../../../../../../assets/lotties/web/error.json";
 import greenloader from "../../../../../../assets/lotties/web/green_loader.json";
-import { manageConfig } from "../../../../../../axiosConfig";
+import { serverConfig } from "../../../../../../axiosConfig";
 
 //components
 import OTPModal from "./OTPModal";
@@ -70,14 +70,14 @@ const TechDegreeForm = () => {
         setVerficationLoading(true);
 
         if (phone && phone.length >= 10) {
-            manageConfig
+            serverConfig
                 .post(`web/enter-phone/service-referral/`, {
                     phone: phone,
                     country: "IN",
                 })
                 .then((res) => {
-                    let { StatusCode, message, data } = res.data;
-                    if (StatusCode === 6000) {
+                    let { status_code, message, data } = res.data;
+                    if (status_code === 6000) {
                         if (data.title === "Verified user") {
                             setVerifed(true);
                             setVerfiedNumber(phone);
@@ -139,19 +139,19 @@ const TechDegreeForm = () => {
                 formData.append("couse_completion_year", year);
                 formData.append("resume", file);
 
-                manageConfig
+                serverConfig
                     .post("web/submit/tech-degree-registration/", formData, {
                         headers: {
                             "Content-Type": "multipart/form-data",
                         },
                     })
                     .then((res) => {
-                        let { StatusCode, title, message } = res.data;
-                        if (StatusCode === 6000) {
+                        let { status_code, title, message } = res.data;
+                        if (status_code === 6000) {
                             setError(false);
                             setModalType("success");
                             setLoading(false);
-                        } else if (StatusCode === 6001) {
+                        } else if (status_code === 6001) {
                             setLoading(false);
                             setError(true);
                             setErrorMessage(message);

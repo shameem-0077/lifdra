@@ -22,7 +22,7 @@ import EligibilityFormModal from "../../inludes/EligibilityFormModal";
 import EligibilityConfirmModal from "../../inludes/EligibilityConfirmModal";
 import ResponseModal from "../../inludes/ResponseModal";
 import { useSelector } from "react-redux";
-import { manageConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 
 const TechDegreeLanding = () => {
     const { user_profile } = useAuthStore();
@@ -59,7 +59,7 @@ const TechDegreeLanding = () => {
     const submitData = () => {
         let { access_token } = user_profile;
         setLoading(true);
-        manageConfig
+        serverConfig
             .post(
                 `web/eligility-enquiry/enter/
 				`,
@@ -78,8 +78,8 @@ const TechDegreeLanding = () => {
                 }
             )
             .then((response) => {
-                const { StatusCode, data, message } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data, message } = response.data;
+                if (status_code === 6000) {
                     if (data.is_verified) {
                         setLoading(false);
                         setFormModal(false);
@@ -89,7 +89,7 @@ const TechDegreeLanding = () => {
                         setFormModal(false);
                         setConfirmModal(true);
                     }
-                } else if (StatusCode === 6001) {
+                } else if (status_code === 6001) {
                     if (name === "") {
                         setnameError(true);
                     }

@@ -95,7 +95,7 @@ const VerifyOtp = (props) => {
                 setLoading(true);
 
                 //user_data, service and otp is passed to the url
-                accountsConfig
+                serverConfig
                     .post("/authentication/signup/verify/phone/", {
                         otp: otpNumber,
                         service: "learn",
@@ -104,9 +104,9 @@ const VerifyOtp = (props) => {
                     })
 
                     .then((response) => {
-                        //From response.data the message and statuscode  will be taken.
-                        const { StatusCode, message } = response.data;
-                        if (StatusCode === 6000) {
+                        //From response.data the message and status_code  will be taken.
+                        const { status_code, message } = response.data;
+                        if (status_code === 6000) {
                             //stopped the loading function
                             setLoading(false);
                             //When status code reads true it will redirect to the next page.
@@ -120,7 +120,7 @@ const VerifyOtp = (props) => {
                                 name: null,
                                 password: null,
                             });
-                        } else if (StatusCode === 6001) {
+                        } else if (status_code === 6001) {
                             //When status is invalid error message will be saved in setState.
                             setError(true);
                             setErrorMessage(message);
@@ -152,7 +152,7 @@ const VerifyOtp = (props) => {
         setResendLoading(true);
 
         //user_data, service and country is passed through the url
-        accountsConfig
+        serverConfig
             .post("/authentication/signup/resend/otp/", {
                 country: user_data.selectedCountry.web_code,
                 service: "learn",
@@ -160,14 +160,14 @@ const VerifyOtp = (props) => {
             })
 
             .then((response) => {
-                //From response.data the message and statuscode  will be taken.
-                const { StatusCode, message } = response.data;
-                if (StatusCode === 6000) {
+                //From response.data the message and status_code  will be taken.
+                const { status_code, message } = response.data;
+                if (status_code === 6000) {
                     //stopped the loading function
                     setResendLoading(false);
                     setResendSuccess(true);
                     props.updateUserData(user_data);
-                } else if (StatusCode === 6001) {
+                } else if (status_code === 6001) {
                     //When status is invalid error message will be saved in setState.
                     setResendLoading(false);
                     setResendSuccess(false);

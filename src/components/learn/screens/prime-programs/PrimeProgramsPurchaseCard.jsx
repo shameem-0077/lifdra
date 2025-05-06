@@ -21,18 +21,18 @@ const PrimeProgramsPurchaseCard = ({ item, isButtonLoading }) => {
   function StartCourse() {
     const access_token = user_data.access_token;
     setStartNowLoading(true);
-    primeprogramsConfig
+    serverConfig
       .get(`learning/start-course/${item.id}/`, {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           history.push(`/prime-programs/${item.slug}/${item.first_topic}/`);
           setStartNowLoading(false);
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
           setStartNowLoading(false);
         }
       })
@@ -55,7 +55,7 @@ const PrimeProgramsPurchaseCard = ({ item, isButtonLoading }) => {
 
   const startCourse = async () => {
     const { access_token } = user_data;
-    await primeprogramsConfig
+    await serverConfig
       .post(
         `learning/start-course/${item.id}/`,
         {},

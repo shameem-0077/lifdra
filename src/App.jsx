@@ -148,7 +148,7 @@ const MainApp = (props) => {
       const values = queryString.parse(search);
       const access_token = values.t;
       if (values.t) {
-        accountsConfig
+        serverConfig
           .get(
             "api/v1/users/get-student-info/",
             {
@@ -161,12 +161,12 @@ const MainApp = (props) => {
             }
           )
           .then((response) => {
-            let { StatusCode, data } = response.data;
-            if (StatusCode === 6000) {
+            let { status_code, data } = response.data;
+            if (status_code === 6000) {
               setUserData(data);
               fetchUserProfileData(data);
               navigate("/tech-schooling/");
-            } else if (StatusCode === 6001) {
+            } else if (status_code === 6001) {
               navigate("/tech-schooling/");
             }
           });
@@ -197,7 +197,7 @@ const MainApp = (props) => {
 
   const refreshToken = () => {
     let { access_token, refresh_token } = user_data;
-    accountsConfig
+    serverConfig
       .post(
         "/api/v1/users/token/refresh/",
         {
@@ -211,9 +211,9 @@ const MainApp = (props) => {
         }
       )
       .then((response) => {
-        const { StatusCode, data } = response.data;
+        const { status_code, data } = response.data;
 
-        if (StatusCode === 6000) {
+        if (status_code === 6000) {
           if (data.error === "invalid_grant") {
             localStorage.clear();
             auth.logout(() => {
@@ -268,15 +268,15 @@ const MainApp = (props) => {
       const { access_token, is_verified } = user || {};
 
       if (is_verified) {
-        accountsConfig
+        serverConfig
           .get("/api/v1/users/profile/", {
             params: { response_type: "minimal" },
             headers: { Authorization: `Bearer ${access_token}` },
           })
           .then((response) => {
-            const { StatusCode, data } = response.data;
+            const { status_code, data } = response.data;
 
-            if (StatusCode === 6000) {
+            if (status_code === 6000) {
               let { subscription_data } = data;
               if (subscription_data.has_active_subscription) {
                 setUserData({
@@ -324,15 +324,15 @@ const MainApp = (props) => {
   };
 
   const fetchNotifications = (access_token) => {
-    notificationsConfig
+    serverConfig
       .get("main/user-notifications/", {
         params: { "response-length": 3 },
         headers: { Authorization: `Bearer ${access_token}` },
       })
       .then((response) => {
-        const { StatusCode, data, count } = response.data;
+        const { status_code, data, count } = response.data;
 
-        if (StatusCode === 6000) {
+        if (status_code === 6000) {
           setNotifications(data, count);
         }
       })
@@ -358,7 +358,7 @@ const MainApp = (props) => {
   return (
     <React.Fragment>
       {/* <ScheduledMaintenance /> */}
-      {user_data?.access_token && <Notification />}
+      {/* {user_data?.access_token && <Notification />} */}
       {isAppLoading ? <RouteLoading /> : <AppRouter {...props} />}
     </React.Fragment>
   );

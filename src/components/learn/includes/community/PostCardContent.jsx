@@ -43,9 +43,9 @@ function PostCardContent({ item, isSinglePost }) {
 
   const handleLike = () => {
     const { access_token } = user_data;
-    primeprogramsConfig
+    serverConfig
       .post(
-        `community/posts/${item.id}/like/`,
+        `communityapi/v1/posts/${item.id}/like/`,
         {},
         {
           headers: {
@@ -54,8 +54,8 @@ function PostCardContent({ item, isSinglePost }) {
         }
       )
       .then((response) => {
-        const { StatusCode } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code } = response.data;
+        if (status_code === 6000) {
           setIsLiked(!isLiked);
           setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
         }

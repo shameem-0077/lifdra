@@ -131,7 +131,7 @@ const SetPassword = (props) => {
         setLoading(true);
 
         //password, service and authorization is passed to the url
-        accountsConfig
+        serverConfig
           .post("/authentication/signup/set/password/", {
             password: password,
             service: "learn",
@@ -139,15 +139,15 @@ const SetPassword = (props) => {
             country: user_data.selectedCountry.web_code,
           })
           .then((response) => {
-            //From response.data the message and statuscode  will be taken.
+            //From response.data the message and status_code  will be taken.
             let {
-              StatusCode,
+              status_code,
               message,
               is_premium_user,
               has_active_subscription,
               learn_student_token,
             } = response.data;
-            if (StatusCode === 6000) {
+            if (status_code === 6000) {
               setLoading(false);
               //When status code reads true it will redirect to the next page.
               history.push("/feed/");
@@ -163,7 +163,7 @@ const SetPassword = (props) => {
                 ...signup_data,
                 password: password,
               });
-            } else if (StatusCode === 6001) {
+            } else if (status_code === 6001) {
               //When status is invalid error message will be saved in setState.
               setLoading(false);
               setError(true);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useAuthStore } from "../../../../store/authStore";
 import styled from "styled-components";
 import Jdenticon from "react-jdenticon";
 import { useNavigate, useLocation, Link } from "react-router-dom";
@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import moment from "moment";
 
 function PostTop({ toast, isUpdate, setUpdate, setModal, isModal, generatePost, isPostId }) {
-  const { user_data, user_profile } = useSelector((state) => state);
+  const { user_data, user_profile } = useAuthStore();
   const { access_token } = user_data;
 
   const navigate = useNavigate();
@@ -24,15 +24,15 @@ function PostTop({ toast, isUpdate, setUpdate, setModal, isModal, generatePost, 
   }, [location]);
 
   const handleDelete = () => {
-    primeprogramsConfig
-      .delete(`community/posts/${data.id}/`, {
+    serverConfig
+      .delete(`communityapi/v1/posts/${data.id}/`, {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
       })
       .then((response) => {
-        const { StatusCode } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code } = response.data;
+        if (status_code === 6000) {
           toast.success("Post deleted successfully");
           setPostData(postData.filter((item) => item.id !== data.id));
         }

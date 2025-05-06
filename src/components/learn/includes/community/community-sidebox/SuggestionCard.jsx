@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useAuthStore } from "../../../../../store/authStore";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import Skeleton from "react-loading-skeleton";
@@ -14,17 +14,15 @@ function SuggestionCard({ setFollowCount, setIsFollow, isFollow }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   const location = useLocation();
-
-  const {
-    user_data: { access_token },
-  } = useSelector((state) => state);
+  const { user_data } = useAuthStore();
+  const { access_token } = user_data;
 
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
     async function fetchPeopleMayYouKnow() {
       try {
-        const response = await accountsConfig.get(
+        const response = await serverConfig.get(
           "/api/v1/users/community-profiles/",
           {
             headers: {

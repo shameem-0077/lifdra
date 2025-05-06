@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import successTick from "../../../../../../assets/images/job-desk/success-tick.svg";
 import closeImage from "../../../../../../assets/images/job-desk/close.svg";
-import { manageConfig } from "../../../../../../axiosConfig";
+import { serverConfig } from "../../../../../../axiosConfig";
 import RequestLoader from "../../../../../learn/includes/authentication/general/RequestLoader";
 
 function ContactUsOptModal({
@@ -50,12 +50,12 @@ function ContactUsOptModal({
 		if (otp !== "") {
 			setLoading(true);
 
-			manageConfig
+			serverConfig
 				.post(`web/verify/contact-enquiry/`, formData)
 				.then((response) => {
 					setLoading(false);
-					const { StatusCode, data } = response.data;
-					if (StatusCode === 6000) {
+					const { status_code, data } = response.data;
+					if (status_code === 6000) {
 						setOtp("");
 						setCounter(20);
 						setOtpModal(false);
@@ -84,17 +84,17 @@ function ContactUsOptModal({
 		formData.append("phone", mobile);
 		setLoading(true);
 
-		manageConfig
+		serverConfig
 			.post(`web/resend-otp/service-referral/`, formData)
 			.then((response) => {
 				setLoading(false);
-				const { StatusCode, data } = response.data;
-				if (StatusCode === 6000) {
+				const { status_code, data } = response.data;
+				if (status_code === 6000) {
 					setError(false);
 					setOtp("");
 					setResend(data.message);
 					setErrorMessage("");
-				} else if (StatusCode === 6001) {
+				} else if (status_code === 6001) {
 					setErrorMessage("Enter valid otp");
 				}
 			})

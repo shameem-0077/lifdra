@@ -90,7 +90,6 @@ export default function OtpCard({
                         onKeyDown={handleKeyDown}
                         className="g-medium"
                         placeholder="Enter OTP"
-                        max={9999}
                         value={otp}
                     />
                 </InputContainer>

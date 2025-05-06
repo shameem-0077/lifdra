@@ -119,7 +119,7 @@ export default function AddCertificationsModal({ isOffline }) {
             issuedDate
         ) {
             setLoading(true);
-            accountsConfig
+            serverConfig
                 .post(
                     "api/v1/users/create-student-certificate/",
                     {
@@ -140,8 +140,8 @@ export default function AddCertificationsModal({ isOffline }) {
                 )
                 .then((response) => {
                     setLoading(false);
-                    const { StatusCode, message } = response.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, message } = response.data;
+                    if (status_code === 6000) {
                         handleSuccess();
                     } else {
                         setErrorMessage(message?.message);
@@ -182,7 +182,7 @@ export default function AddCertificationsModal({ isOffline }) {
             certificateId
         ) {
             setLoading(true);
-            accountsConfig
+            serverConfig
                 .post(
                     `/api/v1/users/update-student-certificate/${selectedEditingMyProfileData?.id}/`,
                     {
@@ -203,8 +203,8 @@ export default function AddCertificationsModal({ isOffline }) {
                 )
                 .then((response) => {
                     setLoading(false);
-                    const { StatusCode, data, message } = response.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, data, message } = response.data;
+                    if (status_code === 6000) {
                         handleSuccess();
                         updateUserData({ selected_editing_my_profile_data: {} });
                     } else {

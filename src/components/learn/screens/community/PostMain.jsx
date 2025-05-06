@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import TalropEdtechHelmet from "../../../helpers/TalropEdtechHelmet";
 import styled from "styled-components";
 import { useLocation, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
 import PostTop from "../../includes/community/PostTop";
 import TrendToggle from "../../includes/community/TrendToggle";
 import PostCard from "../../includes/community/PostCard";
@@ -20,35 +19,38 @@ import {
 import CommentDelModal from "../../includes/community/modals/CommentDelModal";
 import PostProcessing from "../../includes/community/PostProcessing";
 import CommunitySuggetionCard from "./CommunitySuggetionCard";
+import { useAuthStore } from "../../../../store/authStore";
 
-function PostMain({ toast, setFollowCount, userProfileDetails, setUsername }) {
+function PostMain({
+  toast,
+  setFollowCount,
+  userProfileDetails,
+  setUsername,
+}) {
   const { username } = useParams();
+  const { slug } = useParams();
+  const location = useLocation();
+  const { user_data, user_profile } = useAuthStore();
 
   const [selected, setSelected] = useState("trending");
   const [postIds, setPostIds] = useState([]);
   const [randomId, setRandomId] = useState(null);
-  const location = useLocation();
-  const user_data = useSelector((state) => state.user_data);
-  const { user_profile } = useSelector((state) => state);
-
-  const { access_token } = user_data;
-
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [isLoading, setLoading] = useState(false);
   const [postData, setPostData] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [isDelete, setDelete] = useState(false);
-  const [isCmtDel, setCmDel] = useState(false);
-  const [isReport, setReport] = useState(false);
-  const [isSelectedId, setSelectedId] = useState("");
-  const [isOptions, setOptions] = useState(null);
-  const [deletionUpdate, setDeletionUpdate] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(false);
   const [deletionOccurred, setDeletionOccurred] = useState(false);
-  const [isUpdate, setUpdate] = useState(false);
-  const [isModal, setModal] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [isDelete, setDelete] = useState(false);
+  const [isSelectedId, setSelectedId] = useState(null);
+  const [isOptions, setOptions] = useState(false);
+  const [isReport, setReport] = useState(false);
+  const [isCmtDel, setCmDel] = useState(false);
+  const [deletionUpdate, setDeletionUpdate] = useState(false);
   const [selectedComment, setSelectedComment] = useState(null);
-  const [isPostId, setPostId] = useState("");
+  const [isModal, setModal] = useState(false);
+  const [isPostId, setPostId] = useState(null);
 
   const observer = useRef();
   const lastPostElementRef = useCallback(
@@ -74,9 +76,9 @@ function PostMain({ toast, setFollowCount, userProfileDetails, setUsername }) {
       const formData = new FormData();
       formData.append("status", "on_draft");
 
-      const response = await learnConfig.post(`/posts/create/`, formData, {
+      const response = await serverConfig.post(`api/v1/posts/create/`, formData, {
         headers: {
-          Authorization: `Bearer ${access_token}`,
+          Authorization: `Bearer ${user_data?.access_token}`,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -111,17 +113,17 @@ function PostMain({ toast, setFollowCount, userProfileDetails, setUsername }) {
       setLoading(true);
     }
     try {
-      let url = "/posts/";
+      let url = "api/v1/posts/";
       let params = { type: selected, page };
 
       if (location.pathname.match(SavedRouteRegex)) {
-        url = "/posts/profile-posts/";
+        url = "api/v1/posts/profile-posts/";
         params = { section: "saved", page };
       } else if (
         location.pathname.match(PostRouteRegex) ||
         location.pathname.match(ProfilePostRedirctRegex)
       ) {
-        url = "/posts/profile-posts/";
+        url = "api/v1/posts/profile-posts/";
         params = {
           section: "posts",
           page,
@@ -132,9 +134,9 @@ function PostMain({ toast, setFollowCount, userProfileDetails, setUsername }) {
         };
       }
 
-      const response = await learnConfig.get(url, {
+      const response = await serverConfig.get(url, {
         headers: {
-          Authorization: `Bearer ${access_token}`,
+          Authorization: `Bearer ${user_data?.access_token}`,
         },
         params,
       });
@@ -160,7 +162,7 @@ function PostMain({ toast, setFollowCount, userProfileDetails, setUsername }) {
       setInitialLoading(false);
       setLoading(false);
     }
-  }, [access_token, location, selected, page, username]);
+  }, [user_data?.access_token, location, selected, page, username, user_profile, userProfileDetails]);
 
   useEffect(() => {
     setPostData([]);
@@ -245,7 +247,7 @@ function PostMain({ toast, setFollowCount, userProfileDetails, setUsername }) {
             <PostTop
               toast={toast}
               isUpdate={isUpdate}
-              setUpdate={setUpdate}
+              setUpdate={setIsUpdate}
               setModal={setModal}
               isModal={isModal}
               generatePost={GeneratePost}
@@ -262,13 +264,11 @@ function PostMain({ toast, setFollowCount, userProfileDetails, setUsername }) {
               ))}
             </LoaderCover>
           ) : postData.length > 0 ? (
-            postData.map((item, index) => (
-              <>
+            <>
+              {postData.map((item, index) => (
                 <div
                   key={item.id}
-                  ref={
-                    index === postData.length - 1 ? lastPostElementRef : null
-                  }
+                  ref={index === postData.length - 1 ? lastPostElementRef : null}
                 >
                   {item?.status === "processing" &&
                     !location?.pathname?.match(SavedRouteRegex) && (
@@ -299,14 +299,14 @@ function PostMain({ toast, setFollowCount, userProfileDetails, setUsername }) {
                       setSelectedComment={setSelectedComment}
                     />
                   )}
+                  {randomId == item.id && (
+                    <SuggetionBox>
+                      <CommunitySuggetionCard />
+                    </SuggetionBox>
+                  )}
                 </div>
-                {randomId == item.id && (
-                  <SuggetionBox>
-                    <CommunitySuggetionCard />
-                  </SuggetionBox>
-                )}
-              </>
-            ))
+              ))}
+            </>
           ) : (
             <NoDataContainer>
               <CommunityNoDataFound

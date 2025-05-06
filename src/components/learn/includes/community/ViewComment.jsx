@@ -65,7 +65,7 @@ function ViewComment({
     setReplyData("");
     setLoading(true);
     try {
-      const response = await learnConfig.get(`/posts/comments/${isPostId}/`, {
+      const response = await serverConfig.get(`api/v1/posts/comments/${isPostId}/`, {
         params: {
           reply_id: commentId,
         },
@@ -92,8 +92,8 @@ function ViewComment({
       formData.append("parent", commentId);
       formData.append("reply_mention", authorname);
 
-      const response = await learnConfig.post(
-        `/posts/create-comment/${isPostId}/`,
+      const response = await serverConfig.post(
+        `api/v1/posts/create-comment/${isPostId}/`,
         formData,
         {
           headers: {
@@ -127,8 +127,8 @@ function ViewComment({
     }));
 
     try {
-      await learnConfig.post(
-        `/posts/like-comment/${commentId}/`,
+      await serverConfig.post(
+        `api/v1/posts/like-comment/${commentId}/`,
         {},
         {
           headers: {

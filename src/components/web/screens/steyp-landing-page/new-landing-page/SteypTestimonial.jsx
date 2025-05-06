@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Slider from "react-slick";
 import { truncateString } from "../../../../helpers/functions";
 import MagicSliderDots from "react-magic-slider-dots";
-import { communityConfig } from "../../../../../axiosConfig";
+import { serverConfig } from "../../../../../axiosConfig";
 import TestimonialModal from "../../../inludes/general/steyp-landing-page/modal/TestimonialModal";
 import line from "../../../../../assets/images/steyp-landing/line.svg";
 import axios from "axios";
@@ -87,7 +87,7 @@ const SteypTestimonials = ({ title, program }) => {
   }, [pageNumber]);
 
   const fetchData = () => {
-    // communityConfig
+    // serverConfig
     axios
       .get(
         "https://community.talrop.com/api/v1/testimonials/tech-schooling/student/",
@@ -99,8 +99,8 @@ const SteypTestimonials = ({ title, program }) => {
         }
       )
       .then((response) => {
-        let { StatusCode, data, pagination_data } = response.data;
-        if (StatusCode === 6000) {
+        let { status_code, data, pagination_data } = response.data;
+        if (status_code === 6000) {
           setTestimonials((prev) => prev.concat(data));
           setPagination(pagination_data);
         }

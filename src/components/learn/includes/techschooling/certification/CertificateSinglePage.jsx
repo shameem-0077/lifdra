@@ -49,11 +49,11 @@ function CertificateSinglePage() {
   };
 
   useEffect(() => {
-    learnConfig
+    serverConfig
       .get(`/certifications/get-certificate-detail/${id}/`)
       .then((response) => {
-        let { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        let { status_code, data } = response.data;
+        if (status_code === 6000) {
           setCertificateDatas(data.certificate_data);
           setCertificateSkillsData(data.certificate_details_data);
           setobtainedScore(data.certificate_data.certificate_obtained_score);
@@ -73,13 +73,13 @@ function CertificateSinglePage() {
 
   const downloadCertificate = (certificateId, designationName) => {
     setisButtonLoading(true);
-    learnConfig
+    serverConfig
       .get(`/certifications/get-certificate/${certificateId}/`, {
         responseType: "blob",
       })
       .then((response) => {
-        let { StatusCode } = response.data;
-        if (StatusCode === 6001) {
+        let { status_code } = response.data;
+        if (status_code === 6001) {
           setDownloadError(true);
           setisButtonLoading(false);
         } else {

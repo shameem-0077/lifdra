@@ -31,14 +31,14 @@ class Notification extends React.PureComponent {
 		let { user_data } = this.props;
 		let { access_token } = user_data;
 
-		notificationsConfig
+		serverConfig
 			.get("main/user-notifications/", {
 				headers: { Authorization: `Bearer ${access_token}` },
 			})
 			.then((response) => {
-				const { StatusCode, data } = response.data;
+				const { status_code, data } = response.data;
 
-				if (StatusCode === 6000) {
+				if (status_code === 6000) {
 					this.setState({
 						notifications: data,
 						isLoading: false,

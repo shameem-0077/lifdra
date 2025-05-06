@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import ContentBox from "../../includes/community/community-profile/ContentBox";
@@ -10,29 +9,32 @@ import CertificateBox from "../../includes/community/community-profile/Certifica
 import { serverConfig } from "../../../../axiosConfig";
 import ProfileAboutSectionSkeleton from "../../includes/community/community-profile/ProfileAboutSectionSkeleton";
 import UnfollowModal from "../../includes/community/modals/UnfollowModal";
+import { useAuthStore } from "../../../../store/authStore";
 
 function CommunityProfile({ setUsername }) {
   const { username } = useParams();
   const [userProfileDetails, setUserProfileDetails] = useState({});
   const [isLoading, setLoading] = useState(false);
-
   const [isModal, setModal] = useState(false);
-
-  const {
-    user_data: { access_token },
-  } = useSelector((state) => state);
+  const { user_data } = useAuthStore();
 
   useEffect(() => {
     let isMounted = true;
 
     async function fetchMyProfileDetails() {
+      if (!user_data?.access_token) {
+        console.error("No access token available");
+        return;
+      }
+
       setLoading(true);
       try {
-        const response = await accountsConfig.get(
-          `/api/v1/users/community-profiles/`,
+        const response = await serverConfig.get(
+          `/api/v1/users/profile/`,
           {
             headers: {
-              Authorization: `Bearer ${access_token}`,
+              'Authorization': `Bearer ${user_data.access_token}`,
+              'Content-Type': 'application/json'
             },
             params: { type: "about", student_id: username },
           }
@@ -57,15 +59,18 @@ function CommunityProfile({ setUsername }) {
         }
       }
     }
-    if (access_token) {
-      setUsername(username);
+
+    if (user_data?.access_token) {
+      if (typeof setUsername === 'function') {
+        setUsername(username);
+      }
       fetchMyProfileDetails();
     }
 
     return () => {
       isMounted = false;
     };
-  }, [access_token, username]);
+  }, [user_data?.access_token, username, setUsername]);
 
   return (
     <Container>

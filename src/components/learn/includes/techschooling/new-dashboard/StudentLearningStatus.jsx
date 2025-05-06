@@ -4,8 +4,8 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { getShortMonthName } from "../../../../helpers/functions";
 import {
-	learnConfig,
-	studentActivitiesConfig,
+	serverConfig,
+	serverConfig,
 } from "../../../../../axiosConfig";
 import "chart.js/auto";
 import { Bar, Chart } from "react-chartjs-2";
@@ -20,7 +20,7 @@ function StudentLearningStatus() {
 	const [workshopData, setWorkshopData] = useState([]);
 
 	useEffect(() => {
-		studentActivitiesConfig
+		serverConfig
 			.get("followups/student-activity-day-chart/", {
 				headers: {
 					authorization: `Bearer ${access_token}`,
@@ -170,15 +170,15 @@ function StudentLearningStatus() {
 
 	// useEffect(() => {
 	//     const viewSchedule = () => {
-	//         learnConfig
+	//         serverConfig
 	//             .get(`/schedules/view-schedule/`, {
 	//                 headers: {
 	//                     Authorization: `Bearer ${access_token}`,
 	//                 },
 	//             })
 	//             .then((response) => {
-	//                 const { StatusCode, data } = response.data;
-	//                 if (StatusCode === 6000) {
+	//                 const { status_code, data } = response.data;
+	//                 if (status_code === 6000) {
 	//                     setScheduleData(data);
 	//                     setLoading(false);
 	//                 } else {

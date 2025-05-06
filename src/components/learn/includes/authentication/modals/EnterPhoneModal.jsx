@@ -7,51 +7,33 @@ import RequestLoader from "../general/RequestLoader";
 import FlagDropDown from "../general/FlagDropDown";
 import CountrySelector from "../general/CountrySelector";
 import { serverConfig } from "../../../../../axiosConfig";
-import { connect } from "react-redux";
 import SignupLoader from "../../techschooling/general/loaders/SignupLoader";
 import { useAuthStore } from "../../../../../store/authStore";
-
 import ReCAPTCHA from "react-google-recaptcha";
-// Function used to fetch values from redux react
-function mapStatetoProps(state) {
-  return {
-    signup_data: state.signup_data,
-  };
-}
 
-// Function used to update values from redux react
-function mapDispatchtoProps(dispatch) {
-  return {
-    updateUserData: (user_data) =>
-      dispatch({
-        type: "UPDATE_USER_DATA",
-        user_data: user_data,
-      }),
-    updateSignupData: (signup_data) =>
-      dispatch({
-        type: "UPDATE_SIGNUP_DATA",
-        signup_data: signup_data,
-      }),
-    updateNextPath: (nextPath) =>
-      dispatch({
-        type: "UPDATE_NEXT_PATH",
-        nextPath: nextPath,
-      }),
-  };
-}
-
-function EnterPhoneModal(props) {
+const EnterPhoneModal = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const recaptchaRef = useRef(null);
-  const updateUserData = useAuthStore((state) => state.updateUserData);
+  const { user_data, updateUserData, signup_data, updateSignupData, nextPath, updateNextPath } = useAuthStore();
+
+  // Default country data
+  const defaultCountryData = {
+    web_code: "IN",
+    phone_code: "+91",
+    phone_number_length: 10,
+    name: "India"
+  };
 
   //storing selcted country to state
-  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState(defaultCountryData);
   const [countryselector, setCountryselector] = useState(false);
   const [error, setError] = useState(false);
   const [error_message, setErrorMessage] = useState("");
-  
+  const [phone, setPhone] = useState("");
+  const [selecteddistrict, setSelectedDistrict] = useState("");
+  const [isLoading, setLoading] = useState(false);
+
   const handleShow = () => {
     setCountryselector((prevValue) => !prevValue);
   };
@@ -60,12 +42,7 @@ function EnterPhoneModal(props) {
     navigate(-1);
   };
 
-  const [phone, setPhone] = useState("");
-  const [selecteddistrict, setSelectedDistrict] = useState("");
-  const [isLoading, setLoading] = useState(false);
-
   useEffect(() => {
-    let { signup_data } = props;
     if (signup_data) {
       setPhone(signup_data.phone);
     }
@@ -74,14 +51,7 @@ function EnterPhoneModal(props) {
     const phone = values.phone;
     setPhone(phone);
     setSelectedDistrict(values.token);
-    // setCountry(user_data.selectedCountry.web_code);
-  }, []);
-
-  // useEffect(() => {
-  //     if (phone) {
-  //         onSubmit(null, phone);
-  //     }
-  // }, [selectedCountry]);
+  }, [signup_data, location]);
 
   //Validating the function of entering the phone number
   const onChange = (e) => {
@@ -105,60 +75,46 @@ function EnterPhoneModal(props) {
   const onSubmit = async (e) => {
     e && e.preventDefault();
 
-    let { signup_data } = props;
-
     if (phone) {
-      if (!(signup_data.phone === phone)) {
-        //After submission of userdata loading will starts.
+      if (!(signup_data?.phone === phone)) {
         setLoading(true);
-        //Country,service and phone is passed through the url
         let token;
-        // if (process.env.NODE_ENV !== "development") {
-        //   // Run the function in any environment except development
-        //   token = await recaptchaRef.current.executeAsync();
-        // }
-
-        accountsConfig
-          .post("/authentication/signup/enter/phone/", {
+        try {
+          const response = await serverConfig.post("/api/v1/users/signup/enter/phone/", {
             country: selectedCountry.web_code,
             service: "learn",
             phone: phone,
             "g-recaptcha-response": token,
-          })
-          .then((response) => {
-            //From response.data the message and statuscode  will be taken.
-            const { StatusCode, message } = response.data;
-            if (StatusCode === 6000) {
-              setLoading(false);
-              //When status code reads true it will redirect to the next page.
-              navigate(`${location.pathname}?action=verify-otp${props.nextPath ? `&next=${props.nextPath}` : ""}`);
-              let user_data = {
-                phone,
-                selectedCountry,
-              };
-              updateUserData(user_data);
-              props.updateSignupData({
-                ...signup_data,
-                phone: phone,
-                country: selectedCountry.web_code,
-                otp: null,
-                name: null,
-                password: null,
-                selecteddistrict: selecteddistrict,
-              });
-            } else if (StatusCode === 6001) {
-              //When status is invalid error message will be saved in setState.
-              setError(true);
-              setErrorMessage(message);
-              setLoading(false);
-            }
-          })
-          .catch((error) => {
-            //Saved error message will be shown.
-            setError(true);
-            setErrorMessage("An error occurred, please try again later");
-            setLoading(false);
           });
+
+          const { status_code, message } = response.data;
+          if (status_code === 6000) {
+            setLoading(false);
+            navigate(`${location.pathname}?action=verify-otp${nextPath ? `&next=${nextPath}` : ""}`);
+            let user_data = {
+              phone,
+              selectedCountry,
+            };
+            updateUserData(user_data);
+            updateSignupData({
+              ...signup_data,
+              phone: phone,
+              country: selectedCountry.web_code,
+              otp: null,
+              name: null,
+              password: null,
+              selecteddistrict: selecteddistrict,
+            });
+          } else if (status_code === 6001) {
+            setError(true);
+            setErrorMessage(message);
+            setLoading(false);
+          }
+        } catch (error) {
+          setError(true);
+          setErrorMessage("An error occurred, please try again later");
+          setLoading(false);
+        }
       } else {
         navigate(`${location.pathname}?action=verify-otp`);
       }
@@ -201,46 +157,37 @@ function EnterPhoneModal(props) {
               </Description>
             </>
             <MiddleContainer>
-              {!selectedCountry ? (
-                <LoaderContainer>
-                  <SignupLoader />
-                </LoaderContainer>
-              ) : (
-                <>
-                  <FlagDropDown
-                    handleClick={handleShow}
-                    selectedCountry={selectedCountry}
-                  />
-                  <InputContainer
-                    className="g-medium"
-                    style={{
-                      borderColor: error ? "#f32e2f" : "#2f3337",
-                    }}
-                  >
-                    <Icon src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/phone.svg" />
-                    {selectedCountry && selectedCountry.phone_code}
-                    <InputField
-                      maxLength={selectedCountry.phone_number_length}
-                      autoFocus
-                      className="g-medium"
-                      placeholder="Enter your phone number"
-                      onKeyDown={handleKeyDown}
-                      onChange={onChange}
-                      value={phone}
-                    />
-                    {error && (
-                      <ErrorText className="g-medium">
-                        {error_message}
-                      </ErrorText>
-                    )}
-                  </InputContainer>
-                </>
-              )}
+              <FlagDropDown
+                handleClick={handleShow}
+                selectedCountry={selectedCountry}
+              />
+              <InputContainer
+                className="g-medium"
+                style={{
+                  borderColor: error ? "#f32e2f" : "#2f3337",
+                }}
+              >
+                <Icon src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/phone.svg" />
+                {selectedCountry && selectedCountry.phone_code}
+                <InputField
+                  maxLength={selectedCountry.phone_number_length}
+                  autoFocus
+                  className="g-medium"
+                  placeholder="Enter your phone number"
+                  onKeyDown={handleKeyDown}
+                  onChange={onChange}
+                  value={phone}
+                />
+                {error && (
+                  <ErrorText className="g-medium">
+                    {error_message}
+                  </ErrorText>
+                )}
+              </InputContainer>
             </MiddleContainer>
 
             <ReCAPTCHA
               ref={recaptchaRef}
-              //This ref can be used to call captcha related functions in case you need.
               sitekey="6Ld-4_ohAAAAAPmNLvidUquNeF7UYZXz4AiGzWdc"
               size="invisible"
               badge="bottomleft"
@@ -275,9 +222,9 @@ function EnterPhoneModal(props) {
       </JoinNow>
     </Container>
   );
-}
+};
 
-export default connect(mapStatetoProps, mapDispatchtoProps)(EnterPhoneModal);
+export default EnterPhoneModal;
 
 const Container = styled.div`
   position: fixed;

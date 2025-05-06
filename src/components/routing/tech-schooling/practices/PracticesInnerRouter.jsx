@@ -52,13 +52,13 @@ function PracticesInnerRouter(props) {
     let { user_data } = props;
     let { access_token } = user_data;
 
-    learnConfig
+    serverConfig
       .get(`/practices/view/${id}/`, {
         headers: { Authorization: "Bearer " + access_token },
       })
       .then((response) => {
-        const { StatusCode, data, workshop_data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data, workshop_data } = response.data;
+        if (status_code === 6000) {
           practiceDispatch({
             type: "UPDATE_PRACTICE",
             practice: data,
@@ -67,7 +67,7 @@ function PracticesInnerRouter(props) {
             type: "UPDATE_WORKSHOP",
             workshop: workshop_data,
           });
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
         }
       })
       .catch((error) => {});

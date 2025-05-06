@@ -3,43 +3,14 @@ import styled from "styled-components";
 import TermsService from "../general/TermsService";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import RequestLoader from "../general/RequestLoader";
-
 import { serverConfig } from "../../../../../axiosConfig";
-import { connect, useSelector } from "react-redux";
+import { useAuthStore } from "../../../../../store/authStore";
 
-// Function used to get values from redux react
-function mapStatetoProps(state) {
-  return {
-    user_data: state.user_data,
-    user_profile: state.user_profile,
-    signup_data: state.signup_data,
-  };
-}
-
-// Function used to update values from redux react
-function mapDispatchtoProps(dispatch) {
-  return {
-    updateUserData: (new_user_data) =>
-      dispatch({
-        type: "UPDATE_USER_DATA",
-        user_data: new_user_data,
-      }),
-    updateSignupData: (signup_data) =>
-      dispatch({
-        type: "UPDATE_SIGNUP_DATA",
-        signup_data: signup_data,
-      }),
-    updateUserProfile: (user_profile) =>
-      dispatch({
-        type: "UPDATE_USER_PROFILE",
-        user_profile: user_profile,
-      }),
-  };
-}
-
-function SetPasswordModal(props) {
+function SetPasswordModal() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user_data, updateUserData, signup_data, updateSignupData, updateUserProfile } = useAuthStore();
+
   const [hide, setHide] = useState(true);
   const [error, setError] = useState(false);
   const [error_message, setErrorMessage] = useState("");
@@ -103,21 +74,12 @@ function SetPasswordModal(props) {
     rules_array.find((item) => item.key === "symbol").status = isSymbolOkay;
   };
 
-  const { signup_data } = useSelector((state) => state);
-  const user_data = useSelector((state) => state.user_data);
-
-  // useEffect(() => {
-  //   let { search } = props.location;
-  //   const values = queryString.parse(search);
-  //   setNextPath(values.next);
-  // }, []);
-
   useEffect(() => {
-    setPassword(signup_data.password);
-    if (signup_data.password) {
+    setPassword(signup_data?.password || '');
+    if (signup_data?.password) {
       validatePassword(signup_data.password);
     }
-  }, [Object.keys(signup_data).length]);
+  }, [signup_data]);
 
   const onChange = (e) => {
     setPassword(e.target.value);
@@ -125,7 +87,6 @@ function SetPasswordModal(props) {
     setError(false);
   };
 
-  //Input values will be saved
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -135,7 +96,7 @@ function SetPasswordModal(props) {
 
   const setUserDetails = async (user_data) => {
     let promise = new Promise((res, rej) => {
-      props.updateUserData(user_data);
+      updateUserData(user_data);
       setTimeout(() => {
         res("Success");
       }, 1000);
@@ -146,7 +107,7 @@ function SetPasswordModal(props) {
   };
 
   const fetchProfile = (user_data, access_token) => {
-    accountsConfig
+    serverConfig
       .get("/api/v1/users/profile/", {
         params: {
           response_type: "minimal",
@@ -156,89 +117,78 @@ function SetPasswordModal(props) {
         },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
-          props.updateUserData({
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
+          updateUserData({
             access_token: access_token,
             ...user_data,
           });
-          props.updateUserProfile(data);
+          updateUserProfile(data);
           navigate("/feed/");
-        } else {
         }
       })
-      .catch((error) => {});
+      .catch((error) => {
+        console.error('Error fetching profile:', error);
+      });
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     if (e) {
       e.preventDefault();
     }
 
-    let { user_data, signup_data } = props;
-
     if (password) {
-      if (!(signup_data.password === password)) {
+      if (!(signup_data?.password === password)) {
         setLoading(true);
 
-        //password, service and authorization is passed to the url
-        accountsConfig
-          .post(
-            "/authentication/signup/set/password/",
+        try {
+          const response = await serverConfig.post(
+            "/api/v1/users/signup/set/password/",
             {
               password: password,
               service: "learn",
-              phone: user_data.phone,
-              country: user_data.selectedCountry.web_code,
-            },
-            {}
-          )
-          .then((response) => {
-            //From response.data the message and statuscode  will be taken.
-            let {
-              StatusCode,
-              message,
+              phone: user_data?.phone,
+              country: user_data?.selectedCountry?.web_code || "IN",
+            }
+          );
+
+          const {
+            status_code,
+            message,
+            is_premium_user,
+            has_active_subscription,
+            learn_student_token,
+          } = response.data;
+
+          if (status_code === 6000) {
+            setLoading(false);
+            let new_user_data = {
+              ...user_data,
               is_premium_user,
               has_active_subscription,
-              learn_student_token,
-            } = response.data;
-            if (StatusCode === 6000) {
-              setLoading(false);
-              let new_user_data = {
-                ...user_data,
-                is_premium_user,
-                has_active_subscription,
-                is_verified: true,
-                signup_type: "other",
-                access_token: response?.data?.learn_student_token?.access_token,
-                ...learn_student_token,
-              };
-              setUserDetails(new_user_data).then((resp) => {
-                setLoading(false);
-                navigate("/feed/");
-                window.location.reload();
-              });
-              console.log(new_user_data, "new_user_data");
-              props.updateUserData(new_user_data);
-              props.updateSignupData({
-                ...signup_data,
-                password: password,
-              });
-              fetchProfile(new_user_data, learn_student_token.access_token);
-              navigate("/feed/");
-            } else if (StatusCode === 6001) {
-              //When status is invalid error message will be saved in setState.
-              setLoading(false);
-              setError(true);
-              setErrorMessage(message);
-            }
-          })
-          .catch((error) => {
-            //Saved error message will be shown.
+              is_verified: true,
+              signup_type: "other",
+              access_token: response?.data?.learn_student_token?.access_token,
+              ...learn_student_token,
+            };
+            
+            await setUserDetails(new_user_data);
+            updateSignupData({
+              ...signup_data,
+              password: password,
+            });
+            fetchProfile(new_user_data, learn_student_token.access_token);
+          } else {
             setLoading(false);
             setError(true);
-            setErrorMessage("An error occurred, please try again later");
-          });
+            setErrorMessage(message);
+          }
+        } catch (error) {
+          console.error('API error:', error);
+          setLoading(false);
+          setError(true);
+          setErrorMessage("An error occurred, please try again later");
+        }
       } else {
         navigate(`${location.pathname}?action=set-password`);
       }
@@ -275,7 +225,7 @@ function SetPasswordModal(props) {
         <CloseIcon
           title="Close"
           className="las la-times-circle"
-          onClick={props.closeModal}
+          onClick={() => navigate(-1)}
         ></CloseIcon>
         <ItemContainer>
           <>
@@ -339,7 +289,6 @@ function SetPasswordModal(props) {
                 <PasswordRules>{renderRules}</PasswordRules>
                 <BottomButton
                   onClick={onSubmit}
-                  //   to={`${location.pathname}?action=district`}
                   className="g-medium white"
                 >
                   {isLoading ? <RequestLoader /> : "Confirm"}
@@ -362,7 +311,7 @@ function SetPasswordModal(props) {
   );
 }
 
-export default connect(mapStatetoProps, mapDispatchtoProps)(SetPasswordModal);
+export default SetPasswordModal;
 
 const Container = styled.div`
   position: fixed;

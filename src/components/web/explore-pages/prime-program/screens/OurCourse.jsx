@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { learnConfig, primeprogramsConfig } from "../../../../../axiosConfig";
+import { serverConfig, serverConfig } from "../../../../../axiosConfig";
 import auth from "../../../../routing/auth";
 import PrimeProgramCourseCard from "../includes/PrimeProgramCourseCard";
 import { useAuthStore } from "../../../../../store/authStore";
@@ -14,11 +14,11 @@ function OurCourse() {
 
     useEffect(() => {
         function fetchData() {
-            primeprogramsConfig
+            serverConfig
                 .get("/learning/courses/")
                 .then((res) => {
-                    let { data, StatusCode } = res.data;
-                    if (StatusCode === 6000) {
+                    let { data, status_code } = res.data;
+                    if (status_code === 6000) {
                         setCourses(data);
                     }
                 })

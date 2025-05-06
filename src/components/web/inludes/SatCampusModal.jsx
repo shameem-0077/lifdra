@@ -29,8 +29,8 @@ export default function SatCampusModal({
     //                 },
     //             })
     //             .then((response) => {
-    //                 const { StatusCode, data } = response.data;
-    //                 if (StatusCode === 6000) {
+    //                 const { status_code, data } = response.data;
+    //                 if (status_code === 6000) {
     //                     setErrorMessage("");
     //                     setSearchResults(data);
     //                     setLoading(false);
@@ -42,7 +42,7 @@ export default function SatCampusModal({
     //                             campus_name: data.campus,
     //                         },
     //                     });
-    //                 } else if (StatusCode === 6001) {
+    //                 } else if (status_code === 6001) {
     //                     setErrorMessage("Campus Not Found");
     //                     setLoading(false);
     //                     setError(true);

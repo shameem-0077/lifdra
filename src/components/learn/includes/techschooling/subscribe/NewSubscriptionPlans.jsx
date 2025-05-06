@@ -79,15 +79,15 @@ const NewSubscriptionPlans = ({
 	const fetchStudentPlans = () => {
 		let { access_token } = user_data;
 		if (access_token) {
-			learnConfig
+			serverConfig
 				.get("/subscriptions/plans/", {
 					headers: {
 						Authorization: `Bearer ${access_token}`,
 					},
 				})
 				.then((res) => {
-					let { StatusCode, data } = res.data;
-					if (StatusCode === 6000) {
+					let { status_code, data } = res.data;
+					if (status_code === 6000) {
 						if (is_techschooling) {
 							setDashBoardStudentPlans(data);
 							setUserStudentType(data[0].plan_category);
@@ -100,7 +100,7 @@ const NewSubscriptionPlans = ({
 							setStudentType(data[0].plan_category);
 							setSelectedPlan(data[0].id);
 						}
-					} else if (StatusCode === 6001) {
+					} else if (status_code === 6001) {
 						setError(true);
 					}
 				})
@@ -112,11 +112,11 @@ const NewSubscriptionPlans = ({
 	};
 
 	const fetchRegularPlans = () => {
-		learnConfig
+		serverConfig
 			.get(`subscriptions/plan-category/`)
 			.then((response) => {
-				let { StatusCode, data } = response.data;
-				if (StatusCode === 6000) {
+				let { status_code, data } = response.data;
+				if (status_code === 6000) {
 					if (is_techschooling) {
 						setDashBoardRegularPlans(
 							data.filter(
@@ -132,7 +132,7 @@ const NewSubscriptionPlans = ({
 					if (query.get("s") === "pricing") {
 						executeScroll();
 					}
-				} else if (StatusCode === 6001) {
+				} else if (status_code === 6001) {
 					setError(true);
 				}
 			})

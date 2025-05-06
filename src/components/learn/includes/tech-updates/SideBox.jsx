@@ -38,7 +38,7 @@ function SideBox() {
     async function fetchTechUpdateCategories() {
       setTopicLoading(true);
       try {
-        const response = await learnConfig.get(`/tech-updates/categories/`, {
+        const response = await serverConfig.get(`/tech-updates/categories/`, {
           params: {
             response_type: "parent",
             q: searchQuery,
@@ -47,13 +47,13 @@ function SideBox() {
             Authorization: `Bearer ${access_token}`,
           },
         });
-        const { StatusCode, data } = response.data;
+        const { status_code, data } = response.data;
 
-        if (StatusCode === 6000) {
+        if (status_code === 6000) {
           setSelectedTopics(data);
           setTopicLoading(false);
-        } else if (StatusCode === 6001) {
-          // Handle StatusCode 6001 if needed
+        } else if (status_code === 6001) {
+          // Handle status_code 6001 if needed
           setSelectedTopics([]);
           setTopicLoading(false);
         } else {
@@ -71,7 +71,7 @@ function SideBox() {
     async function fetchSavedArticles() {
       setSavedLoading(true);
       try {
-        const response = await learnConfig.get(
+        const response = await serverConfig.get(
           "/tech-updates/saved-articles/",
           {
             headers: {
@@ -80,15 +80,15 @@ function SideBox() {
           }
         );
 
-        const { StatusCode, data } = response.data;
+        const { status_code, data } = response.data;
 
-        if (StatusCode === 6000) {
+        if (status_code === 6000) {
           setSavedLoading(false);
           setSavedPost(data);
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
           setSavedPost([]);
           setSavedLoading(false);
-          // Handle StatusCode 6001 if needed
+          // Handle status_code 6001 if needed
         } else {
           // Handle other status codes if needed
         }

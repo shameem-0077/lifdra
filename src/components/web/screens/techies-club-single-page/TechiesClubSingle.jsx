@@ -57,7 +57,7 @@ const TechiesClubSingle = () => {
   const submitData = () => {
     let { access_token } = user_profile;
     setLoading(true);
-    manageConfig
+    serverConfig
       .post(
         `web/eligility-enquiry/enter/
 				`,
@@ -76,8 +76,8 @@ const TechiesClubSingle = () => {
         }
       )
       .then((response) => {
-        const { StatusCode, data, message } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data, message } = response.data;
+        if (status_code === 6000) {
           if (data.is_verified) {
             setLoading(false);
             setFormModal(false);
@@ -87,7 +87,7 @@ const TechiesClubSingle = () => {
             setFormModal(false);
             setConfirmModal(true);
           }
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
           if (name === "") {
             setnameError(true);
           }

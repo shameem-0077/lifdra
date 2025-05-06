@@ -28,6 +28,8 @@ function CommunityRouter() {
   const { user_data, updateUserData } = useAuthStore();
   const access_token = user_data?.access_token;
   const divMainClass = user_data?.divMainClass;
+  const location = useLocation();
+  const isFeedRoute = location.pathname.includes('/feed');
 
   const [userProfileDetails, setUserProfileDetails] = useState({});
   const [inner, setInner] = useState(false);
@@ -41,9 +43,8 @@ function CommunityRouter() {
   const [profileData, setProfileData] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("following");
-  const location = useLocation();
   const [myLearningData, setMyLearningData] = useState([]);
-  const [mLstatusCode, setMLStatusCode] = useState(6001);
+  const [mLstatus_code, setMLstatus_code] = useState(6001);
 
   useEffect(() => {
     let isMounted = true;
@@ -53,7 +54,7 @@ function CommunityRouter() {
       
       setIsLoading(true);
       try {
-        const response = await accountsConfig.get(
+        const response = await serverConfig.get(
           "/api/v1/users/community-profiles/",
           {
             headers: {
@@ -102,7 +103,7 @@ function CommunityRouter() {
   //   const fetchMyLrngsCardsData = async () => {
   //     setIsLoading(true);
   //     try {
-  //       const { data } = await learnConfig.get(
+  //       const { data } = await serverConfig.get(
   //         "/learn/nano-degree-my-learning-progress/",
   //         {
   //           headers: {
@@ -116,11 +117,11 @@ function CommunityRouter() {
   //       if (status_code !== 6000) {
   //         setMyLearningData([]);
   //         setIsLoading(false);
-  //         setMLStatusCode(status_code);
+  //         setMLstatus_code(status_code);
   //       } else {
   //         setMyLearningData(datas);
   //         setIsLoading(false);
-  //         setMLStatusCode(status_code);
+  //         setMLstatus_code(status_code);
   //       }
   //     } catch (error) {
   //       console.error("Error fetching Mylearnings data:", error);
@@ -174,7 +175,7 @@ function CommunityRouter() {
       />
       <MainBoxContainer>
         <MainContainer>
-          {isLoading ? (
+          {/* {isLoading ? (
             <ProfileSectionSkeleton />
           ) : (
             <CommunityProfile
@@ -187,9 +188,9 @@ function CommunityRouter() {
               setIsFollow={setIsFollow}
               setModal={setModal}
               myLearningData={myLearningData}
-              mLstatusCode={mLstatusCode}
+              mLstatus_code={mLstatus_code}
             />
-          )}
+          )} */}
 
           <LeftContainerBox inner={inner}>
             <Routes>
@@ -198,15 +199,6 @@ function CommunityRouter() {
               <Route path="/:username" element={<CommunityProfile />} />
             </Routes>
           </LeftContainerBox>
-
-          {!inner && (
-            <RightContainerBox className={showSideBox && "active"}>
-              <PostSideBar
-                followCount={followCount}
-                setFollowCount={setFollowCount}
-              />
-            </RightContainerBox>
-          )}
         </MainContainer>
       </MainBoxContainer>
     </div>
@@ -224,29 +216,14 @@ const MainBoxContainer = styled.div`
 const MainContainer = styled.div`
   display: flex;
   width: 100%;
-  gap: 32px;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  @media all and (max-width: 1441px) {
-    gap: 15px;
-  }
+  justify-content: center;
+  padding: 0 20px;
 `;
 
 const LeftContainerBox = styled.div`
-  width: ${({ inner }) => (inner ? "100%" : "65%")};
+  width: 100%;
+  max-width: 800px;
   position: relative;
-
-  @media all and (max-width: 1080px) {
-    width: 100%;
-  }
-`;
-
-const RightContainerBox = styled.div`
-  width: 30%;
-
-  @media all and (max-width: 1080px) {
-    width: 100%;
-  }
 `;
 
 const Container = styled.div`

@@ -5,7 +5,7 @@ import Aos from "aos";
 import "aos/dist/aos.css";
 import "../../../assets/css/web/style.css";
 import bggradient from "../../../assets/images/web/color.png";
-import { communityConfig } from "../../../axiosConfig";
+import { serverConfig } from "../../../axiosConfig";
 import axios from "axios";
 
 export default function Backborns() {
@@ -20,28 +20,28 @@ export default function Backborns() {
 
   useEffect(() => {
     const getTeam = () => {
-      const axiosrequest1 = communityConfig.get(
+      const axiosrequest1 = serverConfig.get(
         "/team/steyp-team-members/?priority=1"
       );
-      const axiosrequest2 = communityConfig.get(
+      const axiosrequest2 = serverConfig.get(
         "/team/steyp-team-members/?priority=2"
       );
-      const axiosrequest3 = communityConfig.get(
+      const axiosrequest3 = serverConfig.get(
         "/team/steyp-team-members/?priority=3"
       );
-      const axiosrequest4 = communityConfig.get(
+      const axiosrequest4 = serverConfig.get(
         "/team/steyp-team-members/?priority=4"
       );
-      const axiosrequest5 = communityConfig.get(
+      const axiosrequest5 = serverConfig.get(
         "/team/steyp-team-members/?priority=5"
       );
-      const axiosrequest6 = communityConfig.get(
+      const axiosrequest6 = serverConfig.get(
         "/team/steyp-team-members/?priority=6"
       );
-      const axiosrequest7 = communityConfig.get(
+      const axiosrequest7 = serverConfig.get(
         "/team/steyp-team-members/?priority=7"
       );
-      const axiosrequest8 = communityConfig.get(
+      const axiosrequest8 = serverConfig.get(
         "/team/steyp-team-members/?priority=8"
       );
       axios
@@ -66,28 +66,28 @@ export default function Backborns() {
             response7,
             response8
           ) {
-            if (response1.data.StatusCode === 6000) {
+            if (response1.data.status_code === 6000) {
               setCeo(response1.data.data);
             }
-            if (response2.data.StatusCode === 6000) {
+            if (response2.data.status_code === 6000) {
               setCoo(response2.data.data);
             }
-            if (response3.data.StatusCode === 6000) {
+            if (response3.data.status_code === 6000) {
               setAcademicHead(response3.data.data);
             }
-            if (response4.data.StatusCode === 6000) {
+            if (response4.data.status_code === 6000) {
               setTechnologyHead(response4.data.data);
             }
-            if (response5.data.StatusCode === 6000) {
+            if (response5.data.status_code === 6000) {
               setAdministrativeHead(response5.data.data);
             }
-            if (response6.data.StatusCode === 6000) {
+            if (response6.data.status_code === 6000) {
               setMarketHead(response6.data.data);
             }
-            if (response7.data.StatusCode === 6000) {
+            if (response7.data.status_code === 6000) {
               setRelationHead(response7.data.data);
             }
-            if (response8.data.StatusCode === 6000) {
+            if (response8.data.status_code === 6000) {
               setcoordinator(response8.data.data);
             }
           })

@@ -18,7 +18,7 @@ const demoServerConfig = axios.create({
 });
 
 const localServerConfig = axios.create({
-  baseURL: "https://accounts.steyp.com",
+  baseURL: "http://localhost:8015",
 });
 
 const serverConfig =

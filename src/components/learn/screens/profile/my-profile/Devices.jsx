@@ -35,15 +35,15 @@ function Devices() {
 
     useEffect(() => {
         setLoading(true);
-        accountsConfig
+        serverConfig
             .get("api/v1/users/list-devices/", {
                 headers: {
                     Authorization: `Bearer ${access_token}`,
                 },
             })
             .then((response) => {
-                const { StatusCode, data } = response.data;
-                if (StatusCode === 6000) {
+                const { status_code, data } = response.data;
+                if (status_code === 6000) {
                     setDevise(response.data.active_devices);
                     setLoginStatus(data);
                     setLoading(false);
@@ -58,7 +58,7 @@ function Devices() {
 
     const LogOutFromAllDevices = () => {
         setLogout(true);
-        accountsConfig
+        serverConfig
             .post(
                 "api/v1/users/logout-from-all-devices/",
                 {
@@ -71,9 +71,9 @@ function Devices() {
                 }
             )
             .then((response) => {
-                const { StatusCode, data } = response.data;
+                const { status_code, data } = response.data;
 
-                if (StatusCode === 6000) {
+                if (status_code === 6000) {
                     window.location.reload();
                     setLogout(false);
                 } else {
@@ -86,7 +86,7 @@ function Devices() {
     };
 
     const LogoutSingleDevice = (id) => {
-        accountsConfig
+        serverConfig
             .post(
                 `api/v1/users/logout-from-device/${id}/`,
                 {},
@@ -97,9 +97,9 @@ function Devices() {
                 }
             )
             .then((response) => {
-                const { StatusCode, data } = response.data;
+                const { status_code, data } = response.data;
 
-                if (StatusCode === 6000) {
+                if (status_code === 6000) {
                     window.location.reload();
                 } else {
                 }

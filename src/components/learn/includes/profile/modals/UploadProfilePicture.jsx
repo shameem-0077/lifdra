@@ -28,7 +28,7 @@ function UploadProfilePicture({ setSrc, src }) {
     setLoading(true);
     formData.append("image", dataURItoBlob(cropData), "image.jpg");
     try {
-      const res = await accountsConfig.post(
+      const res = await serverConfig.post(
         "api/v1/users/signup/set-profile-picture/",
         formData,
         {

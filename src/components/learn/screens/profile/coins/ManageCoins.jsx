@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import { coinsConfig, accountsConfig } from "../../../../../axiosConfig";
+import { serverConfig, serverConfig } from "../../../../../axiosConfig";
 import TalropEdtechHelmet from "../../../../helpers/TalropEdtechHelmet";
 import TokenCard from "../../../includes/profile/coins/TokenCard";
 import AddCoinCard from "../../../includes/profile/coins/AddCoinCard";
@@ -65,7 +65,7 @@ function ManageCoins(props) {
   const fetchUserReferrals = () => {
     let { user_data } = props;
     let { access_token } = user_data;
-    coinsConfig
+    serverConfig
       .get("/referrals/user-referrals/", {
         params: {
           response_type: "minimal",
@@ -75,8 +75,8 @@ function ManageCoins(props) {
         },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           setUserReferrals(data);
         } else {
         }
@@ -87,7 +87,7 @@ function ManageCoins(props) {
   const fetchProfile = () => {
     let { user_data } = props;
     let { access_token } = user_data;
-    accountsConfig
+    serverConfig
       .get("/api/v1/users/profile/", {
         params: {
           response_type: "minimal",
@@ -97,8 +97,8 @@ function ManageCoins(props) {
         },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           props.updateUserProfile(data);
         } else {
         }
@@ -113,7 +113,7 @@ function ManageCoins(props) {
     if (amount) {
       if (amount <= 200000) {
         setTransferLoading(true);
-        coinsConfig
+        serverConfig
           .post(
             `/purchases/create-fund-transfer-order/`,
             {
@@ -126,8 +126,8 @@ function ManageCoins(props) {
             }
           )
           .then((response) => {
-            const { StatusCode, data, message } = response.data;
-            if (StatusCode === 6000) {
+            const { status_code, data, message } = response.data;
+            if (status_code === 6000) {
               window.location.href = data.paymentLink;
               setTransferLoading(false);
             } else {
@@ -159,7 +159,7 @@ function ManageCoins(props) {
     if (coins) {
       if (coins <= 4000) {
         setPurchaseLoading(true);
-        coinsConfig
+        serverConfig
           .post(
             `/purchases/create-order/`,
             {
@@ -172,8 +172,8 @@ function ManageCoins(props) {
             }
           )
           .then((response) => {
-            const { StatusCode, data, message } = response.data;
-            if (StatusCode === 6000) {
+            const { status_code, data, message } = response.data;
+            if (status_code === 6000) {
               window.location.href = data.paymentLink;
               setPurchaseLoading(false);
             } else {
@@ -206,7 +206,7 @@ function ManageCoins(props) {
 
     if (token) {
       setTokenLoading(true);
-      coinsConfig
+      serverConfig
         .post(
           "/tokens/apply-token/",
           {
@@ -218,8 +218,8 @@ function ManageCoins(props) {
           }
         )
         .then((response) => {
-          const { StatusCode, data } = response.data;
-          if (StatusCode === 6000) {
+          const { status_code, data } = response.data;
+          if (status_code === 6000) {
             setTokenLoading(false);
             setTokenError(false);
             setTokenErrorMessage("");
@@ -231,7 +231,7 @@ function ManageCoins(props) {
               });
             fetchProfile();
             toggleTokenSuccessModal();
-          } else if (StatusCode === 6001) {
+          } else if (status_code === 6001) {
             setTokenLoading(false);
             setTokenError(true);
             setTokenErrorMessage(data.message);

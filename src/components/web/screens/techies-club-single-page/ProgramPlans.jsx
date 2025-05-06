@@ -52,13 +52,13 @@ function ProgramPlans({ title, program }) {
     useEffect(() => {
         const fetchData = () => {
             let { access_token } = user_data;
-            learnConfig
+            serverConfig
                 .get(apiUrl, {
                     headers: { Authorization: `Bearer ${access_token}` },
                 })
                 .then((response) => {
-                    let { StatusCode, data } = response.data;
-                    if (StatusCode === 6000) {
+                    let { status_code, data } = response.data;
+                    if (status_code === 6000) {
                         user_profile.is_old_student ||
                         (!user_profile.is_old_student &&
                             user_profile.program?.name === "Tech Grad")

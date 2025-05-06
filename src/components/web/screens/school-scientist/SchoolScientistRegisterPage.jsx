@@ -4,9 +4,9 @@ import { useSchoolScientistStore } from "../../../../store/schoolScientistStore"
 import styled from "styled-components";
 import RequestLoader from "../../../learn/includes/authentication/general/RequestLoader";
 import {
-    accountsConfig,
-    communityConfig,
-    manageConfig,
+    serverConfig,
+    serverConfig,
+    serverConfig,
 } from "../../../../axiosConfig";
 import SuccessModal from "../../inludes/steyp-landing-page/school-scientist/SuccessModal";
 import OptModal from "../../inludes/steyp-landing-page/school-scientist/OtpModal";
@@ -143,15 +143,15 @@ function SchoolScientistRegisterPage() {
         if (user_data && searchTerm) {
             let { access_token } = user_data;
             setLoading(true);
-            communityConfig
+            serverConfig
                 .get(`school-scientists/campuses/?q=${searchTerm}`, {
                     headers: {
                         Authorization: `Bearer ${access_token}`,
                     },
                 })
                 .then((response) => {
-                    const { StatusCode, data } = response.data;
-                    if (StatusCode === 6000) {
+                    const { status_code, data } = response.data;
+                    if (status_code === 6000) {
                         setCampus(data);
                         setLoading(false);
 
@@ -161,7 +161,7 @@ function SchoolScientistRegisterPage() {
                         } else {
                             setCampusErrorMessage("");
                         }
-                    } else if (StatusCode === 6001) {
+                    } else if (status_code === 6001) {
                         setCampusErrorMessage("");
                         setLoading(false);
 
@@ -192,7 +192,7 @@ function SchoolScientistRegisterPage() {
         formData.append("has_computer", isTick);
         
         try {
-            const response = await accountsConfig.post(
+            const response = await serverConfig.post(
                 `/api/v1/users/school-scientist/apply/form/`, 
                 formData,
                 {
@@ -202,8 +202,8 @@ function SchoolScientistRegisterPage() {
                 }
             );
             
-            const { StatusCode, data } = response.data;
-            if (StatusCode === 6000) {
+            const { status_code, data } = response.data;
+            if (status_code === 6000) {
                 setSchoolScientistData(data);
                 setSuccessModal(true);
                 setLoading(false);

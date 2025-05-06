@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { coinsConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 import Loader from "../techschooling/general/loaders/Loader";
 const EmptySupportCredit = lazy(() => import("./EmptySupportCredit"));
 const SupportCredit = lazy(() => import("./SupportCredit"));
@@ -19,15 +19,15 @@ const SupportContent = () => {
 	useEffect(() => {
 		const fetchCoins = () => {
 			const { access_token } = user_data;
-			coinsConfig
+			serverConfig
 				.get("/premium-assist-credits/premium-assist-credits/", {
 					headers: {
 						Authorization: `Bearer ${access_token}`,
 					},
 				})
 				.then((response) => {
-					const { StatusCode, data } = response.data;
-					if (StatusCode === 6000) {
+					const { status_code, data } = response.data;
+					if (status_code === 6000) {
 						setLoading(false);
 						setSupportCredits(data.credits_balance);
 						setPremiumCoins(data.premium_coins_balance);

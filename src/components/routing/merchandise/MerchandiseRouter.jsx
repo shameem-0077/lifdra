@@ -8,7 +8,7 @@ import styled from "styled-components";
 import MerchandiseFilter from "../../merchandise/includes/modals/MerchandiseFilter";
 import ProductSingle from "../../merchandise/screens/ProductSingle";
 import MyCart from "../../merchandise/screens/MyCart";
-import { coinsConfig } from "../../../axiosConfig";
+import { serverConfig } from "../../../axiosConfig";
 import { MerchandiseContext } from "../../contexts/stores/MerchandiseStore";
 import BuyNow from "../../merchandise/screens/BuyNow";
 import TalropTechSchoolingHelmet from "../../helpers/TalropTechSchoolingHelmet";
@@ -34,15 +34,15 @@ const MerchandiseRouter = () => {
 
     const getUsableEarnedCoins = () => {
       const access_token = user_data.access_token;
-      coinsConfig
+      serverConfig
         .get("/main/merchandise/usable-earned-coins/", {
           headers: {
             Authorization: `Bearer ${access_token}`,
           },
         })
         .then((response) => {
-          const { StatusCode, data } = response.data;
-          if (StatusCode === 6000) {
+          const { status_code, data } = response.data;
+          if (status_code === 6000) {
             merchandiseDispatch({
               type: "UPDATE_EARNED_COINS",
               earned_coins: data,

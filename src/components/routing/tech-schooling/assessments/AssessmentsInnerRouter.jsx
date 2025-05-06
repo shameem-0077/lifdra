@@ -57,13 +57,13 @@ function AssessmentsInnerRouter(props) {
     let { user_data } = props;
     let { access_token } = user_data;
 
-    learnConfig
+    serverConfig
       .get(`/assessments/view/${id}/`, {
         headers: { Authorization: "Bearer " + access_token },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           assessmentDispatch({
             type: "UPDATE_ASSESSMENT",
             assessment: data,
@@ -71,7 +71,7 @@ function AssessmentsInnerRouter(props) {
           if (data.status === "attending") {
             sendCurrentQuestion();
           }
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
         }
       })
       .catch((error) => {});
@@ -81,7 +81,7 @@ function AssessmentsInnerRouter(props) {
     let { user_data } = props;
     let { access_token } = user_data;
 
-    learnConfig
+    serverConfig
       .post(
         `assessments/send-current-question/${id}/`,
         {},
@@ -90,9 +90,9 @@ function AssessmentsInnerRouter(props) {
         }
       )
       .then((response) => {
-        const { StatusCode, data } = response.data;
+        const { status_code, data } = response.data;
 
-        if (StatusCode === 6000) {
+        if (status_code === 6000) {
           assessmentDispatch({
             type: "UPDATE_CURRENT_QUESTION",
             current_question: data,

@@ -37,7 +37,7 @@ function NotificationsListPage() {
   const fetchNotifications = () => {
     let { access_token } = user_data;
     // setLoading(true);
-    notificationsConfig
+    serverConfig
       .get("main/list-notifications/", {
         headers: { Authorization: `Bearer ${access_token}` },
       })
@@ -59,7 +59,7 @@ function NotificationsListPage() {
       type: "UPDATE_NOTIFICATIONS_MARKED",
       isMarked: !isMarked,
     });
-    notificationsConfig
+    serverConfig
       .post(
         `/main/notification-mark-as-read/ `,
         {},

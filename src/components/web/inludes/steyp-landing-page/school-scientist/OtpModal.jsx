@@ -6,7 +6,7 @@ import closeImage from "../../../../../assets/images/school-scientist/close.svg"
 import { serverConfig } from "../../../../../axiosConfig";
 import ReCAPTCHA from "react-google-recaptcha";
 import RequestLoader from "../../../../learn/includes/authentication/general/RequestLoader";
-// import { manageConfig } from "../../../../../../axiosConfig";
+// import { serverConfig } from "../../../../../../axiosConfig";
 // import RequestLoader from "../../../../../learn/includes/authentication/general/RequestLoader";
 
 function OptModal({
@@ -72,17 +72,17 @@ function OptModal({
 		if (otp !== "") {
 			setLoading(true);
 
-			accountsConfig
+			serverConfig
 				.post(
 					`/api/v1/users/school-scientist/verify/form/`,
 					formData
 				)
 				.then((response) => {
 					setLoading(false);
-					const { StatusCode, data, message } =
+					const { status_code, data, message } =
 						response.data;
 
-					if (StatusCode === 6000) {
+					if (status_code === 6000) {
 						setOtp("");
 						setCounter(20);
 						setOtpModal(false);
@@ -116,23 +116,23 @@ function OptModal({
 
 		setLoading(true);
 
-		accountsConfig
+		serverConfig
 			.post(
 				`/api/v1/users/school-scientist/resend/otp/`,
 				formData
 			)
 			.then((response) => {
 				setLoading(false);
-				const { StatusCode, data } = response.data;
+				const { status_code, data } = response.data;
 				setOtp("");
 				setErrorMessage("");
-				if (StatusCode === 6000) {
+				if (status_code === 6000) {
 					setError(false);
 					setCounter(20);
 					setOtp("");
 					// setResend("OTP does not exist. Try again");
 					setErrorMessage("");
-				} else if (StatusCode === 6001) {
+				} else if (status_code === 6001) {
 					setErrorMessage(data.message);
 					console.log();
 				}

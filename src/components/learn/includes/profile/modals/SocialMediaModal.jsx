@@ -48,13 +48,13 @@ function SocialMediaModal({ isOffline }) {
 
   const getAllSocialMedias = () => {
     setLoading(true);
-    accountsConfig
+    serverConfig
       .get("api/v1/users/social-medias/", {
         headers: { Authorization: `Bearer ${access_token}` },
       })
       .then((response) => {
-        const { StatusCode, data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data } = response.data;
+        if (status_code === 6000) {
           setAllSocialMedias(data);
           setLoading(false);
         } else {
@@ -75,7 +75,7 @@ function SocialMediaModal({ isOffline }) {
       setErrorMessage("Enter a valid username");
     } else {
       setButtonLoader(true);
-      accountsConfig
+      serverConfig
         .post(
           "api/v1/users/add-new-social-media/",
           { social_profiles: JSON.stringify(mySocialMedias) },
@@ -84,10 +84,10 @@ function SocialMediaModal({ isOffline }) {
           }
         )
         .then((response) => {
-          const { StatusCode, data, message } = response.data;
+          const { status_code, data, message } = response.data;
           setButtonLoader(false);
 
-          if (StatusCode === 6000) {
+          if (status_code === 6000) {
             handleSuccess();
           } else {
             setErrorMessage(message?.message);

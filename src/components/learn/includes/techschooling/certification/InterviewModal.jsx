@@ -36,7 +36,7 @@ function InterviewModal({
 		setError(false);
 
 		let { access_token } = user_data;
-		learnConfig
+		serverConfig
 			.post(
 				`/certifications/apply-for-certification/${designationPK}/`,
 				{},
@@ -47,8 +47,8 @@ function InterviewModal({
 				}
 			)
 			.then((response) => {
-				let { StatusCode, data } = response.data;
-				if (StatusCode === 6000) {
+				let { status_code, data } = response.data;
+				if (status_code === 6000) {
 					setLoading(false);
 					setError(false);
 					setIsApplied(true);

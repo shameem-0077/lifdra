@@ -28,7 +28,7 @@
 
   // const fetchPeopleMayYouKnow = async () => {
   //   try {
-  //     const response = await accountsConfig.get(
+  //     const response = await serverConfig.get(
   //       "/api/v1/users/community-profiles/",
   //       {
   //         headers: {
@@ -62,7 +62,7 @@
 
 //   const updateFollow = async (id) => {
 //     try {
-//       const response = await accountsConfig.post(
+//       const response = await serverConfig.post(
 //         `/api/v1/users/follow-user/${id}/`,
 //         {},
 //         {
@@ -97,7 +97,7 @@
 //     setModaltLoading(true);
 //     async function fetchPeopleMayYouKnow() {
 //       try {
-//         const response = await accountsConfig.get(
+//         const response = await serverConfig.get(
 //           "/api/v1/users/community-profiles/",
 //           {
 //             headers: {

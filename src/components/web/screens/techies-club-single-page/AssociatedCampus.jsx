@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import styled from "styled-components";
 import Slider from "react-slick";
-import { communityConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../../axiosConfig";
 
 const AssociatedCampus = ({ type }) => {
   const [campus, setCampus] = useState([]);
@@ -80,14 +80,14 @@ const AssociatedCampus = ({ type }) => {
   }, [type]);
 
   const fetchData = () => {
-    communityConfig
+    serverConfig
       .get(`/campuses/`, {
         params: {
           program: type,
         },
       })
       .then((response) => {
-        let { StatusCode, data } = response.data;
+        let { status_code, data } = response.data;
         setCampus(data);
       })
       .catch((error) => {});

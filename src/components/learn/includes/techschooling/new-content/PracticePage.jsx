@@ -103,19 +103,19 @@ const PracticePage = (props) => {
   // const fetchPracticeAsset = () => {
   //     let { user_data } = props;
   //     let { access_token } = user_data;
-  //     learnConfig
+  //     serverConfig
   //         .get(`/practices/new-content/view/practice/${id}/`, {
   //             headers: { Authorization: "Bearer " + access_token },
   //         })
   //         .then((response) => {
-  //             const { StatusCode, data } = response.data;
-  //             if (StatusCode === 6000) {
+  //             const { status_code, data } = response.data;
+  //             if (status_code === 6000) {
   //                 practiceDispatch({
   //                     type: "UPDATE_PRACTICE_ASSETS",
   //                     practice_assets: data,
   //                 });
   //                 setPracticeAssetLoading(false);
-  //             } else if (StatusCode === 6001) {
+  //             } else if (status_code === 6001) {
   //                 setPracticeAssetLoading(false);
   //             }
   //         })
@@ -127,19 +127,19 @@ const PracticePage = (props) => {
   // const fetchPracticeScore = () => {
   //     let { user_data } = props;
   //     let { access_token } = user_data;
-  //     learnConfig
+  //     serverConfig
   //         .get(`/practices/practice-score/${id}/`, {
   //             headers: { Authorization: "Bearer " + access_token },
   //         })
   //         .then((response) => {
-  //             const { StatusCode, data } = response.data;
-  //             if (StatusCode === 6000) {
+  //             const { status_code, data } = response.data;
+  //             if (status_code === 6000) {
   //                 practiceDispatch({
   //                     type: "UPDATE_PRACTICE_SCORE",
   //                     practice_score: data,
   //                 });
   //                 setPracticeScoreLoading(false);
-  //             } else if (StatusCode === 6001) {
+  //             } else if (status_code === 6001) {
   //                 setPracticeScoreLoading(false);
   //             }
   //         })
@@ -152,13 +152,13 @@ const PracticePage = (props) => {
   // const fetchPracticeActivities = () => {
   //     let { user_data } = props;
   //     let { access_token } = user_data;
-  //     learnConfig
+  //     serverConfig
   //         .get(`/practices/practice-activities/${id}/`, {
   //             headers: { Authorization: "Bearer " + access_token },
   //         })
   //         .then((response) => {
-  //             const { StatusCode, data } = response.data;
-  //             if (StatusCode === 6000) {
+  //             const { status_code, data } = response.data;
+  //             if (status_code === 6000) {
   //                 let activities = data;
   //                 let { activities_base } = practiceState;
   //                 let response = [];
@@ -250,7 +250,7 @@ const PracticePage = (props) => {
         "student_day_pk",
         currentDayObject ? currentDayObject.id : ""
       );
-      learnConfig
+      serverConfig
         .post(
           `/practices/nanodegree/upload-practice/${props.subject_slug}/${id}/`,
           data,
@@ -262,8 +262,8 @@ const PracticePage = (props) => {
           }
         )
         .then((response) => {
-          const { StatusCode, message, data } = response.data;
-          if (StatusCode === 6000) {
+          const { status_code, message, data } = response.data;
+          if (status_code === 6000) {
             if (data?.is_new_day || data?.next_student_day_pk) {
               updateDaysLocal(data.next_student_day_pk, data.day_pk);
             }
@@ -300,7 +300,7 @@ const PracticePage = (props) => {
             // setTimeout(() => {
             //     fetchPracticeActivities();
             // }, 500);
-          } else if (StatusCode === 6001) {
+          } else if (status_code === 6001) {
             setUploadError(true);
             setUploadErrorMessage(message);
             setUploadLoading(false);
@@ -335,16 +335,16 @@ const PracticePage = (props) => {
     let { user_data } = props;
     let { access_token } = user_data;
 
-    learnConfig
+    serverConfig
       .get(`/practices/new-content/view/practice/${id}/`, {
         headers: { Authorization: "Bearer " + access_token },
       })
       .then((response) => {
-        const { StatusCode, data, workshop_data } = response.data;
-        if (StatusCode === 6000) {
+        const { status_code, data, workshop_data } = response.data;
+        if (status_code === 6000) {
           setPractice(data);
           setWorkshop(workshop_data);
-        } else if (StatusCode === 6001) {
+        } else if (status_code === 6001) {
         }
       })
       .catch((error) => {
