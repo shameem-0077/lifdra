@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import ProfileSlider from "../../learn/screens/community/ProfileSlider";
+import ProfileSlider from "../pages/ProfileSlider";
 import { serverConfig } from "../../../axiosConfig";
-import plus from "../../../../../assets/images/profile-screen/plus.svg";
+import plus from "../../../assets/images/profile-screen/plus.svg";
 import ProfilePostSliderSkeleton from "./ProfilePostSliderSkeleton";
 import CommunityNoDataFound from "./CommunityNoDataFound";
 import { toast } from "react-toastify";

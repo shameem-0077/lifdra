@@ -11,7 +11,7 @@ function TechRevolution() {
     if (isAuthenticated) {
       navigate("/feed/");
     } else {
-      navigate("/login/");
+      navigate("/?action=login");
     }
   };
 

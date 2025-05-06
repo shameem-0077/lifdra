@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import ViewReply from "./ViewReply";
 import { serverConfig } from "../../../axiosConfig";
 import PostCommentBox from "./PostCommentBox";
-import PostLoader from "../../includes/community/PostLoader";
+import PostLoader from "../components/PostLoader";
 import OptionComments from "../modals/OptionComments";
 
 function ViewComment({

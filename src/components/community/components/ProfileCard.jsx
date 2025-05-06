@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import Jdenticon from "react-jdenticon";
 import { Link } from "react-router-dom";
-import ProficPic from "../../../../../assets/images/community/profile-pic.svg";
 
 function ProfileCard({ profileData, followCount, setModal, setActiveTab }) {
   const handleCountClick = (e) => {

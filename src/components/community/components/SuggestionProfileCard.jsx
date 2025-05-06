@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 import { serverConfig } from "../../../axiosConfig";
-import ProficPic from "../../../../../assets/images/community/profile-pic.svg";
 import Jdenticon from "react-jdenticon";
 import FollowBT from "./FollowBT";
 import { tr } from "date-fns/locale";

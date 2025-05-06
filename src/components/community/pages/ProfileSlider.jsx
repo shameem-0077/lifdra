@@ -7,8 +7,8 @@ import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/splide/dist/css/splide.min.css";
 import styled, { keyframes, css } from "styled-components";
 import { Link } from "react-router-dom";
-import SliderCard from "../../includes/community/community-profile/SliderCard";
-import SliderNavigation from "../../includes/community/community-profile/SliderNavigation";
+import SliderCard from "../components/SliderCard";
+import SliderNavigation from "../components/SliderNavigation";
 
 const ProfileSlider = ({ cards, userId }) => {
   const { username } = useParams();

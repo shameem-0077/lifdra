@@ -4,7 +4,7 @@ import styled from "styled-components";
 import moment from "moment";
 import UserProfile from "./UserProfile";
 import PostCardContent from "./PostCardContent";
-import VideoPlayer from "../../applications/video-player/src/VideoPlayer";
+import VideoPlayer from "../../general/applications/video-player/src/VideoPlayer";
 import PostActions from "./PostActions";
 import OgImageViewer from "./OgImageViewer";
 import MultiImageViewer from "./MultiImageViewer";
@@ -15,7 +15,7 @@ import {
   ProfileRouteRegex,
   SavedRouteRegex,
   PostRouteRegex,
-} from "../../includes/community/RouteRegexPattern";
+} from "../components/RouteRegexPattern";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { serverConfig } from "../../../axiosConfig";

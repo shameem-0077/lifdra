@@ -3,7 +3,6 @@ import { useAuthStore } from "../../../store/authStore";
 import styled from "styled-components";
 import Jdenticon from "react-jdenticon";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import ProficPic from "../../../../assets/images/community/profile-pic.svg";
 import CreatePostModal from "./CreatePostModal";
 import { serverConfig } from "../../../axiosConfig";
 import { toast } from "react-toastify";

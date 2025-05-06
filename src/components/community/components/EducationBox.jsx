@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Moment from "moment";
 import { parseISO, format } from "date-fns";
-import textbook from "../../../../../assets/images/profile-screen/textbook.svg";
+import textbook from "../../../assets/images/profile-screen/textbook.svg";
 
 function EducationBox({ userProfileDetails }) {
   const [academicDetailsPage, setacademicDetailsPage] = useState(3);

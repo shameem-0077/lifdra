@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import { useAuthStore } from "../../../../../store/authStore";
+import { useAuthStore } from "../../../store/authStore";
 import styled from "styled-components";
-import { serverConfig } from "../../../../../axiosConfig";
-import ButtonLoader from "../../../../general/loaders/ButtonLoader";
-import RequestLoader from "../../../../authentications/components/RequestLoader";
+import RequestLoader from "../../authentications/components/RequestLoader";
 
 function DiscardModal({
   isDelete,

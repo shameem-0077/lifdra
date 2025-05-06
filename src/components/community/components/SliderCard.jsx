@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled, { keyframes, css } from "styled-components";
 import moment from "moment";
-import PlayButtonIcon from "../../../../../assets/icons/new-updates/play_button.svg";
+import PlayButtonIcon from "../../../assets/icons/new-updates/play_button.svg";
 import { toast } from "react-toastify";
 import { serverConfig } from "../../../axiosConfig";
 

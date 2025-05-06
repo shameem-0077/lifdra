@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import Lottie from "react-lottie";
 import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
-import successData from "../../../../assets/lotties/modal/successtick.json";
-import failedData from "../../../../assets/lotties/modal/failed.json";
+import successData from "../../../assets/lotties/modal/successtick.json";
+import failedData from "../../../assets/lotties/modal/failed.json";
 import queryString from "query-string";
 
 function PrimeProgramSucessModal({ topicId }) {

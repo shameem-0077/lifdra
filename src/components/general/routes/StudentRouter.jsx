@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useEffect, useContext, useState, useCallback, useMemo } from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import RouteLoading from "../../../general/conponents/RouteLoading";
+import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import RouteLoading from "../conponents/RouteLoading";
 
 import Error401 from "../pages/Error401";
 import Error403 from "../pages/Error403";
@@ -8,39 +8,28 @@ import Error404 from "../pages/Error404";
 import Error500 from "../pages/Error500";
 import styled from "styled-components";
 import Header from "../conponents/Header";
-import MessagePopUp from "../../learn/includes/general/MessagePopUp";
-import Sidebar from "../conponents/Sidebar";
 import { serverConfig } from "../../../axiosConfig";
 import WebSocketMessagesInstance from "../../../messages-socket";
-import { PrivateRoute } from "../../routing/PrivateRoute";
-import TechSchoolingStore from "../../contexts/stores/TechSchoolingStore";
-import { SupportEngineerContext } from "../../contexts/stores/SupportEngineerStore";
-import { PrimeProgramContext } from "../../contexts/stores/PrimeProgramStore";
-import PrimeProgramSucessModal from "../../learn/screens/prime-programs/PrimeProgramSucessModal";
-import MobailNavManu from "../../learn/includes/general/MobailNavManu";
+import PrimeProgramSucessModal from "../../courses/pages/PrimeProgramSucessModal";
+import MobailNavManu from "../conponents/MobailNavManu";
 import { useAuthStore } from "../../../store/authStore";
+import { useSupportEngineerStore } from "../../../store/supportEngineerStore";
 
 const CommunityRouter = lazy(() => import("../../community/routes/CommunityRouter"));
-const MeetRouter = lazy(() => import("../meet/MeetRouter"));
-const TechUpdatesRouter = lazy(() => import("../tech-updates/TechUpdatesRouter"));
-const ProjectsRouter = lazy(() => import("../project/ProjectsRouter"));
 const GlobalSearch = lazy(() => import("../pages/GlobalSearchPage"));
-const ProgramPlans = lazy(() => import("../../web/screens/techies-club-single-page/ProgramPlans"));
-const PrimeProgramsCertificate = lazy(() => import("../../learn/screens/prime-programs/PrimeProgramsCertificate"));
+const PrimeProgramsCertificate = lazy(() => import("../../courses/pages/PrimeProgramsCertificate"));
 const NotificationSinglePage = lazy(() => import("../../notifications/pages/NotificationSinglePage"));
-const MyclubRouter = lazy(() => import("../my-club/MyclubRouter"));
-const ProgramRouter = lazy(() => import("../tech-schooling/ProgramRouter"));
 const PrimeProgramsRouter = lazy(() => import("../../courses/routes/PrimeProgramsRouter"));
 const PrimeProgramsInnerRouter = lazy(() => import("../../courses/routes/PrimeProgramsInnerRouter"));
 const SettingsRouter = lazy(() => import("./SettingsRouter"));
 
 const StudentRouter = () => {
-  const { user_profile, user_data, updateUserData } = useAuthStore();
+  const { user_profile, user_data, updateUserData, isAuthenticated } = useAuthStore();
+  const { setSupportEngineer } = useSupportEngineerStore();
   const currentToken = localStorage.getItem("currentToken");
-  const { supportEngineerDispatch } = useContext(SupportEngineerContext);
-  const { primeProgramDispatch } = useContext(PrimeProgramContext);
   const location = useLocation();
   const [allowedFeatures, setAllowedFeatures] = useState([]);
+  const navigate = useNavigate();
 
   const setMessages = useCallback((message) => {
     updateUserData({ messages: message });
@@ -48,14 +37,14 @@ const StudentRouter = () => {
 
   const addMessage = useCallback((message) => {
     if (message.message_type === "premium_assist_picked") {
-      supportEngineerDispatch({
+      setSupportEngineer({
         type: "OPEN_PREMIUM_ASSIST",
       });
-      supportEngineerDispatch({
+      setSupportEngineer({
         type: "UPDATE_ACTIVE_PA_CHAT_SESSION",
         active_pa_chat_session: message.pa_chat_session,
       });
-      supportEngineerDispatch({
+      setSupportEngineer({
         type: "UPDATE_ACTIVE_PA_CHAT_SESSION_ID",
         active_pa_chat_session_id: message.pa_chat_session_id,
       });
@@ -65,7 +54,7 @@ const StudentRouter = () => {
         message: message,
       });
     }
-  }, [supportEngineerDispatch, updateUserData]);
+  }, [setSupportEngineer, updateUserData]);
 
   const waitForSocketConnection = useCallback((callback) => {
     setTimeout(() => {
@@ -87,17 +76,6 @@ const StudentRouter = () => {
     }
   }, [waitForSocketConnection, setMessages, addMessage]);
 
-  useEffect(() => {
-    if (user_data?.access_token) {
-      const coins_settings_stored = localStorage.getItem("coins_settings");
-      const coins_settings_value = JSON.parse(coins_settings_stored);
-      
-      primeProgramDispatch({
-        type: "UPDATE_IS_PURCHASED_COINS_VALUE",
-        coins_settings: coins_settings_value,
-      });
-    }
-  }, [user_data?.access_token, primeProgramDispatch]);
 
   useEffect(() => {
     const fetchCampusData = () => {
@@ -172,33 +150,37 @@ const StudentRouter = () => {
     createDevice();
   }, [user_data?.access_token, currentToken]);
 
-  const routes = useMemo(() => (
-    <Routes>
-      <Route path="/feed/*" element={<CommunityRouter />} />
-      <Route path="/meet/*" element={<MeetRouter />} />
-      <Route path="/tech-updates/*" element={<TechUpdatesRouter />} />
-      <Route path="/projects/*" element={<ProjectsRouter />} />
-      <Route path="/global-search/*" element={<GlobalSearch />} />
-      <Route path="/plans/*" element={<ProgramPlans />} />
-      <Route path="/prime-programs/certificate/*" element={<PrimeProgramsCertificate />} />
-      <Route path="/notifications/:id/*" element={<NotificationSinglePage />} />
-      <Route path="/my-club/*" element={<MyclubRouter />} />
-      <Route path="/tech-schooling/*" element={<ProgramRouter />} />
-      <Route path="/prime-programs/*" element={<PrimeProgramsRouter />} />
-      <Route path="/prime-programs-inner/*" element={<PrimeProgramsInnerRouter />} />
-      <Route path="/settings/*" element={<SettingsRouter />} />
-      <Route path="/401" element={<Error401 />} />
-      <Route path="/403" element={<Error403 />} />
-      <Route path="/404" element={<Error404 />} />
-      <Route path="/500" element={<Error500 />} />
-      <Route path="*" element={<Navigate to="/404" replace />} />
-    </Routes>
-  ), []);
+  const handleSupportEngineerUpdate = (data) => {
+    setSupportEngineer(data);
+  };
+
+  const routes = useMemo(() => {
+    if (!isAuthenticated) {
+      return <Navigate to="/?action=login" replace />;
+    }
+
+    return (
+      <Routes>
+        <Route path="/feed/*" element={<CommunityRouter />} />
+        <Route path="/global-search/*" element={<GlobalSearch />} />
+        <Route path="/prime-programs/certificate/*" element={<PrimeProgramsCertificate />} />
+        <Route path="/notifications/:id/*" element={<NotificationSinglePage />} />
+        <Route path="/prime-programs/*" element={<PrimeProgramsRouter />} />
+        <Route path="/prime-programs-inner/*" element={<PrimeProgramsInnerRouter />} />
+        <Route path="/settings/*" element={<SettingsRouter />} />
+        <Route path="/401" element={<Error401 />} />
+        <Route path="/403" element={<Error403 />} />
+        <Route path="/404" element={<Error404 />} />
+        <Route path="/500" element={<Error500 />} />
+        <Route path="*" element={<Navigate to="/404" replace />} />
+      </Routes>
+    );
+  }, [isAuthenticated]);
 
   return (
     <div id="main-container">
       <Header />
-      <MessagePopUp />
+      {/* <MessagePopUp /> */}
       <MobailNavManu />
       <PrimeProgramSucessModal />
       <Suspense fallback={<RouteLoading />}>

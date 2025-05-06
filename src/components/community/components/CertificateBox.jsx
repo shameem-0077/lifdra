@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { parseISO, format } from "date-fns";
 import Moment from "moment";
-import badge from "../../../../../assets/images/profile-screen/badge.svg";
-import shareicon from "../../../../../assets/images/profile-screen/share.svg";
+import badge from "../../../assets/images/profile-screen/badge.svg";
+import shareicon from "../../../assets/images/profile-screen/share.svg";
 
 function CertificateBox({ userProfileDetails }) {
   const [certificatePage, setcertificatePage] = useState(3);

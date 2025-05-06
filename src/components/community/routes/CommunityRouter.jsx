@@ -3,7 +3,6 @@ import { Route, useLocation, Link, Routes, Navigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
-import RouteLoading from "../../../general/conponents/RouteLoading";
 
 import PostMain from "../pages/PostMain";
 import SharedPostMain from "../pages/SharedPostMain";

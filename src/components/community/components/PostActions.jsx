@@ -4,7 +4,7 @@ import PostCommentBox from "./PostCommentBox";
 import { useSelector } from "react-redux";
 import ViewComment from "./ViewComment";
 import { serverConfig } from "../../../axiosConfig";
-import PostLoader from "../../includes/community/PostLoader";
+import PostLoader from "./PostLoader";
 import { tr } from "date-fns/locale";
 
 function PostActions({

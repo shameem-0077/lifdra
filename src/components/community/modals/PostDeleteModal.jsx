@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { serverConfig } from "../../../../../axiosConfig";
-import ButtonLoader from "../../../../general/loaders/ButtonLoader";
-import RequestLoader from "../../../../authentications/components/RequestLoader";
-import { useAuthStore } from "../../../../../store/authStore";
+import { serverConfig } from "../../../axiosConfig";
+import RequestLoader from "../../authentications/components/RequestLoader";
+import { useAuthStore } from "../../../store/authStore";
 
 function PostDeleteModal({
   isDelete,

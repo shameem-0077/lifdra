@@ -1,9 +1,8 @@
 import React, { useState, Suspense, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { PrivateRoute } from "../../routing/PrivateRoute";
 import PostProfile from "../pages/PostProfile";
 import { Routes, Route, Navigate } from "react-router-dom";
-import RouteLoading from "../../../general/conponents/RouteLoading";
+import RouteLoading from "../../general/conponents/RouteLoading";
 
 import CommunityProfile from "../pages/CommunityProfile";
 import PostMain from "../pages/PostMain";

@@ -7,11 +7,11 @@ import React, {
 } from "react";
 import styled from "styled-components";
 import debounce from "lodash/debounce";
-import { serverConfig } from "../../../../../axiosConfig";
-import SearchComponent from "../../../../community/components/SearchComponent";
-import UserFollowComponent from "../UserFollowComponent";
-import UserFollowSkeletonLoader from "../../../../general/skeltons/UserFollowSkeletonLoader";
-import { useAuthStore } from "../../../../../store/authStore";
+import { serverConfig } from "../../../axiosConfig";
+import SearchComponent from "../components/SearchComponent";
+import UserFollowComponent from "../components/UserFollowComponent";
+import UserFollowSkeletonLoader from "../../general/skeltons/UserFollowSkeletonLoader";
+import { useAuthStore } from "../../../store/authStore";
 
 const ENDPOINTS = {
   following: "api/v1/users/list-following/",

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import TalropEdtechHelmet from "../helpers/TalropEdtechHelmet";
 import { useAuthStore } from "../../../store/authStore";
-import error404Image from "../../assets/images/404.svg";
+import error404Image from "../../../assets/images/404.svg";
 
 const Error404 = () => {
   const { user_data } = useAuthStore();
