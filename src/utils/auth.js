@@ -1,7 +1,9 @@
 import { useAuthStore } from '../store/authStore';
 
 // Create a function to get the store state
-const getAuthState = () => useAuthStore.getState();
+const getAuthState = () => {
+  return useAuthStore.getState();
+};
 
 const auth = {
   /**
@@ -10,20 +12,28 @@ const auth = {
    */
   isAuthenticated: () => {
     const { user_data, is_verified } = getAuthState();
-    
-    // Check if user data exists and is verified
-    return Boolean(user_data && is_verified && user_data.access_token);
+    return Boolean(user_data?.access_token && is_verified);
   },
 
   /**
    * Login function to set authentication state
+   * @param {Object} data - The user data object containing access_token and other user info
    * @param {Function} callback - Optional callback function to execute after login
    * @returns {boolean} True if login was successful
    */
-  login: (callback) => {
-    const { user_data } = getAuthState();
+  login: (data, callback) => {
+    const { setUserData, setIsVerified } = getAuthState();
     
-    if (user_data && user_data.access_token) {
+    if (data?.access_token) {
+      // Set user data with is_verified flag
+      setUserData({
+        ...data,
+        is_verified: true
+      });
+      
+      // Set verification status
+      setIsVerified(true);
+      
       if (typeof callback === 'function') {
         callback();
       }

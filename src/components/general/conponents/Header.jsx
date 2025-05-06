@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import {
   Link,
   Navigate,
@@ -28,7 +28,7 @@ import ResetTwo from "../../authentications/modals/ResetTwo";
 import ResetThree from "../../authentications/modals/ResetThree";
 import SearchModal from "../modals/SearchModal";
 import NavMenu from "../conponents/NavMenu";
-import NotificationBox from "../../notifications/pages/NotificationBox";
+// import NotificationBox from "../../notifications/pages/NotificationBox";
 import HeaderSearch from "./HeaderSearch";
 import NavModal from "../modals/NavModal";
 import LoginJoinButton from "../conponents/LoginJoinButton";
@@ -86,113 +86,29 @@ const Header = () => {
   const inputRef = useRef(null);
   const tabRefs = useRef([]);
 
-  // Effects
-  useEffect(() => {
-    function handleResize() {
-      const halfScreenWidth = window.innerWidth / 2;
-      let widthOne = 0;
-      let widthTwo = 0;
+  // Memoized values
+  const searchProps = useMemo(() => ({
+    setGlobalSearch,
+    globalSearch,
+    setSearchModal,
+    isSearchModal,
+    historyStack,
+    setHistoryStack,
+  }), [globalSearch, isSearchModal, historyStack]);
 
-      if (tabRefs.current[0]) {
-        widthOne = tabRefs.current[0].offsetWidth;
-      }
-
-      if (tabRefs.current[1]) {
-        widthTwo = tabRefs.current[1].offsetWidth / 2;
-      }
-
-      const total = widthOne + widthTwo + 18;
-      const newMarginLeft = Math.max(25, halfScreenWidth - total);
-      setMarginLeft(newMarginLeft);
-    }
-
-    requestAnimationFrame(handleResize);
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [tabRefs.current, marginLeft]);
-
-  useEffect(() => {
-    setShowSearch(false);
-  }, [window.innerWidth]);
-
-  useEffect(() => {
-    if (window.innerWidth <= 768 && location.pathname === "/search/") {
-      toggleRespSearch(true);
-    }
-    return () => {
-      AOS.init({
-        duration: 400,
-      });
-    };
-  }, []);
-
-  useEffect(() => {
-    const search = location?.search || '';
-    const values = queryString.parse(search);
-    const {
-      q: searchValue,
-      action,
-      phone,
-      plan,
-      status,
-      event,
-      next,
-      c,
-      d
-    } = values;
-
-    setSearchValue(searchValue);
-    setAction(action);
-    setPlan(plan);
-    setPhone(phone);
-    setEvent(event);
-    setStatus(status);
-    setCourseId(c);
-    setNextPath(next);
-    setDays(d);
-  }, [location.search]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWidth(window.innerWidth);
-      setSearchModal(false);
-      setNavMenuModal(false);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    if (showSearch) {
-      inputRef.current?.focus();
-    }
-  }, [showSearch]);
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const actionParam = searchParams.get('action');
-    if (actionParam && actionParam !== action) {
-      setAction(actionParam);
-    }
-  }, [location.search]);
-
-  // Handlers
-  const handleKeyDown = (e) => {
+  // Callbacks
+  const handleKeyDown = useCallback((e) => {
     if (e.key === "Enter") {
       e.preventDefault();
       onSubmitSearch();
     }
-  };
+  }, []);
 
-  const onSearchValueChange = (e) => {
+  const onSearchValueChange = useCallback((e) => {
     setSearchValue(e.target.value);
-  };
+  }, []);
 
-  const onSubmitSearch = () => {
+  const onSubmitSearch = useCallback(() => {
     if (location.pathname === "/search/") {
       setSearchRedirect("update");
     } else {
@@ -201,9 +117,9 @@ const Header = () => {
     setTimeout(() => {
       setSearchRedirect(null);
     }, 200);
-  };
+  }, [location.pathname]);
 
-  const onSubscribe = () => {
+  const onSubscribe = useCallback(() => {
     if (auth.isAuthenticated()) {
       navigate(`${location.pathname}?action=subscribe`);
     } else {
@@ -211,14 +127,14 @@ const Header = () => {
       setAction(newAction);
       navigate(`${location.pathname}?action=${newAction}`, { replace: true });
     }
-  };
+  }, [location.pathname, navigate]);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setAction("");
     navigate(location.pathname, { replace: true });
-  };
+  }, [location.pathname, navigate]);
 
-  const renderPhoto = () => {
+  const renderPhoto = useCallback(() => {
     if (user_profile?.photo) {
       return (
         <Profile>
@@ -231,9 +147,28 @@ const Header = () => {
         <Jdenticon size="45px" value={user_profile?.name || "Name"} />
       </Profile>
     );
-  };
+  }, [user_profile]);
 
-  const renderRedirect = () => {
+  // Effects
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const actionParam = searchParams.get('action');
+    if (actionParam && actionParam !== action) {
+      setAction(actionParam);
+    }
+  }, [location.search, action]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Memoized render functions
+  const renderRedirect = useMemo(() => {
     if (searchRedirect === "push") {
       return (
         <Navigate
@@ -257,9 +192,9 @@ const Header = () => {
       );
     }
     return null;
-  };
+  }, [searchRedirect, searchValue]);
 
-  const renderModal = () => {
+  const renderModal = useMemo(() => {
     if (!auth.isAuthenticated() && action) {
       switch (action) {
         case "login":
@@ -289,58 +224,12 @@ const Header = () => {
       }
     }
     return null;
-  };
-
-  const searchProps = {
-    setGlobalSearch,
-    globalSearch,
-    setSearchModal,
-    isSearchModal,
-    historyStack,
-    setHistoryStack,
-  };
-
-  if (respSearch) {
-    return (
-      <React.Fragment>
-        {renderRedirect()}
-        <Head>
-          <SearchRightContainer onClick={toggleRespMenu} className="search">
-            <i className="las la-bars"></i>
-          </SearchRightContainer>
-
-          <SearchRespContainer>
-            <SearchInner className="search">
-              <form style={{ width: "100%" }} action="" className="search">
-                <i className="las la-search"></i>
-                <input
-                  style={{ width: "100%" }}
-                  type="text"
-                  placeholder="Search"
-                  onChange={onSearchValueChange}
-                  onKeyDown={handleKeyDown}
-                  value={searchValue}
-                  autoFocus
-                />
-                <i
-                  onClick={() => {
-                    toggleRespSearch();
-                    setSearchRedirect("");
-                  }}
-                  className="las la-times"
-                ></i>
-              </form>
-            </SearchInner>
-          </SearchRespContainer>
-        </Head>
-      </React.Fragment>
-    );
-  }
+  }, [action, nextPath, closeModal]);
 
   return (
     <>
-      {renderModal()}
-      {renderRedirect()}
+      {renderModal}
+      {renderRedirect}
       {redirectUrl ? <Navigate to={redirectUrl} /> : null}
       <Head>
         <Left
@@ -386,7 +275,7 @@ const Header = () => {
             <RightContainer>
               {width > 1060 ? (
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <NotificationBox />
+                  {/* <NotificationBox /> */}
                   <hr
                     style={{
                       height: "40px",
@@ -633,4 +522,4 @@ const Center = styled.div`
   align-items: center;
 `;
 
-export default Header;
+export default React.memo(Header);

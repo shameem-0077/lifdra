@@ -10,7 +10,7 @@ import styled from "styled-components";
 import Header from "../conponents/Header";
 import { serverConfig } from "../../../axiosConfig";
 import WebSocketMessagesInstance from "../../../messages-socket";
-import PrimeProgramSucessModal from "../../courses/pages/PrimeProgramSucessModal";
+// import PrimeProgramSucessModal from "../../courses/pages/PrimeProgramsSucessModal";
 import MobailNavManu from "../conponents/MobailNavManu";
 import { useAuthStore } from "../../../store/authStore";
 import { useSupportEngineerStore } from "../../../store/supportEngineerStore";
@@ -24,12 +24,13 @@ const PrimeProgramsInnerRouter = lazy(() => import("../../courses/routes/PrimePr
 const SettingsRouter = lazy(() => import("./SettingsRouter"));
 
 const StudentRouter = () => {
-  const { user_profile, user_data, updateUserData, isAuthenticated } = useAuthStore();
+  const { user_data, user_profile, updateUserData, isAuthenticated } = useAuthStore();
   const { setSupportEngineer } = useSupportEngineerStore();
   const currentToken = localStorage.getItem("currentToken");
   const location = useLocation();
   const [allowedFeatures, setAllowedFeatures] = useState([]);
   const navigate = useNavigate();
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const setMessages = useCallback((message) => {
     updateUserData({ messages: message });
@@ -76,61 +77,24 @@ const StudentRouter = () => {
     }
   }, [waitForSocketConnection, setMessages, addMessage]);
 
-
+  // Initialize campus data only once
   useEffect(() => {
-    const fetchCampusData = () => {
-      const campus_data_stored = localStorage.getItem("campus_data");
-      if (!campus_data_stored) {
-        localStorage.setItem("campus_data", JSON.stringify(campus_data_stored));
-      }
+    if (isInitialized) return;
+    
+    const campus_data_stored = localStorage.getItem("campus_data");
+    if (campus_data_stored) {
       const campus_data_value = JSON.parse(campus_data_stored);
       updateUserData({
         type: "UPDATE_CAMPUS_DATA",
         campus_data: campus_data_value,
       });
-    };
+    }
+    setIsInitialized(true);
+  }, [isInitialized, updateUserData]);
 
-    fetchCampusData();
-  }, [updateUserData]);
-
+  // Create device only when we have both token and access token
   useEffect(() => {
-    if (!user_data?.access_token) return;
-
-    const fetchPrograms = async () => {
-      try {
-        const response = await serverConfig.get(`learn/programs/`, {
-          headers: { Authorization: `Bearer ${user_data.access_token}` },
-        });
-        const { status_code, data } = response.data;
-        if (status_code === 6000) {
-          updateUserData({ programs: data, loading: false });
-        }
-      } catch (error) {
-        updateUserData({ programs: [], loading: false });
-      }
-    };
-
-    const fetchFeatures = async () => {
-      try {
-        const response = await serverConfig.get("/api/v1/users/list-user-features/", {
-          headers: { Authorization: `Bearer ${user_data.access_token}` },
-        });
-        const { status_code, data } = response.data;
-        if (status_code === 6000) {
-          const features = data.map((item) => item?.feature?.name.trim());
-          setAllowedFeatures(features);
-        }
-      } catch (error) {
-        console.error("Error fetching features:", error);
-      }
-    };
-
-    fetchPrograms();
-    fetchFeatures();
-  }, [user_data?.access_token, updateUserData]);
-
-  useEffect(() => {
-    if (!user_data?.access_token || !currentToken) return;
+    if (!user_data?.access_token || !currentToken || !isInitialized) return;
 
     const createDevice = async () => {
       const formData = new FormData();
@@ -148,7 +112,7 @@ const StudentRouter = () => {
     };
 
     createDevice();
-  }, [user_data?.access_token, currentToken]);
+  }, [user_data?.access_token, currentToken, isInitialized]);
 
   const handleSupportEngineerUpdate = (data) => {
     setSupportEngineer(data);
@@ -182,7 +146,7 @@ const StudentRouter = () => {
       <Header />
       {/* <MessagePopUp /> */}
       <MobailNavManu />
-      <PrimeProgramSucessModal />
+      {/* <PrimeProgramSucessModal /> */}
       <Suspense fallback={<RouteLoading />}>
         {routes}
       </Suspense>

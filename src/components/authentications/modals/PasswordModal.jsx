@@ -174,39 +174,55 @@ function PasswordModal() {
                                 // Create user data object from the response
                                 const userData = {
                                     access_token: data.access_token,
+                                    refresh_token: data.refresh_token,
                                     name: data.user_data.name,
                                     phone: data.user_data.phone,
                                     is_verified: true,
                                     pk: data.user_data.id,
-                                    ...data.user_data
+                                    user_id: data.user_data.user_id,
+                                    email: data.user_data.email,
+                                    whatsapp_number: data.user_data.whatsapp_number,
+                                    designation: data.user_data.designation,
+                                    is_email_verified: data.user_data.is_email_verified,
+                                    photo: data.user_data.photo,
+                                    gender: data.user_data.gender,
+                                    dob: data.user_data.dob,
+                                    referral_code: data.user_data.referral_code,
+                                    social_media: data.user_data.social_media,
+                                    following: data.user_data.following,
+                                    followers: data.user_data.followers,
+                                    about: data.user_data.about,
+                                    is_following: data.user_data.is_following,
+                                    is_guardian_info_found: data.user_data.is_guardian_info_found,
+                                    campus: data.user_data.campus
                                 };
                                 
                                 // Update user data in store
                                 updateUserData(userData);
                                 
-                                // Set auth token
-                                auth.login(data.access_token);
-                                
-                                // Navigate to feed
-                                navigate("/feed/");
+                                // Set auth token and verification status
+                                auth.login(userData, () => {
+                                    // Fetch user profile
+                                    fetchProfile(data.access_token);
+                                    
+                                    // Navigate to feed after successful login
+                                    navigate("/feed/");
+                                });
                             }
-                        } else {
+                        } else if (status_code === 6001) {
                             setLoading(false);
                             setError(true);
-                            setErrorMessage(message?.message || "Login failed");
+                            setErrorMessage(message);
                         }
                     })
                     .catch((error) => {
                         setLoading(false);
                         setError(true);
-                        setErrorMessage(
-                            error.response?.data?.message?.message ||
-                            "Something went wrong"
-                        );
+                        setErrorMessage("An error occurred, please try again later");
                     });
             } else {
                 setError(true);
-                setErrorMessage("Please enter password");
+                setErrorMessage("This field cannot be left blank");
             }
         }
     };

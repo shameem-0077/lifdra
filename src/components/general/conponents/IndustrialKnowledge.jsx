@@ -47,7 +47,7 @@ const IndustrialKnowledge = () => {
         <Section
           id="educate"
           ref={educateRef}
-          isActive={currentSection === "educate"}
+          data-active={currentSection === "educate"}
         >
           <div
             className="text-content"
@@ -83,7 +83,7 @@ const IndustrialKnowledge = () => {
         <Section
           id="experience"
           ref={experienceRef}
-          isActive={currentSection === "experience"}
+          data-active={currentSection === "experience"}
         >
           <div
             className="text-content"
@@ -118,7 +118,7 @@ const IndustrialKnowledge = () => {
         <Section
           id="entitle"
           ref={entitleRef}
-          isActive={currentSection === "entitle"}
+          data-active={currentSection === "entitle"}
         >
           <div
             className="text-content"
@@ -188,7 +188,7 @@ const Section = styled.div`
   align-items: center;
   padding: 40px 0;
   border-bottom: 1px dashed lightgray;
-  opacity: ${(props) => (props.isActive ? 1 : 0.5)};
+  opacity: ${(props) => (props['data-active'] ? 1 : 0.5)};
   transition: opacity 0.5s ease-in-out;
 
   @media all and (max-width: 980px) {

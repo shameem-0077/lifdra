@@ -3,7 +3,6 @@ import styled from "styled-components";
 import TermsService from "../components/TermsService";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import RequestLoader from "../components/RequestLoader";
-import { connect } from "react-redux";
 import { serverConfig } from "../../../axiosConfig";
 import OtpCard from "../components/OtpCard";
 import auth from "../../../utils/auth";
@@ -12,32 +11,13 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { Timestamp, setDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db, auth as firebaseAuth } from "../../../firebase";
 import { signInWithCustomToken } from "firebase/auth";
-
-function mapDispatchtoProps(dispatch) {
-  return {
-    updateUserData: (user_data) =>
-      dispatch({
-        type: "UPDATE_USER_DATA",
-        user_data: user_data,
-      }),
-    updateUserProfile: (user_profile) =>
-      dispatch({
-        type: "UPDATE_USER_PROFILE",
-        user_profile: user_profile,
-      }),
-  };
-}
-
-function mapStatetoProps(state) {
-  return {
-    user_data: state.user_data,
-  };
-}
+import { useAuthStore } from "../../../store/authStore";
 
 function LoginWithOTPModal(props) {
   const navigate = useNavigate();
   const location = useLocation();
   const recaptchaRef = useRef(null);
+  const { user_data, updateUserData, updateUserProfile } = useAuthStore();
   const [error, setError] = useState(false);
   const [error_message, setErrorMessage] = useState("");
   const [isLoading, setLoading] = useState(false);
@@ -68,7 +48,7 @@ function LoginWithOTPModal(props) {
     }
   };
 
-  //access_token and refresh_token will be saved in the redux store
+  //access_token and refresh_token will be saved in the store
   const setUserDetails = async (data) => {
     let promise = new Promise((res, rej) => {
       let user_data = {
@@ -79,7 +59,7 @@ function LoginWithOTPModal(props) {
         is_premium_user: data.is_premium_user,
         has_active_subscription: data.has_active_subscription,
       };
-      props.updateUserData(user_data);
+      updateUserData(user_data);
       firebaseAuthenticate(
         user_data,
         data.name,
@@ -108,8 +88,7 @@ function LoginWithOTPModal(props) {
       .then((response) => {
         const { status_code, data } = response.data;
         if (status_code === 6000) {
-          props.updateUserProfile(data);
-        } else {
+          updateUserProfile(data);
         }
       })
       .catch((error) => {});
@@ -138,7 +117,7 @@ function LoginWithOTPModal(props) {
               roomId: roomId,
             };
 
-            props.updateUserData(data);
+            updateUserData(data);
 
             async function getUser() {
               const currentToken = localStorage.getItem("currentToken");
@@ -175,55 +154,58 @@ function LoginWithOTPModal(props) {
       });
   };
 
-  const onSubmit = (e, otp_value) => {
+  const onSubmit = (e) => {
     if (e) {
       e.preventDefault();
     }
-    //Phone number is taken as user data from redux store
-    let { user_data } = props;
-    const otpNumber = otp_value ? otp_value : otp;
     if (user_data.phone) {
-      if (otpNumber) {
-        //After submission of userdata loading will starts.
+      if (otp) {
         setLoading(true);
 
-        //user_data, service and otp is passed to the url
         serverConfig
           .post("/api/v1/users/login/verify/otp/", {
-            otp: otpNumber,
+            otp: otp,
             service: "learn",
-            country: user_data.selectedCountry.web_code,
             phone: user_data.phone,
+            country: user_data.selectedCountry.web_code,
           })
-
-          .then((response) => {
-            //From response.data the message and status_code  will be taken.
-            const { status_code, message, signup_type } = response.data;
+          .then(async (response) => {
+            const { status_code, data, message } = response.data;
             if (status_code === 6000) {
-              //stopped the loading function
-              setUserDetails(response.data).then((resp) => {
-                auth.login(() => {
-                  return "Success";
-                });
-                setLoading(false);
-                if (props.nextPath) {
-                  navigate(props.nextPath);
-                } else {
-                  navigate("/feed/");
-                }
+              // Create user data object from the response
+              const userData = {
+                access_token: data.learn_student_token.access_token,
+                refresh_token: data.learn_student_token.refresh_token,
+                name: data.name,
+                phone: data.phone,
+                is_verified: true,
+                is_premium_user: data.is_premium_user,
+                has_active_subscription: data.has_active_subscription,
+                signup_type: data.signup_type,
+                pk: data.id
+              };
+              
+              // Update user data in store
+              updateUserData(userData);
+              
+              // Set auth token and verification status
+              auth.login(userData, () => {
+                // Fetch user profile
+                fetchProfile(data.learn_student_token.access_token);
+                
+                // Navigate to feed after successful login
+                navigate("/feed/");
               });
             } else if (status_code === 6001) {
-              //When status is invalid error message will be saved in setState.
+              setLoading(false);
               setError(true);
               setErrorMessage(message);
-              setLoading(false);
             }
           })
           .catch((error) => {
-            //Saved error message will be shown.
+            setLoading(false);
             setError(true);
             setErrorMessage("An error occurred, please try again later");
-            setLoading(false);
           });
       } else {
         setError(true);
@@ -329,7 +311,7 @@ function LoginWithOTPModal(props) {
   );
 }
 
-export default connect(mapStatetoProps, mapDispatchtoProps)(LoginWithOTPModal);
+export default LoginWithOTPModal;
 
 const Container = styled.div`
   position: fixed;
