@@ -35,6 +35,7 @@ import LoginJoinButton from "../conponents/LoginJoinButton";
 import useUserStore from "../../../store/userStore";
 import { useUIStore } from "../../../store/uiStore";
 import { useNotificationStore } from "../../../store/notificationStore";
+import ProfileDropdownModal from "../modals/ProfileDropdownModal";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -77,6 +78,7 @@ const Header = () => {
   const [historyStack, setHistoryStack] = useState([]);
   const [width, setWidth] = useState(window.innerWidth);
   const [isProfileSideActive, setProfileSideBar] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   // Refs
   const wrapperRef = useRef(null);
@@ -148,6 +150,14 @@ const Header = () => {
       </Profile>
     );
   }, [loginData]);
+
+  const handleProfileClick = useCallback(() => {
+    if (loginData?.accessToken) {
+      setIsProfileDropdownOpen(!isProfileDropdownOpen);
+    } else {
+      onSubscribe();
+    }
+  }, [loginData?.accessToken, isProfileDropdownOpen, onSubscribe]);
 
   // Effects
   useEffect(() => {
@@ -284,11 +294,7 @@ const Header = () => {
                       margin: "0px 20px",
                     }}
                   />
-                  <ProfileWrapper
-                    onClick={() => {
-                      loginData?.accessToken ? toggleProfile() : onSubscribe();
-                    }}
-                  >
+                  <ProfileWrapper onClick={handleProfileClick}>
                     {renderPhoto()}
                     <Name className="g-medium">
                       {loginData?.name ? "  Me " : "User"}
@@ -328,9 +334,7 @@ const Header = () => {
                       alt="Close"
                     />
                   ) : (
-                    <ProfileWrapper
-                      onClick={() => setNavMenuModal(true)}
-                    >
+                    <ProfileWrapper onClick={handleProfileClick}>
                       {renderPhoto()}
                     </ProfileWrapper>
                   )}
@@ -348,6 +352,10 @@ const Header = () => {
           <LoginJoinButton onSubscribe={onSubscribe} />
         )}
       </Head>
+      <ProfileDropdownModal 
+        isOpen={isProfileDropdownOpen} 
+        onClose={() => setIsProfileDropdownOpen(false)} 
+      />
     </>
   );
 };
