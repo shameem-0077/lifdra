@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import PostCommentBox from "./PostCommentBox";
-import { useSelector } from "react-redux";
 import ViewComment from "./ViewComment";
 import { serverConfig } from "../../../axiosConfig";
 import PostLoader from "./PostLoader";
-import { tr } from "date-fns/locale";
+import useUserStore from "../../../store/userStore";
 
 function PostActions({
   item,
@@ -23,8 +22,8 @@ function PostActions({
   selectedComment,
   setSelectedComment,
 }) {
-  const user_data = useSelector((state) => state.user_data);
-  const { access_token } = user_data;
+  const loginData = useUserStore((state) => state.loginData);
+  const { accessToken } = loginData;
   const commentInputRef = useRef(null);
   const [isLiked, setIsLiked] = useState(item?.is_liked || false);
   const [likeCount, setLikeCount] = useState(item?.likes_count || 0);
@@ -70,7 +69,7 @@ function PostActions({
         {},
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       );
@@ -92,7 +91,7 @@ function PostActions({
         formData,
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "multipart/form-data",
           },
         }
@@ -116,7 +115,7 @@ function PostActions({
           page: loadMore ? page + 1 : 1,
         },
         headers: {
-          Authorization: `Bearer ${access_token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
       const { status_code, data, pagination_data } = response.data;
@@ -158,6 +157,7 @@ function PostActions({
                         ? "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/03-06-2024/like-green.svg"
                         : "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/03-06-2024/thumbs-up.svg"
                     }
+                    alt={isLiked ? "Liked" : "Like"}
                   />
                 </LikeIcon>
                 <LikeText isActive={isLiked}>Like</LikeText>
@@ -169,7 +169,10 @@ function PostActions({
             <CommentBox>
               <CommentBtn onClick={toggleComments}>
                 <CommentIcon>
-                  <img src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/03-06-2024/message-circle-02.svg" />
+                  <img 
+                    src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/03-06-2024/message-circle-02.svg"
+                    alt="Comment"
+                  />
                 </CommentIcon>
                 <CommentText>Comment</CommentText>
               </CommentBtn>
@@ -250,219 +253,186 @@ const InnerContainer = styled.div`
 
 const ActionContainer = styled.div`
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 12px;
-  flex-wrap: wrap;
+  align-items: center;
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+
+  @media (max-width: 768px) {
+    padding: 12px 16px;
+  }
 
   @media (max-width: 480px) {
-    flex-direction: column;
-    align-items: flex-start;
+    padding: 8px 12px;
   }
 `;
 
 const ActionLeft = styled.div`
   display: flex;
+  gap: 24px;
   align-items: center;
 
+  @media (max-width: 768px) {
+    gap: 16px;
+  }
+
   @media (max-width: 480px) {
-    /* margin-bottom: 10px; */
+    gap: 12px;
   }
 `;
 
 const ActionRight = styled.div`
   display: flex;
+  gap: 16px;
   align-items: center;
-  padding: 0 12px;
-  @media all and (max-width: 480px) {
-    display: none;
-  }
-  @media (max-width: 480px) {
-    padding: 0;
-    padding-left: 8px;
-  }
-`;
-
-const LickCountBox = styled.div`
-  display: none;
-  @media all and (max-width: 480px) {
-    display: block;
-  }
-`;
-const CommentCountBox = styled.div`
-  display: none;
-  @media all and (max-width: 480px) {
-    display: block;
-  }
-`;
-
-const LikeCount = styled.h5`
-  color: #757575;
+  color: #6b7280;
   font-size: 14px;
-  font-family: "gordita_medium";
-  margin-right: 14px;
 
-  @media (max-width: 480px) {
-    font-size: 12px;
-    margin-right: 10px;
-  }
-`;
-
-const CommentCount = styled.h5`
-  color: #757575;
-  font-size: 14px;
-  font-family: "gordita_medium";
-  cursor: pointer;
-
-  @media (max-width: 480px) {
+  @media (max-width: 768px) {
+    gap: 12px;
     font-size: 12px;
   }
 `;
 
 const LikBox = styled.div`
   display: flex;
-  justify-content: flex-start;
   align-items: center;
-`;
-const LikeBtn = styled.div`
-  cursor: pointer;
-  display: flex;
-  align-items: flex-start;
-  margin-right: 24px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  /* ${(props) =>
-    props.isActive &&
-    `
-    transform: scale(1.1);
-    transition: transform 0.2s ease;
-  `} */
-  :hover {
-    background: #ecfdf4;
-    color: #4caf50;
-  }
-
-  @media (max-width: 768px) {
-    margin-right: 16px;
-    padding: 6px 10px;
-  }
-
-  @media (max-width: 480px) {
-    margin-right: 0;
-    padding: 4px 8px;
-  }
+  gap: 8px;
 `;
 
-const CommentBox = styled.div`
+const LikeBtn = styled.button`
   display: flex;
-  justify-content: flex-start;
   align-items: center;
-`;
-
-const CommentBtn = styled.div`
-  display: flex;
-  align-items: flex-start;
+  gap: 8px;
+  background: none;
+  border: none;
   cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 8px;
-  :hover {
-    background: #ecfdf4;
-    color: #4caf50;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f3f4f6;
   }
 
-  @media (max-width: 768px) {
-    padding: 6px 10px;
-  }
-
-  @media (max-width: 480px) {
-    padding: 4px 8px;
+  img {
+    width: 20px;
+    height: 20px;
   }
 `;
 
 const LikeIcon = styled.div`
-  width: 16.25px;
-  height: 16.25px;
-  margin-right: 4px;
-  img {
-    width: 100%;
-    display: block;
-  }
   &.grow {
-    animation: pulse 0.4s ease-in-out; /* Apply pulse animation */
+    animation: grow 0.4s ease-in-out;
   }
-  @keyframes pulse {
+
+  @keyframes grow {
     0% {
       transform: scale(1);
     }
     50% {
-      transform: scale(1.5);
+      transform: scale(1.2);
     }
     100% {
       transform: scale(1);
     }
   }
-  @media (max-width: 480px) {
-    width: 14px;
-    height: 14px;
+`;
+
+const LikeText = styled.span`
+  color: ${(props) => (props.isActive ? "#059669" : "#6b7280")};
+  font-size: 14px;
+  font-weight: 500;
+`;
+
+const LickCountBox = styled.div`
+  color: #6b7280;
+  font-size: 14px;
+`;
+
+const CommentBox = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const CommentBtn = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f3f4f6;
+  }
+
+  img {
+    width: 20px;
+    height: 20px;
   }
 `;
 
 const CommentIcon = styled.div`
-  width: 16.25px;
-  height: 16.25px;
-  margin-right: 4px;
-  img {
-    width: 100%;
-    display: block;
-  }
-
-  @media (max-width: 480px) {
-    width: 14px;
-    height: 14px;
-  }
-`;
-
-const LikeText = styled.span`
-  color: ${(props) => (props.isActive ? "#4caf50" : "#697586")};
-  font-size: 14px;
-  font-family: "gordita_medium";
-  transition: color 0.2s ease;
-
-  @media (max-width: 480px) {
-    font-size: 12px;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const CommentText = styled.span`
-  color: #697586;
+  color: #6b7280;
   font-size: 14px;
-  font-family: "gordita_medium";
+  font-weight: 500;
+`;
 
-  @media (max-width: 480px) {
-    font-size: 12px;
+const CommentCountBox = styled.div`
+  color: #6b7280;
+  font-size: 14px;
+`;
+
+const LikeCount = styled.span`
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const CommentCount = styled.span`
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
   }
 `;
 
 const LoaderContainer = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
   padding: 20px 0;
 `;
 
 const LoadMoreButton = styled.button`
-  color: #697586;
+  width: 100%;
+  padding: 12px;
+  background-color: #f3f4f6;
   border: none;
-  cursor: pointer;
-  font-family: "gordita_medium";
+  border-radius: 6px;
+  color: #4b5563;
   font-size: 14px;
-  margin-top: 20px;
-  &:disabled {
-    cursor: not-allowed;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover:not(:disabled) {
+    background-color: #e5e7eb;
   }
 
-  @media (max-width: 480px) {
-    font-size: 12px;
-    margin-top: 16px;
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
   }
 `;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import useUserStore from "../../../store/userStore";
 import styled from "styled-components";
 import { serverConfig } from "../../../axiosConfig";
 
@@ -14,8 +14,8 @@ function OptionModal({
   setReport,
   isReport,
 }) {
-  const user_data = useSelector((state) => state.user_data);
-  const { access_token } = user_data;
+  const loginData = useUserStore((state) => state.loginData);
+  const { accessToken, user } = loginData;
   const [isSaved, setSaved] = useState(false || item?.is_saved);
 
   const handleDelete = () => {
@@ -38,7 +38,7 @@ function OptionModal({
         {},
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "multipart/form-data",
           },
         }
@@ -68,13 +68,15 @@ function OptionModal({
 
         setOpen(false);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error saving post:", error);
+    }
   };
 
   return (
     <Container isVisible={isOpen}>
       <ListItem>
-        {user_data?.pk === item?.author?.id ? (
+        {user?.id === item?.author?.id ? (
           <>
             {/* <Items>Edit Post</Items> */}
             <Items onClick={handleDelete}>Delete</Items>
@@ -111,12 +113,17 @@ const Container = styled.div`
     top: 30px;
   }
 `;
-const ListItem = styled.ul``;
+const ListItem = styled.ul`
+  margin: 0;
+  padding: 0;
+  list-style: none;
+`;
 const Items = styled.li`
   font-size: 14px;
   color: #202939;
   cursor: pointer;
-  padding: 8px;
+  padding: 8px 12px;
+  transition: background-color 0.2s ease;
   &:last-child {
     margin-bottom: 0;
   }

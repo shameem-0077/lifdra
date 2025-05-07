@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import useUserStore from "../../../store/userStore";
 import { serverConfig } from "../../../axiosConfig";
 import PostLoader from "./PostLoader";
 import PostCommentBox from "./PostCommentBox";
@@ -19,8 +19,8 @@ function ModalActions({
   isCmtDel,
   setCmDel,
 }) {
-  const user_data = useSelector((state) => state.user_data);
-  const { access_token } = user_data;
+  const loginData = useUserStore((state) => state.loginData);
+  const { accessToken } = loginData;
 
   const [showComments, setShowComments] = useState(false);
   const [isLiked, setIsLiked] = useState(item?.is_liked || false);
@@ -61,7 +61,7 @@ function ModalActions({
         formData,
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "multipart/form-data",
           },
         }
@@ -84,7 +84,7 @@ function ModalActions({
         {},
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       );
@@ -103,7 +103,7 @@ function ModalActions({
           page: loadMore ? page + 1 : 1,
         },
         headers: {
-          Authorization: `Bearer ${access_token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
       const { status_code, data, pagination_data } = response.data;
@@ -247,63 +247,56 @@ const ActionButton = styled.button`
   &:hover {
     background: #ecfdf4;
   }
-
-  ${(props) =>
-    props.isActive &&
-    `
-    transform: scale(1.05);
-  `}
 `;
 
 const ActionIcon = styled.div`
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   img {
     width: 100%;
     height: 100%;
-    display: block;
+    object-fit: contain;
   }
 `;
 
 const ActionText = styled.span`
-  color: ${(props) => (props.isActive ? "#4caf50" : "#697586")};
   font-size: 14px;
-  font-family: "gordita_medium";
-  transition: color 0.2s ease;
+  color: ${(props) => (props.isActive ? "#0fa76f" : "#697586")};
+  font-family: ${(props) => (props.isActive ? "gordita_medium" : "gordita_regular")};
 `;
 
 const CountText = styled.span`
-  color: #757575;
   font-size: 14px;
-  font-family: "gordita_medium";
+  color: #697586;
 `;
 
 const LoaderContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px 0;
+  margin-top: 16px;
 `;
 
 const LoadMoreButton = styled.button`
-  color: #697586;
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-family: "gordita_medium";
+  width: 100%;
+  padding: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #0fa76f;
   font-size: 14px;
-  margin-top: 20px;
-  padding: 8px 16px;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
+  font-family: "gordita_medium";
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 16px;
 
   &:hover {
-    background-color: #f0f0f0;
+    background: #ecfdf4;
   }
 
   &:disabled {
+    opacity: 0.7;
     cursor: not-allowed;
-    opacity: 0.6;
   }
 `;

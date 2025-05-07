@@ -16,7 +16,7 @@ import {
   SavedRouteRegex,
   PostRouteRegex,
 } from "../components/RouteRegexPattern";
-import { useSelector } from "react-redux";
+import useUserStore from "../../../store/userStore";
 import { toast } from "react-toastify";
 import { serverConfig } from "../../../axiosConfig";
 import PostTop from "./PostTop";
@@ -44,7 +44,7 @@ function PostCard({
 }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user_data } = useSelector((state) => state);
+  const loginData = useUserStore((state) => state.loginData);
 
   const [imageAttachments, setImageAttachments] = useState([]);
   const [videoAttachment, setVideoAttachment] = useState(null);
@@ -152,11 +152,11 @@ function PostCard({
   };
 
   const handleDelete = () => {
-    const { access_token } = user_data;
+    const { accessToken } = loginData;
     serverConfig
       .delete(`communityapi/v1/posts/${item.id}/`, {
         headers: {
-          Authorization: `Bearer ${access_token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       })
       .then((response) => {
@@ -252,24 +252,18 @@ function PostCard({
                     ) : null}
                   </MediaSection>
                 </CardContentSection>
-              </Container>
-              <ActionSection>
                 <PostActions
                   item={item}
+                  setCmDel={setCmDel}
+                  isCmtDel={isCmtDel}
                   setReport={setReport}
                   isReport={isReport}
-                  setSelectedId={setSelectedId}
                   setOptions={setOptions}
                   isOptions={isOptions}
-                  isCmtDel={isCmtDel}
-                  setCmDel={setCmDel}
-                  deletionUpdate={deletionUpdate}
-                  setDeletionUpdate={setDeletionUpdate}
                   selectedComment={selectedComment}
                   setSelectedComment={setSelectedComment}
-                  isSinglePost={isSinglePost}
                 />
-              </ActionSection>
+              </Container>
             </FadeInContent>
           )}
         </div>

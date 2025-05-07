@@ -88,7 +88,7 @@ function CreatePostModal({
         formData,
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "multipart/form-data",
           },
         }
@@ -151,7 +151,7 @@ function CreatePostModal({
           `/general/get-link-data/?link=${encodeURIComponent(lastUrl)}`,
           {
             headers: {
-              Authorization: `Bearer ${access_token}`,
+              Authorization: `Bearer ${accessToken}`,
             },
           }
         );
@@ -192,7 +192,7 @@ function CreatePostModal({
           {},
           {
             headers: {
-              Authorization: `Bearer ${access_token}`,
+              Authorization: `Bearer ${accessToken}`,
             },
           }
         );
@@ -216,7 +216,7 @@ function CreatePostModal({
         formData,
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "multipart/form-data",
           },
         }

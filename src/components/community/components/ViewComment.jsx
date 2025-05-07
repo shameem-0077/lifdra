@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 import moment from "moment";
 import Jdenticon from "react-jdenticon";
-import { useSelector } from "react-redux";
+import useUserStore from "../../../store/userStore";
 import ViewReply from "./ViewReply";
 import { serverConfig } from "../../../axiosConfig";
 import PostCommentBox from "./PostCommentBox";
@@ -24,8 +24,8 @@ function ViewComment({
   setCmDel,
   isCmtDel,
 }) {
-  const user_data = useSelector((state) => state.user_data);
-  const { access_token } = user_data;
+  const loginData = useUserStore((state) => state.loginData);
+  const { accessToken } = loginData;
 
   const [showRepliesForId, setShowRepliesForId] = useState(null);
   const [isLoading, setLoading] = useState(false);
@@ -70,7 +70,7 @@ function ViewComment({
           reply_id: commentId,
         },
         headers: {
-          Authorization: `Bearer ${access_token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
       const { status_code, data } = response.data;
@@ -97,7 +97,7 @@ function ViewComment({
         formData,
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "multipart/form-data",
           },
         }
@@ -132,7 +132,7 @@ function ViewComment({
         {},
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       );
@@ -158,10 +158,7 @@ function ViewComment({
                   {item?.author?.photo ? (
                     <img src={item?.author?.photo} alt="Profile" />
                   ) : (
-                    <Jdenticon
-                      // size={window.innerWidth > 1280 ? "47" : "45"}
-                      value={item?.author?.name}
-                    />
+                    <Jdenticon value={item?.author?.name} />
                   )}
                 </ProfileIcon>
                 <ProfileDiv>
@@ -248,17 +245,17 @@ function ViewComment({
                       ))}
                   </RepliesContainer>
                 </>
-              ) : (
-                ""
-              )}
+              ) : null}
               {isReplyBox === item?.id && (
-                <PostCommentBox
-                  ref={commentInputRef}
-                  onSubmit={(content) =>
-                    updateComment(content, item?.id, item?.author?.name)
-                  }
-                  parentAuthorName={item?.author?.name}
-                />
+                <ReplyBoxContainer>
+                  <PostCommentBox
+                    ref={commentInputRef}
+                    onSubmit={(content) =>
+                      updateComment(content, item?.id, item?.author?.name)
+                    }
+                    parentAuthorName={item?.author?.name}
+                  />
+                </ReplyBoxContainer>
               )}
             </ContentContainer>
           </Container>
@@ -271,201 +268,120 @@ function ViewComment({
 export default ViewComment;
 
 const Container = styled.div`
-  margin-top: 32px;
-
-  @media (max-width: 768px) {
-    margin-top: 24px;
-  }
-`;
-
-const ProfileIcon = styled.div`
-  height: 36px;
-  width: 36px;
-  border-radius: 50%;
-  overflow: hidden;
-
-  img {
-    width: 100%;
-    display: inline-block;
-  }
-
-  @media (max-width: 480px) {
-    height: 32px;
-    width: 32px;
-  }
-`;
-
-const UserName = styled.h2`
-  color: #364152;
-  font-size: 14px;
-  font-family: "gordita_medium";
-  margin: 0 !important;
-
-  @media (max-width: 480px) {
-    font-size: 13px;
-  }
-`;
-
-const ProfileDiv = styled.div`
-  margin: 0 16px;
-
-  @media (max-width: 480px) {
-    margin: 0 12px;
-  }
+  padding: 16px 0;
+  border-bottom: 1px solid #e3e8ef;
 `;
 
 const ProfileContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
+  margin-bottom: 8px;
   position: relative;
-`;
-
-const Time = styled.span`
-  color: #9aa4b2;
-  font-size: 13px;
-  margin-right: 8px;
-
-  @media (max-width: 480px) {
-    font-size: 12px;
-  }
-`;
-
-const Content = styled.p`
-  color: #121926;
-  font-size: 14px;
-  margin: 8px 0;
-
-  @media (max-width: 480px) {
-    font-size: 13px;
-  }
-`;
-
-const ContentContainer = styled.div`
-  padding-left: 30px;
-  width: 97%;
-  margin: auto;
-  border-left: 1px solid #e3e8ef;
-
-  @media (max-width: 768px) {
-    padding-left: 20px;
-    width: 95%;
-  }
-
-  @media (max-width: 480px) {
-    padding-left: 15px;
-    width: 93%;
-  }
-`;
-
-const ViewReplyBtn = styled.button`
-  color: #697586;
-  font-size: 13px;
-  cursor: pointer;
-  font-family: "gordita_medium";
-  background: none;
-  border: none;
-  padding: 0;
-
-  @media (max-width: 480px) {
-    font-size: 12px;
-  }
-`;
-
-const ReplyCount = styled.span`
-  color: #697586;
-  font-size: 13px;
-  cursor: pointer;
-  font-family: "gordita_medium";
-
-  @media (max-width: 480px) {
-    font-size: 12px;
-  }
-`;
-
-const slideDown = keyframes`
-  from {
-    height: 0;
-    opacity: 0;
-  }
-  to {
-    height: auto;
-    opacity: 1;
-  }
-`;
-
-const slideUp = keyframes`
-  from {
-    height: auto;
-    opacity: 1;
-  }
-  to {
-    height: 0;
-    opacity: 0;
-  }
-`;
-
-const RepliesContainer = styled.div`
-  max-height: ${(props) => (props.showReplies ? "1000px" : "0")};
-  opacity: ${(props) => (props.showReplies ? "1" : "0")};
-  overflow: hidden;
-  animation: ${(props) => (props.showReplies ? slideDown : slideUp)} 0.5s
-    ease-out;
-`;
-
-const LikeBtn = styled.span`
-  color: #697586;
-  font-size: 13px;
-  font-family: "gordita_medium";
-  cursor: pointer;
-  margin-right: 24px;
-
-  @media (max-width: 480px) {
-    font-size: 12px;
-    margin-right: 16px;
-  }
-`;
-
-const ReplyBtn = styled.span`
-  color: #697586;
-  font-size: 13px;
-  font-family: "gordita_medium";
-  cursor: pointer;
-  margin-right: 24px;
-
-  @media (max-width: 480px) {
-    font-size: 12px;
-    margin-right: 16px;
-  }
-`;
-
-const LoaderContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px 0;
-
-  @media (max-width: 480px) {
-    padding: 15px 0;
-  }
-`;
-
-const Options = styled.span`
-  padding: 8px;
-  cursor: pointer;
-
-  img {
-    width: 100%;
-    display: block;
-  }
-
-  @media (max-width: 480px) {
-    padding: 6px;
-  }
 `;
 
 const ProfileLeft = styled.div`
   display: flex;
   align-items: center;
+  gap: 8px;
+`;
+
+const ProfileIcon = styled.div`
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
+const ProfileDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const UserName = styled.span`
+  font-size: 14px;
+  font-family: "gordita_medium";
+  color: #202939;
+`;
+
+const Time = styled.span`
+  font-size: 12px;
+  color: #697586;
+`;
+
+const Options = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #f8fafc;
+  }
+
+  img {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
+const ContentContainer = styled.div`
+  margin-left: 40px;
+`;
+
+const Content = styled.p`
+  font-size: 14px;
+  color: #202939;
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+`;
+
+const LikeBtn = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: #697586;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #f8fafc;
+  }
+`;
+
+const ReplyBtn = styled(LikeBtn)``;
+
+const ViewReplyBtn = styled(LikeBtn)`
+  color: #0fa76f;
+  font-family: "gordita_medium";
+`;
+
+const ReplyCount = styled.span`
+  font-size: 12px;
+  color: #697586;
+`;
+
+const RepliesContainer = styled.div`
+  margin-top: 16px;
+  display: ${(props) => (props.showReplies ? "block" : "none")};
+`;
+
+const ReplyBoxContainer = styled.div`
+  margin-top: 16px;
+`;
+
+const LoaderContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
 `;

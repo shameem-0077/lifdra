@@ -1,11 +1,11 @@
 import React, { forwardRef, useState } from "react";
 import styled from "styled-components";
 import Jdenticon from "react-jdenticon";
-import { useSelector } from "react-redux";
+import useUserStore from "../../../store/userStore";
 
 const PostCommentBox = forwardRef(({ onSubmit, parentAuthorName }, ref) => {
   const [content, setContent] = useState("");
-  const { user_profile } = useSelector((state) => state);
+  const userProfile = useUserStore((state) => state.userProfile);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,13 +20,10 @@ const PostCommentBox = forwardRef(({ onSubmit, parentAuthorName }, ref) => {
       <FormDiv onSubmit={handleSubmit}>
         <ProfileDiv>
           <ProfileIcon>
-            {user_profile?.photo ? (
-              <img src={user_profile?.photo} alt="Profile" />
+            {userProfile?.photo ? (
+              <img src={userProfile?.photo} alt="Profile" />
             ) : (
-              <Jdenticon
-                // size={window.innerWidth > 1280 ? "47" : "45"}
-                value={user_profile?.name}
-              />
+              <Jdenticon value={userProfile?.name} />
             )}
           </ProfileIcon>
         </ProfileDiv>
@@ -45,7 +42,7 @@ const PostCommentBox = forwardRef(({ onSubmit, parentAuthorName }, ref) => {
         <CommentDiv>
           <CommentBtn type="submit">Comment</CommentBtn>
           <CommentIcon type="submit">
-            <img src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/01-06-2024/send.svg" />
+            <img src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/01-06-2024/send.svg" alt="Send" />
           </CommentIcon>
         </CommentDiv>
       </FormDiv>
@@ -160,6 +157,7 @@ const CommentBtn = styled.button`
     display: none;
   }
 `;
+
 const CommentIcon = styled.button`
   display: none;
 

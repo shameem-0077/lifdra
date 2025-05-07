@@ -4,14 +4,14 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { ProfileRouteRegex, PostRouteRegex } from "./RouteRegexPattern";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import useUserStore from "../../../store/userStore";
 import { toast } from "react-toastify";
 import { serverConfig } from "../../../axiosConfig";
 
 function PostCardContent({ item, isSinglePost }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user_data } = useSelector((state) => state);
+  const loginData = useUserStore((state) => state.loginData);
   const [isExpanded, setIsExpanded] = useState(isSinglePost);
   const words = item?.content?.split(/\s+/) || [];
   const isLongContent = words.length > 30;
@@ -42,14 +42,14 @@ function PostCardContent({ item, isSinglePost }) {
   };
 
   const handleLike = () => {
-    const { access_token } = user_data;
+    const { accessToken } = loginData;
     serverConfig
       .post(
         `communityapi/v1/posts/${item.id}/like/`,
         {},
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       )
@@ -250,10 +250,7 @@ const ActionButton = styled.button`
     height: 20px;
   }
   span {
+    color: #697586;
     font-size: 14px;
-    color: #757575;
-  }
-  &:hover {
-    opacity: 0.8;
   }
 `;

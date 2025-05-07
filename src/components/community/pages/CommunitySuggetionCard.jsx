@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SuggestionProfileCard from "../components/SuggestionProfileCard";
 import { useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import useUserStore from "../../../store/userStore";
 import { serverConfig } from "../../../axiosConfig";
 import styled from "styled-components";
 
@@ -12,9 +12,9 @@ function CommunitySuggetionCard({ setFollowCount, setIsFollow, isFollow }) {
   const [isVisible, setIsVisible] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const location = useLocation();
-  const {
-    user_data: { access_token },
-  } = useSelector((state) => state);
+  const loginData = useUserStore((state) => state.loginData);
+  const { accessToken } = loginData;
+
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
@@ -24,7 +24,7 @@ function CommunitySuggetionCard({ setFollowCount, setIsFollow, isFollow }) {
           "/api/v1/users/community-profiles/",
           {
             headers: {
-              Authorization: `Bearer ${access_token}`,
+              Authorization: `Bearer ${accessToken}`,
             },
             params: { type: "people_may_you_know", count: 5 },
           }
@@ -47,14 +47,14 @@ function CommunitySuggetionCard({ setFollowCount, setIsFollow, isFollow }) {
         }
       }
     }
-    if (access_token) {
+    if (accessToken) {
       fetchPeopleMayYouKnow();
     }
     return () => {
       isMounted = false;
       setLoading(false);
     };
-  }, [access_token, location]);
+  }, [accessToken, location]);
 
   return (
     <>
@@ -75,6 +75,7 @@ function CommunitySuggetionCard({ setFollowCount, setIsFollow, isFollow }) {
 }
 
 export default CommunitySuggetionCard;
+
 const SuggetionCardBox = styled.div`
   width: 100%;
   flex-direction: row;

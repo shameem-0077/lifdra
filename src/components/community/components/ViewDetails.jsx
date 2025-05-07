@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import useUserStore from "../../../store/userStore";
 import UserProfile from "./UserProfile";
 import PostCardContent from "./PostCardContent";
 import ModalActions from "./ModalActions";
@@ -22,8 +22,8 @@ function ViewDetails({
   setCmDel,
   setFollowCount,
 }) {
-  const user_data = useSelector((state) => state.user_data);
-  const { access_token } = user_data;
+  const loginData = useUserStore((state) => state.loginData);
+  const { accessToken, pk } = loginData;
 
   const [isFollow, setFollow] = useState(item?.author?.is_following || false);
 
@@ -41,7 +41,7 @@ function ViewDetails({
         {},
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       );
@@ -70,7 +70,7 @@ function ViewDetails({
       <TopView>
         <ModalHeaderDetails item={item} isModal={isModal} />
         <RightTop>
-          {user_data?.pk !== item?.author?.id ? (
+          {pk !== item?.author?.id ? (
             <FollowButton
               onClick={() => handleFollowClick(item?.author?.id)}
               isActive={isFollow}
@@ -154,6 +154,22 @@ const TopView = styled.div`
 const RightTop = styled.div`
   display: flex;
   align-items: center;
+`;
+
+const FollowButton = styled.button`
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: ${props => props.isActive ? '#E5E7EB' : '#F3F4F6'};
+  color: ${props => props.isActive ? '#374151' : '#4B5563'};
+  border: 1px solid ${props => props.isActive ? '#D1D5DB' : '#E5E7EB'};
+
+  &:hover {
+    background: ${props => props.isActive ? '#D1D5DB' : '#E5E7EB'};
+  }
 `;
 
 const CloseButton = styled.div`
@@ -245,68 +261,5 @@ const ActionSection = styled.div`
 
   @media (min-width: 2560px) {
     padding: 16px 40px 0px 40px;
-  }
-`;
-
-const FollowButton = styled.button`
-  padding: 0 8px;
-  background: #059664;
-  border-radius: 4px;
-  height: 26px;
-  font-size: 11px;
-  width: fit-content;
-  color: #ffffff;
-  cursor: pointer;
-  font-family: "gordita_medium";
-  transition: transform 0.2s ease-in-out, background 0.3s, color 0.3s,
-    border 0.3s;
-
-  :hover {
-    opacity: 0.9;
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-
-  ${(props) =>
-    props.isActive &&
-    `
-    border: 1px solid #cdd5df;
-    background: #ffffff;
-    color: #364152;
-  `}
-
-  @media (min-width: 375px) {
-    padding: 0 9px;
-    height: 28px;
-    font-size: 12px;
-  }
-
-  @media (min-width: 768px) {
-    padding: 0 10px;
-    border-radius: 6px;
-    height: 30px;
-    font-size: 13px;
-  }
-
-  @media (min-width: 1024px) {
-    padding: 0 12px;
-    border-radius: 8px;
-    height: 34px;
-    font-size: 14px;
-  }
-
-  @media (min-width: 1440px) {
-    padding: 0 14px;
-    height: 36px;
-    font-size: 15px;
-  }
-
-  @media (min-width: 2560px) {
-    padding: 0 16px;
-    border-radius: 10px;
-    height: 40px;
-    font-size: 16px;
   }
 `;

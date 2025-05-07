@@ -1,17 +1,16 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import Jdenticon from "react-jdenticon";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { serverConfig } from "../../../axiosConfig";
 import FollowBT from "./FollowBT";
 import moment from "moment";
-
+import useUserStore from "../../../store/userStore";
 
 function UserProfile({ item, setFollowCount, isModal, time }) {
-  const user_data = useSelector((state) => state.user_data);
-  const { access_token } = user_data;
-  const { user_profile } = useSelector((state) => state);
+  const loginData = useUserStore((state) => state.loginData);
+  const userProfile = useUserStore((state) => state.userProfile);
+  const { accessToken } = loginData;
   const [isFollow, setFollow] = useState(item?.author?.is_following || false);
 
   const updateFollow = async (id) => {
@@ -21,7 +20,7 @@ function UserProfile({ item, setFollowCount, isModal, time }) {
         {},
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       );
@@ -84,7 +83,7 @@ function UserProfile({ item, setFollowCount, isModal, time }) {
       <Container>
         <ProfileNav
           to={
-            user_profile?.user_id == item?.author?.user_id
+            userProfile?.user_id == item?.author?.user_id
               ? "/feed/profile"
               : `/feed/profile/${item?.author?.username}`
           }
@@ -104,23 +103,20 @@ function UserProfile({ item, setFollowCount, isModal, time }) {
             )}
             {item?.author?.designation && (
               <UserProgram>
-                {/* {truncateCharacters(item?.author?.designation, 26)} */}
                 {item?.author?.designation}
               </UserProgram>
             )}
             <Time>{formatTime(item?.date_updated)}</Time>
           </ProfileDiv>
         </ProfileNav>
-        {user_data?.pk !== item?.author?.id ? (
-          // <FollowBtn>
+        {loginData?.pk !== item?.author?.id ? (
           <FollowBT
-          setFollow={setFollow}
-          isFollow={isFollow}
-          updateFollow={updateFollow}
-          autherId={item?.author?.id}
-          type="tertiary"
-        />
-          // </FollowBtn>
+            setFollow={setFollow}
+            isFollow={isFollow}
+            updateFollow={updateFollow}
+            autherId={item?.author?.id}
+            type="tertiary"
+          />
         ) : null}
       </Container>
     </>
@@ -128,24 +124,16 @@ function UserProfile({ item, setFollowCount, isModal, time }) {
 }
 
 export default UserProfile;
+
 const pxToRem = (px) => `${(px / 16).toFixed(2)}rem`;
 
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-
-  /* @media all and (max-width: 480px) {
-  } */
 `;
 
-const ProfileDiv = styled.div`
-  /* width: 60%; */
-`;
-
-const FollowBtn = styled.div`
- padding: 3px;
-`
+const ProfileDiv = styled.div``;
 
 const ProfileIcon = styled.div`
   height: 40px;
@@ -165,9 +153,6 @@ const ProfileIcon = styled.div`
     height: 48px;
     width: 48px;
   }
-  /* @media all and (max-width: 360px) {
-    width: 30%;
-  } */
 `;
 
 const UserName = styled.h2`

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import useUserStore from "../../../store/userStore";
 import Jdenticon from "react-jdenticon";
 import styled from "styled-components";
 import moment from "moment";
 import { Link } from "react-router-dom";
 
 function ModalHeaderDetails({ item }) {
-  const { user_profile } = useSelector((state) => state);
+  const loginData = useUserStore((state) => state.loginData);
   const currentTime = moment();
   const [showProgram, setShowProgram] = useState(true);
   const hasProgram = !!item?.author?.program?.name;
@@ -25,7 +25,7 @@ function ModalHeaderDetails({ item }) {
     <Container>
       <ProfileNav
         to={
-          user_profile?.user_id === item?.author?.user_id
+          loginData?.userId === item?.author?.user_id
             ? "/feed/profile"
             : `/feed/profile/${item?.author?.username}`
         }
@@ -109,23 +109,11 @@ const UserNameModal = styled.h2`
   font-family: "gordita_medium";
 `;
 
-// const UserProgram = styled.h4`
-//   color: #737376;
-//   font-size: 12px;
-
-//   @media (min-width: 768px) {
-//     font-size: 14px;
-//   }
-// `;
-
 const ProfileNav = styled(Link)`
   display: flex;
   align-items: center;
 `;
-// const Time = styled.span`
-//   color: #9aa4b2;
-//   font-size: 14px;
-// `;
+
 const AlternatingText = styled.div`
   position: relative;
   height: 20px;
