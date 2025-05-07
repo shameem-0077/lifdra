@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import styled from "styled-components";
 import RouteLoading from "../conponents/RouteLoading";
 
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 import { useTidioStore } from "../../../store/tidioStore";
 
 // const WebRouter = lazy(() => import("./web/WebRouter"));
@@ -21,69 +21,13 @@ const ContactUs = lazy(() => import("../pages/ContactUs"));
 const AboutUs = lazy(() => import("../pages/AboutUs"));
 
 function AppRouter() {
-  const { user_profile } = useAuthStore();
+  const { loginData, setLoginData, logout } = useUserStore();
   const { tidioSettings, updateTidioSettings } = useTidioStore();
   const [isToast, setToast] = useState(false);
 
   const handleTidioClick = (bool) => {
     updateTidioSettings(bool);
   };
-
-  useEffect(() => {
-    document.addEventListener("tidioChat-open", () => {
-      setToast(false);
-      handleTidioClick(true);
-    });
-
-    if (window.tidioChatApi) {
-      window.tidioChatApi.on("ready", () => {
-        setToast(true);
-      });
-
-      document.tidioIdentify = {
-        distinct_id: user_profile?.user_id, // Unique visitor ID in your system
-        email: user_profile?.email, // visitor email
-        name: user_profile?.name, // Visitor name
-        phone: user_profile?.phone ? `+91 ${user_profile.phone}` : undefined, //Visitor phone
-      };
-
-      window.tidioChatApi.setContactProperties({
-        user_id: user_profile?.user_id,
-        program: user_profile?.program?.name,
-        rm: user_profile?.rm_name,
-      });
-
-      window.tidioChatApi.setVisitorData({
-        distinct_id: user_profile?.user_id, // Unique visitor ID in your system
-        email: user_profile?.email, // visitor email
-        name: user_profile?.name, // Visitor name
-        phone: user_profile?.phone ? `+91 ${user_profile.phone}` : undefined, //Visitor phone
-      });
-    } else {
-      document.addEventListener("tidioChat-ready", () => {
-        setToast(true);
-        document.tidioIdentify = {
-          distinct_id: user_profile?.user_id, // Unique visitor ID in your system
-          email: user_profile?.email, // visitor email
-          name: user_profile?.name, // Visitor name
-          phone: user_profile?.phone ? `+91 ${user_profile.phone}` : undefined, //Visitor phone
-        };
-
-        window.tidioChatApi.setContactProperties({
-          user_id: user_profile?.user_id,
-          program: user_profile?.program?.name,
-          rm: user_profile?.rm_name,
-        });
-
-        window.tidioChatApi.setVisitorData({
-          distinct_id: user_profile?.user_id, // Unique visitor ID in your system
-          email: user_profile?.email, // visitor email
-          name: user_profile?.name, // Visitor name
-          phone: user_profile?.phone ? `+91 ${user_profile.phone}` : undefined, //Visitor phone
-        });
-      });
-    }
-  }, [user_profile, window.tidioChatApi]);
 
   return (
     <>

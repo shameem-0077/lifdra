@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useAuthStore } from "../../../../store/authStore";
-import { serverConfig } from "../../../../axiosConfig";
+import useUserStore from "../../../store/userStore";
+import { serverConfig } from "../../../axiosConfig";
 import { useNavigate } from "react-router-dom";
-import { getDateStr } from "../../../general/helpers/functions";
-import loader from "../../../../assets/lotties/modal/buttonloader.json";
+import loader from "../../../assets/lotties/modal/buttonloader.json";
 import Lottie from "react-lottie";
 
 const PaymentStatusModal = (props) => {
-    const { user_data, updateUserData } = useAuthStore();
+    const { loginData } = useUserStore();
     const navigate = useNavigate();
     const [isButtonLoading, setButtonLoading] = useState(false);
     const [date, setDate] = useState(false);
@@ -33,7 +32,7 @@ const PaymentStatusModal = (props) => {
 
     const handleSuccess = () => {
         setButtonLoading(true);
-        let access_token = user_data.access_token;
+        let access_token = loginData.accessToken;
         serverConfig
             .post(
                 `learning/course/${props.course_id}/purchase/`,
@@ -47,10 +46,6 @@ const PaymentStatusModal = (props) => {
             .then((res) => {
                 let { status_code, data } = res.data;
                 if (status_code === 6000) {
-                    updateUserData({
-                        ...user_data,
-                        total_purchased_coins: data.total_purchased_coins,
-                    });
                     props.setShow(false);
                     props.closeModal();
                     navigate(`/learn/prime-programs/${props.courseSlug}`);

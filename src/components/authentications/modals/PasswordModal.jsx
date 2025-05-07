@@ -10,13 +10,13 @@ import { Timestamp, setDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db, auth as firebaseAuth } from "../../../firebase";
 import { signInWithCustomToken } from "firebase/auth";
 import CampusModal from "./CampusModal";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 function PasswordModal() {
     const navigate = useNavigate();
     const location = useLocation();
     const recaptchaRef = useRef(null);
-    const { user_data, updateUserData, updateUserProfile } = useAuthStore();
+    const { loginData, setLoginData } = useUserStore();
 
     const [error, setError] = useState(false);
     const [error_message, setErrorMessage] = useState("");
@@ -37,28 +37,7 @@ function PasswordModal() {
         }
     };
 
-    //access_token and refresh_token will be saved in the store
-    const setUserDetails = (data) => {
-        let user_data = {
-            access_token: data.response.access_token,
-            refresh_token: data.response.refresh_token,
-            name: data.name,
-            phone: data.phone,
-            is_verified: true,
-            is_premium_user: data.is_premium_user,
-            has_active_subscription: data.has_active_subscription,
-            signup_type: data.signup_type,
-            pk: data.id,
-        };
-        fetchProfile(data.response.access_token);
-        updateUserData(user_data);
-        firebaseAuthenticate(
-            user_data,
-            data.name,
-            data.response.access_token,
-            data.id
-        );
-    };
+    
 
     const fetchProfile = (access_token) => {
         serverConfig
@@ -73,85 +52,22 @@ function PasswordModal() {
             .then((response) => {
                 const { status_code, data } = response.data;
                 if (status_code === 6000) {
-                    updateUserProfile(data);
+                    setLoginData({
+                        name: data.name,
+                        phone: data.phone,
+                        is_verified: true,
+                    });
                 } else {
                 }
             })
             .catch((error) => {});
     };
 
-    const firebaseAuthenticate = (user_data, name, access_token, pk) => {
-        serverConfig
-            .get("/api/v1/users/firebase/auth/login/", {
-                headers: {
-                    Authorization: `Bearer ${access_token}`,
-                },
-            })
-            .then((response) => {
-                const { data } = response.data;
-
-                const token = data.token;
-                signInWithCustomToken(firebaseAuth, token)
-                    .then((userCredential) => {
-                        // Signed in
-                        const user = userCredential.user;
-                        const roomId =
-                            user?.uid + user?.uid.split("").reverse().join("");
-
-                        const data = {
-                            ...user_data,
-                            uid: user.uid,
-                            roomId: roomId,
-                        };
-
-                        updateUserData(data);
-
-                        async function getUser() {
-                            const currentToken =
-                                localStorage.getItem("currentToken");
-                            const docRef = doc(db, "users", user.uid);
-                            const docSnap = await getDoc(docRef);
-
-                            if (docSnap.exists()) {
-                                updateDoc(doc(db, "users", user.uid), {
-                                    name,
-                                    isOnline: true,
-                                    pk: pk,
-                                });
-                            } else {
-                                setDoc(doc(db, "users", user.uid), {
-                                    name,
-                                    username: "",
-                                    uid: user.uid,
-                                    createdAt: Timestamp.fromDate(new Date()),
-                                    lastMessageTime: Timestamp.fromDate(
-                                        new Date()
-                                    ),
-                                    isOnline: true,
-                                    isTyping: false,
-                                    isStudent: true,
-                                    isNew: true,
-                                    activeDeviceToken: currentToken,
-                                    pk: pk,
-                                });
-                            }
-                        }
-
-                        getUser();
-                    })
-                    .catch((error) => {
-                        const errorCode = error.code;
-                        const errorMessage = error.message;
-                        // ...
-                    });
-            });
-    };
-
     const onSubmit = (e) => {
         if (e) {
             e.preventDefault();
         }
-        if (user_data.phone) {
+        if (loginData.phoneNumber) {
             if (password) {
                 setLoading(true);
 
@@ -159,56 +75,43 @@ function PasswordModal() {
                     .post("/api/v1/users/login/verify/", {
                         password: password,
                         service: "learn",
-                        phone: user_data.phone,
-                        country: user_data.selectedCountry.web_code,
+                        phone: loginData.phoneNumber,
+                        country: loginData.webCode,
                     })
                     .then(async (response) => {
                         const { status_code, data, message } = response.data;
                         if (status_code === 6000) {
-                            if (data?.redirect_url) {
-                                setCampusData(data);
-                                setTimeout(() => {
-                                    window.location.href = `https://${data.redirect_url}`;
-                                }, 1000);
-                            } else {
-                                // Create user data object from the response
-                                const userData = {
-                                    access_token: data.access_token,
-                                    refresh_token: data.refresh_token,
-                                    name: data.user_data.name,
-                                    phone: data.user_data.phone,
-                                    is_verified: true,
-                                    pk: data.user_data.id,
-                                    user_id: data.user_data.user_id,
-                                    email: data.user_data.email,
-                                    whatsapp_number: data.user_data.whatsapp_number,
-                                    designation: data.user_data.designation,
-                                    is_email_verified: data.user_data.is_email_verified,
-                                    photo: data.user_data.photo,
-                                    gender: data.user_data.gender,
-                                    dob: data.user_data.dob,
-                                    referral_code: data.user_data.referral_code,
-                                    social_media: data.user_data.social_media,
-                                    following: data.user_data.following,
-                                    followers: data.user_data.followers,
-                                    about: data.user_data.about,
-                                    is_following: data.user_data.is_following,
-                                    is_guardian_info_found: data.user_data.is_guardian_info_found,
-                                    campus: data.user_data.campus
-                                };
+                            
+                            // Create user data object from the response
+                            const userData = {
+                                accessToken: data.access_token,
+                                refreshToken: data.refresh_token,
+                                name: data.user_data.name,
+                                phoneNumber: data.user_data.phone,
+                                is_verified: true,
+                                pk: data.user_data.id,
+                                user_id: data.user_data.user_id,
+                                email: data.user_data.email,
+                                whatsappNumber: data.user_data.whatsapp_number,
+                                designation: data.user_data.designation,
+                                photo: data.user_data.photo,
+                                gender: data.user_data.gender,
+                                dob: data.user_data.dob,
+                                about: data.user_data.about,
+                            };
                                 
-                                // Update user data in store
-                                updateUserData(userData);
+                            // Update user data in store
+                            setLoginData(userData);
+                            
+                            // Set auth token and verification status
+                            auth.login(userData, () => {
+                                // Fetch user profile
+                                fetchProfile(data.accessToken);
                                 
-                                // Set auth token and verification status
-                                auth.login(userData, () => {
-                                    // Fetch user profile
-                                    fetchProfile(data.access_token);
-                                    
-                                    // Navigate to feed after successful login
-                                    navigate("/feed/");
-                                });
-                            }
+                                // Navigate to feed after successful login
+                                navigate("/feed/");
+                            });
+                            
                         } else if (status_code === 6001) {
                             setLoading(false);
                             setError(true);
@@ -234,9 +137,9 @@ function PasswordModal() {
         //Country, service and phone is passed to the url
         serverConfig
             .post("/api/v1/users/login/enter/otp/", {
-                country: user_data.selectedCountry.web_code,
+                country: loginData.webCode,
                 service: "learn",
-                phone: user_data.phone,
+                phone: loginData.phoneNumber,
                 "g-recaptcha-response": token,
             })
             .then((response) => {

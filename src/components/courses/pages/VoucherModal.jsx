@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import badgeIcon from "../../../../assets/images/prime-program/apply-voucher/badge.svg";
+import badgeIcon from "../../../assets/images/prime-program/apply-voucher/badge.svg";
 
 function VoucherModal({ isVoucherModal, modalType, setVoucherModal, data, coupon }) {
     const navigate = useNavigate();

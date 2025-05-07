@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { serverConfig } from "../../../axiosConfig";
 import RequestLoader from "../../authentications/components/RequestLoader";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 function CommentDelModal({
   isCmtDel,
@@ -13,7 +13,7 @@ function CommentDelModal({
   setOptions,
   toast,
 }) {
-  const { user_data } = useAuthStore();
+  const { loginData } = useUserStore();
   const [isLoading, setLoading] = useState(false);
 
   const handleClose = () => {
@@ -29,7 +29,7 @@ function CommentDelModal({
         {},
         {
           headers: {
-            Authorization: `Bearer ${user_data?.access_token}`,
+            Authorization: `Bearer ${loginData?.accessToken}`,
             "Content-Type": "multipart/form-data",
           },
         }

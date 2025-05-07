@@ -32,7 +32,7 @@ import NavMenu from "../conponents/NavMenu";
 import HeaderSearch from "./HeaderSearch";
 import NavModal from "../modals/NavModal";
 import LoginJoinButton from "../conponents/LoginJoinButton";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 import { useUIStore } from "../../../store/uiStore";
 import { useNotificationStore } from "../../../store/notificationStore";
 
@@ -43,7 +43,7 @@ const Header = () => {
   const lastSegment = pathSegments[pathSegments.length - 1];
 
   // Get state and actions from Zustand stores
-  const { user_data, user_profile } = useAuthStore();
+  const { loginData, setLoginData, logout } = useUserStore();
   const {
     menu_type,
     active_menu,
@@ -135,19 +135,19 @@ const Header = () => {
   }, [location.pathname, navigate]);
 
   const renderPhoto = useCallback(() => {
-    if (user_profile?.photo) {
+    if (loginData?.photo) {
       return (
         <Profile>
-          <img src={user_profile.photo} alt={user_profile.name} />
+          <img src={loginData.photo} alt={loginData.name} />
         </Profile>
       );
     }
     return (
       <Profile>
-        <Jdenticon size="45px" value={user_profile?.name || "Name"} />
+        <Jdenticon size="45px" value={loginData?.name || "Name"} />
       </Profile>
     );
-  }, [user_profile]);
+  }, [loginData]);
 
   // Effects
   useEffect(() => {
@@ -257,7 +257,7 @@ const Header = () => {
               </ImageContainer>
             </>
           )}
-          {user_data?.is_verified && width > 1060 && (
+          {loginData?.is_verified && width > 1060 && (
             <HeaderSearch {...searchProps} id={"largeScreen"} />
           )}
         </Left>
@@ -270,7 +270,7 @@ const Header = () => {
           </Center>
         )}
 
-        {user_data?.is_verified ? (
+        {loginData?.is_verified ? (
           <nav className="right">
             <RightContainer>
               {width > 1060 ? (
@@ -286,12 +286,12 @@ const Header = () => {
                   />
                   <ProfileWrapper
                     onClick={() => {
-                      user_data?.is_verified ? toggleProfile() : onSubscribe();
+                      loginData?.accessToken ? toggleProfile() : onSubscribe();
                     }}
                   >
                     {renderPhoto()}
                     <Name className="g-medium">
-                      {user_profile?.name ? "  Me " : "User"}
+                      {loginData?.name ? "  Me " : "User"}
                     </Name>
                     <Polygon
                       src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/polygon.svg"
@@ -358,24 +358,25 @@ const Profile = styled.div`
   border-radius: 50%;
   overflow: hidden;
   background: #fff;
-  max-height: 38px;
-  max-width: 38px;
-  min-height: 38px;
-  min-width: 38px;
+  width: 38px;
+  height: 38px;
   align-items: center;
   justify-content: center;
-  object-fit: cover;
+  
   img {
-    display: block;
     width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
+  
   @media (max-width: 768px) {
-    overflow: hidden;
+    width: 32px;
+    height: 32px;
   }
 `;
 
 const Head = styled.header`
-  padding: 18px;
+  padding: 18px 48px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -387,7 +388,6 @@ const Head = styled.header`
   border-bottom: 1px solid #eef2f6;
   height: 84px;
   z-index: 999;
-  align-items: ${(props) => (props.respSearch ? "center" : "inherit")};
   @media (max-width: 768px) {
     height: 68px;
     padding: 16px;
@@ -396,17 +396,18 @@ const Head = styled.header`
 
 const ImageContainer = styled.h1`
   width: 100px;
-  margin-right: 33px;
+  margin: 0;
+  
   @media only screen and (max-width: 1280px) {
     width: 74px;
-    margin-right: 16px;
   }
+  
   @media only screen and (max-width: 1060px) {
     width: 100px;
   }
+  
   @media all and (max-width: 768px) {
     width: 90px;
-    margin-left: 0px;
   }
 `;
 
@@ -422,8 +423,8 @@ const Logo = styled.img`
 const Left = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 14px;
+  min-width: 200px;
 `;
 
 const SearchIcon = styled.img`
@@ -478,29 +479,40 @@ const SearchRightContainer = styled.div`
 const RightContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
+  justify-content: flex-end;
+  min-width: 200px;
+  gap: 20px;
 `;
 
 const ProfileWrapper = styled.div`
   cursor: pointer;
   display: flex;
   align-items: center;
-  @media (max-width: 980px) {
-    padding-left: 0;
-    border-left: unset;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background-color: #f8f9fa;
   }
+  
+  @media (max-width: 980px) {
+    padding: 0;
+  }
+  
   @media (max-width: 768px) {
     border-radius: 50%;
   }
 `;
 
 const Name = styled.span`
-  padding: 10px;
   font-family: "gordita_regular";
-  font-weight: 500 !important;
+  font-weight: 500;
   font-size: 1rem;
   color: #344049;
+  white-space: nowrap;
+  
   @media (max-width: 980px) {
     display: none;
   }
@@ -516,10 +528,11 @@ const Polygon = styled.img`
 `;
 
 const Center = styled.div`
-  width: 100%;
+  flex: 1;
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
+  margin: 0 20px;
 `;
 
 export default React.memo(Header);

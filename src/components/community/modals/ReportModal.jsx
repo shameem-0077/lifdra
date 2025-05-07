@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { serverConfig } from "../../../axiosConfig";
 import RequestLoader from "../../authentications/components/RequestLoader";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 function ReportModal({
   isReport,
@@ -13,7 +13,7 @@ function ReportModal({
   setSelectedId,
   toast,
 }) {
-  const { user_data } = useAuthStore();
+  const { loginData } = useUserStore();
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [isReasons, setReasons] = useState([]);
@@ -35,7 +35,7 @@ function ReportModal({
       const response = await serverConfig.get(`api/v1/posts/list-reasons/`, {
         params: {},
         headers: {
-          Authorization: `Bearer ${user_data?.access_token}`,
+          Authorization: `Bearer ${loginData?.accessToken}`,
         },
       });
       const { status_code, data } = response.data;
@@ -82,7 +82,7 @@ function ReportModal({
         formData,
         {
           headers: {
-            Authorization: `Bearer ${user_data?.access_token}`,
+            Authorization: `Bearer ${loginData?.accessToken}`,
             "Content-Type": "multipart/form-data",
           },
         }

@@ -7,7 +7,6 @@ import RequestLoader from "../components/RequestLoader";
 import FlagDropDown from "../components/FlagDropDown";
 import CountrySelector from "../components/CountrySelector";
 import { serverConfig } from "../../../axiosConfig";
-import { useAuthStore } from "../../../store/authStore";
 import ReCAPTCHA from "react-google-recaptcha";
 
 const EnterPhoneModal = () => {

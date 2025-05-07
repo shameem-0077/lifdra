@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import Skeleton from "react-loading-skeleton";

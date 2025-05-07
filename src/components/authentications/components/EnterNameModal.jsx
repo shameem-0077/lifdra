@@ -4,7 +4,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import RequestLoader from "./RequestLoader";
 import TermsService from "./TermsService";
 import { serverConfig } from "../../../axiosConfig";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 const EnterNameModal = () => {
   const navigate = useNavigate();

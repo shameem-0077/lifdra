@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import NotificationModal from "../modals/NotifcationModal";
 import { serverConfig } from "../../../axiosConfig";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 import useInfiniteScroll from "../component/useInfiniteScroll";
 import usePolling from "../component/usePolling";
 import { el } from "date-fns/locale";

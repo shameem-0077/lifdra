@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useLocation } from "react-router-dom";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import SuggestionCard from "../components/SuggestionCard";

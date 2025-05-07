@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import RequestLoader from "../../authentications/components/RequestLoader";

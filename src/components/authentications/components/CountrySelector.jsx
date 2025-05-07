@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "react-router";
 import styled from "styled-components";
 import { serverConfig } from "../../../axiosConfig";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 export default function CountrySelector({
     handleClick,
@@ -11,7 +11,7 @@ export default function CountrySelector({
     selectedCountry,
     selectedwebCode,
 }) {
-    const { user_data } = useAuthStore();
+    const { loginData } = useUserStore();
 
     //outside click
     function useOutsideAlerter(ref) {
@@ -79,7 +79,7 @@ export default function CountrySelector({
         } finally {
             setIsLoading(false);
         }
-    }, [selectedwebCode, user_data, onSelectHandler]);
+    }, [selectedwebCode, loginData, onSelectHandler]);
 
     useEffect(() => {
         if (show && countryDetails.length === 0) {

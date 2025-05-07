@@ -7,7 +7,6 @@ import { serverConfig } from "../../../axiosConfig";
 import OtpCard from "../components/OtpCard";
 import OtpIssue from "../components/OtpIssue";
 import ReCAPTCHA from "react-google-recaptcha";
-import { useAuthStore } from "../../../store/authStore";
 
 const EnterOTPModal = () => {
   const navigate = useNavigate();

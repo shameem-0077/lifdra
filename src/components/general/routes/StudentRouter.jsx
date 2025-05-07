@@ -12,7 +12,7 @@ import { serverConfig } from "../../../axiosConfig";
 import WebSocketMessagesInstance from "../../../messages-socket";
 // import PrimeProgramSucessModal from "../../courses/pages/PrimeProgramsSucessModal";
 import MobailNavManu from "../conponents/MobailNavManu";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 import { useSupportEngineerStore } from "../../../store/supportEngineerStore";
 
 const CommunityRouter = lazy(() => import("../../community/routes/CommunityRouter"));
@@ -24,7 +24,7 @@ const PrimeProgramsInnerRouter = lazy(() => import("../../courses/routes/PrimePr
 const SettingsRouter = lazy(() => import("./SettingsRouter"));
 
 const StudentRouter = () => {
-  const { user_data, user_profile, updateUserData, isAuthenticated } = useAuthStore();
+  const { loginData, setLoginData } = useUserStore();
   const { setSupportEngineer } = useSupportEngineerStore();
   const currentToken = localStorage.getItem("currentToken");
   const location = useLocation();
@@ -32,30 +32,7 @@ const StudentRouter = () => {
   const navigate = useNavigate();
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const setMessages = useCallback((message) => {
-    updateUserData({ messages: message });
-  }, [updateUserData]);
-
-  const addMessage = useCallback((message) => {
-    if (message.message_type === "premium_assist_picked") {
-      setSupportEngineer({
-        type: "OPEN_PREMIUM_ASSIST",
-      });
-      setSupportEngineer({
-        type: "UPDATE_ACTIVE_PA_CHAT_SESSION",
-        active_pa_chat_session: message.pa_chat_session,
-      });
-      setSupportEngineer({
-        type: "UPDATE_ACTIVE_PA_CHAT_SESSION_ID",
-        active_pa_chat_session_id: message.pa_chat_session_id,
-      });
-    } else {
-      updateUserData({
-        type: "ADD_MESSAGE",
-        message: message,
-      });
-    }
-  }, [setSupportEngineer, updateUserData]);
+  
 
   const waitForSocketConnection = useCallback((callback) => {
     setTimeout(() => {
@@ -67,34 +44,9 @@ const StudentRouter = () => {
     }, 100);
   }, []);
 
-  const initializeMessages = useCallback((chatProfile) => {
-    waitForSocketConnection(() => {
-      WebSocketMessagesInstance.addCallbacks(setMessages, addMessage);
-      WebSocketMessagesInstance.fetchMessages(chatProfile);
-    });
-    if (!WebSocketMessagesInstance.isConnected) {
-      WebSocketMessagesInstance.connect(`student/messages/${chatProfile}`);
-    }
-  }, [waitForSocketConnection, setMessages, addMessage]);
-
-  // Initialize campus data only once
-  useEffect(() => {
-    if (isInitialized) return;
-    
-    const campus_data_stored = localStorage.getItem("campus_data");
-    if (campus_data_stored) {
-      const campus_data_value = JSON.parse(campus_data_stored);
-      updateUserData({
-        type: "UPDATE_CAMPUS_DATA",
-        campus_data: campus_data_value,
-      });
-    }
-    setIsInitialized(true);
-  }, [isInitialized, updateUserData]);
-
   // Create device only when we have both token and access token
   useEffect(() => {
-    if (!user_data?.access_token || !currentToken || !isInitialized) return;
+    if (!loginData?.accessToken || !currentToken || !isInitialized) return;
 
     const createDevice = async () => {
       const formData = new FormData();
@@ -104,7 +56,7 @@ const StudentRouter = () => {
 
       try {
         await serverConfig.post("/main/create-device/", formData, {
-          headers: { Authorization: `Bearer ${user_data.access_token}` },
+          headers: { Authorization: `Bearer ${loginData.access_token}` },
         });
       } catch (error) {
         console.error("Error creating device:", error);
@@ -112,16 +64,16 @@ const StudentRouter = () => {
     };
 
     createDevice();
-  }, [user_data?.access_token, currentToken, isInitialized]);
+  }, [loginData?.access_token, currentToken, isInitialized]);
 
   const handleSupportEngineerUpdate = (data) => {
     setSupportEngineer(data);
   };
 
   const routes = useMemo(() => {
-    if (!isAuthenticated) {
-      return <Navigate to="/?action=login" replace />;
-    }
+    // if (!isAuthenticated) {
+    //   return <Navigate to="/?action=login" replace />;
+    // }
 
     return (
       <Routes>
@@ -139,7 +91,7 @@ const StudentRouter = () => {
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
     );
-  }, [isAuthenticated]);
+  }, [loginData?.accessToken]);
 
   return (
     <div id="main-container">

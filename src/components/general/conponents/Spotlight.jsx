@@ -1,14 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 function Spotlight() {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuthStore();
+  const { loginData, setLoginData } = useUserStore();
 
   const handleClick = () => {
-    if (isAuthenticated) {
+    if (loginData?.accessToken) {
       navigate("/feed/");
     } else {
       navigate("/login/");
@@ -42,7 +42,7 @@ function Spotlight() {
       </Content>
 
       <RegisterButton onClick={handleClick}>
-        {isAuthenticated ? "Go to Feed" : "Get Started"}
+        {loginData?.accessToken ? "Go to Feed" : "Get Started"}
       </RegisterButton>
 
       <ElementImageContainer className="first-element">

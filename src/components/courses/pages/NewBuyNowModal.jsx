@@ -1,9 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
-import { useAuthStore } from "../../../../store/authStore";
+import useUserStore from "../../../../store/authStore";
 import PaymentStatusModal from "./PaymentStatusModal";
 import loader from "../../../../assets/lotties/modal/buttonloader.json";
-import applyLoader from "../../../../assets/lotties/prime-progrmmes/voucherLoader.json";
+import applyLoader from "../../../assets/lotties/prime-progrmmes/voucherLoader.json";
 import Lottie from "react-lottie";
 import { PrimeProgramContext } from "../../../contexts/stores/PrimeProgramStore";
 import { serverConfig } from "../../../../axiosConfig";

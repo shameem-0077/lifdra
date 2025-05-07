@@ -9,7 +9,7 @@ import CertificateBox from "../components/CertificateBox";
 import { serverConfig } from "../../../axiosConfig";
 import ProfileAboutSectionSkeleton from "../components/ProfileAboutSectionSkeleton";
 import UnfollowModal from "../modals/UnfollowModal";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 function CommunityProfile({ setUsername }) {
   const { username } = useParams();

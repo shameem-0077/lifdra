@@ -1,14 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 function TechRevolution() {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuthStore();
+  const { loginData, setLoginData } = useUserStore();
 
   const handleClick = () => {
-    if (isAuthenticated) {
+    if (loginData?.accessToken) {
       navigate("/feed/");
     } else {
       navigate("/?action=login");
@@ -27,7 +27,7 @@ function TechRevolution() {
           Together, let's drive innovation and make a lasting impact!
         </Description>
         <Button onClick={handleClick}>
-          {isAuthenticated ? "Go to Feed" : "Join Now"}
+          {loginData?.accessToken ? "Go to Feed" : "Join Now"}
         </Button>
       </ContentContainer>
       <ImageContainer>

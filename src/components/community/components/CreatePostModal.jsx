@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 import styled, { keyframes } from "styled-components";
 import Preview from "./ModalPreview";
 import Jdenticon from "react-jdenticon";
@@ -17,8 +17,8 @@ function CreatePostModal({
   setUpdate,
   isUpdate,
 }) {
-  const { user_profile, user_data } = useAuthStore();
-  const { access_token } = user_data;
+  const { loginData } = useUserStore();
+  const { accessToken } = loginData;
   const textareaRef = useRef(null);
 
   const [media, setMedia] = useState([]);
@@ -300,20 +300,20 @@ function CreatePostModal({
             <ContentSection>
               <DetailsSec>
                 <ProfileIcon>
-                  {user_profile?.photo ? (
+                  {loginData?.photo ? (
                     <ProfilePic
-                      src={user_profile.photo}
-                      alt={user_profile?.name || 'Profile'}
+                      src={loginData.photo}
+                      alt={loginData?.name || 'Profile'}
                     />
                   ) : (
                     <PromImgWrap>
-                      <Jdenticon value={user_profile?.name || 'User'} />
+                      <Jdenticon value={loginData?.name || 'User'} />
                     </PromImgWrap>
                   )}
                 </ProfileIcon>
                 <ProfileDiv>
-                  <UserName>{user_profile?.name || "--"}</UserName>
-                  <UserProgram>{user_profile?.designation || "--"}</UserProgram>
+                  <UserName>{loginData?.name || "--"}</UserName>
+                  <UserProgram>{loginData?.designation || "--"}</UserProgram>
                 </ProfileDiv>
               </DetailsSec>
               <TopDiv>

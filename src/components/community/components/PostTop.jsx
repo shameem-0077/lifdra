@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 import styled from "styled-components";
 import Jdenticon from "react-jdenticon";
 import { useNavigate, useLocation, Link } from "react-router-dom";
@@ -9,8 +9,8 @@ import { toast } from "react-toastify";
 import moment from "moment";
 
 function PostTop({ toast, isUpdate, setUpdate, setModal, isModal, generatePost, isPostId }) {
-  const { user_data, user_profile } = useAuthStore();
-  const { access_token } = user_data;
+  const { loginData } = useUserStore();
+  const { accessToken } = loginData;
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,7 +26,7 @@ function PostTop({ toast, isUpdate, setUpdate, setModal, isModal, generatePost, 
     serverConfig
       .delete(`communityapi/v1/posts/${data.id}/`, {
         headers: {
-          Authorization: `Bearer ${access_token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       })
       .then((response) => {
@@ -60,10 +60,10 @@ function PostTop({ toast, isUpdate, setUpdate, setModal, isModal, generatePost, 
         <ProfileDiv>
           <ProfileLink to={`/feed/profile`}>
             <ProfileIcon>
-              {user_profile?.photo ? (
-                <img src={user_profile?.photo} alt="Profile" />
+              {loginData?.photo ? (
+                <img src={loginData?.photo} alt="Profile" />
               ) : (
-                <Jdenticon value={user_profile?.name} />
+                <Jdenticon value={loginData?.name} />
               )}
             </ProfileIcon>
           </ProfileLink>

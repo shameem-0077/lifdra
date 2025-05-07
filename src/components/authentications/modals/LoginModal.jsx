@@ -7,7 +7,7 @@ import FlagDropDown from "../components/FlagDropDown";
 import CountrySelector from "../components/CountrySelector";
 import { serverConfig } from "../../../axiosConfig";
 import SignupLoader from "../../general/loaders/SignupLoader";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 // Constants
 const DEFAULT_COUNTRY = {
@@ -22,19 +22,21 @@ const DEFAULT_COUNTRY = {
 
 const PHONE_REGEX = /^[0-9\b]+$/;
 
-function LoginModal() {
+const LoginModal = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const updateUserData = useAuthStore((state) => state.updateUserData);
+  const {loginData, setLoginData } = useUserStore();
 
   // State management
-  const [selectedCountry, setSelectedCountry] = useState(DEFAULT_COUNTRY);
-  const [phone, setPhone] = useState("");
-  const [countryselector, setCountryselector] = useState(false);
-  const [error, setError] = useState({ show: false, message: "" });
-  const [isLoading, setLoading] = useState(false);
+  const [formState, setFormState] = useState({
+    selectedCountry: DEFAULT_COUNTRY,
+    phone: "",
+    countryselector: false,
+    error: { show: false, message: "" },
+    isLoading: false
+  });
 
-  // Memoize country details to prevent unnecessary re-renders
+  // Memoize country details
   const countryDetails = useMemo(() => [DEFAULT_COUNTRY], []);
 
   // Handlers
@@ -52,30 +54,44 @@ function LoginModal() {
   }, []);
 
   const handlePhoneChange = useCallback((e) => {
-    setError({ show: false, message: "" });
     const value = e.target.value;
     if (value === "" || PHONE_REGEX.test(value)) {
-      setPhone(value);
+      setFormState(prev => ({
+        ...prev,
+        phone: value,
+        error: { show: false, message: "" }
+      }));
     }
   }, []);
 
   const handleCountrySelect = useCallback((selected) => {
-    setSelectedCountry(selected);
-    updateUserData({ selectedCountry: selected });
-    setCountryselector(false); // Close selector after selection
-  }, [updateUserData]);
+    setFormState(prev => ({
+      ...prev,
+      selectedCountry: selected,
+      countryselector: false
+    }));
+  }, []);
 
   const toggleCountrySelector = useCallback(() => {
-    setCountryselector(prev => !prev);
+    setFormState(prev => ({
+      ...prev,
+      countryselector: !prev.countryselector
+    }));
   }, []);
 
   const handleLogin = useCallback(async () => {
+    const { phone, selectedCountry } = formState;
+
     if (!phone) {
-      setError({ show: true, message: "This field cannot be empty." });
+      setFormState(prev => ({
+        ...prev,
+        error: { show: true, message: "This field cannot be empty." }
+      }));
       return;
     }
 
-    setLoading(true);
+    setFormState(prev => ({ ...prev, isLoading: true }));
+
     try {
       const response = await serverConfig.post("/api/v1/users/login/enter/", {
         country: selectedCountry.web_code,
@@ -84,34 +100,44 @@ function LoginModal() {
       });
 
       const { status_code, message } = response.data;
+
       if (status_code === 6000) {
         navigate(`${location.pathname}?action=password`);
-        setLoading(false);
-        updateUserData({ phone, selectedCountry });
+        setLoginData({
+          phoneNumber: phone,
+          webCode: selectedCountry.web_code,
+        })
       } else {
-        // Handle error message that could be an object
         const errorMessage = typeof message === 'object' ? message.message || message.title : message;
-        setError({ show: true, message: errorMessage || "An error occurred" });
-        setLoading(false);
+        setFormState(prev => ({
+          ...prev,
+          error: { show: true, message: errorMessage || "An error occurred" }
+        }));
+
         if (errorMessage === "User not found") {
           navigate(`${location.pathname}?action=phone${phone ? `&phone=${phone}` : ""}`);
         }
       }
     } catch (error) {
-      // Handle error message that could be an object
       const errorMessage = error.response?.data?.message;
       const formattedMessage = typeof errorMessage === 'object' ? errorMessage.message || errorMessage.title : errorMessage;
-      setError({ 
-        show: true, 
-        message: formattedMessage || "An error occurred, please try again later" 
-      });
-      setLoading(false);
+      setFormState(prev => ({
+        ...prev,
+        error: { 
+          show: true, 
+          message: formattedMessage || "An error occurred, please try again later" 
+        }
+      }));
+    } finally {
+      setFormState(prev => ({ ...prev, isLoading: false }));
     }
-  }, [phone, selectedCountry, navigate, location.pathname, updateUserData]);
+  }, [formState, navigate, location.pathname]);
 
   if (!location.search.includes("action=login")) {
     return null;
   }
+
+  const { selectedCountry, phone, countryselector, error, isLoading } = formState;
 
   return (
     <Container>
@@ -120,6 +146,7 @@ function LoginModal() {
           title="Close"
           className="las la-times-circle"
           onClick={handleClose}
+          aria-label="Close login modal"
         />
         <ItemContainer>
           <CountrySelector
@@ -153,7 +180,7 @@ function LoginModal() {
                   >
                     <Icon
                       src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/phone.svg"
-                      alt=""
+                      alt="Phone icon"
                     />
                     {`${selectedCountry.phone_code}`}
                     <InputField
@@ -164,19 +191,22 @@ function LoginModal() {
                       onChange={handlePhoneChange}
                       onKeyDown={handleKeyDown}
                       maxLength={selectedCountry.number_length}
+                      aria-label="Phone number"
                     />
                   </InputContainer>
                 </>
               )}
             </MiddleContainer>
             {error.show && error.message && (
-              <ErrorText className="b-medium">
+              <ErrorText className="b-medium" role="alert">
                 {typeof error.message === 'object' ? error.message.message || error.message.title : error.message}
               </ErrorText>
             )}
             <BottomButton
               onClick={handleLogin}
               className="g-medium white"
+              disabled={isLoading}
+              aria-busy={isLoading}
             >
               {isLoading ? <RequestLoader /> : "Continue"}
             </BottomButton>
@@ -192,7 +222,7 @@ function LoginModal() {
       </JoinNow>
     </Container>
   );
-}
+};
 
 export default LoginModal;
 

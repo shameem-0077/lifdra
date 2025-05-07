@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import arrow_right from "../../../../assets/images/prime-explore/arrow-right.svg";
+import arrow_right from "../../../assets/images/prime-explore/arrow-right.svg";
 // import banner_illustration from "../../../../assets/images/prime-explore/banner-illustration.svg"; // Use your actual illustration asset
 
 const SubscriptionBanner = () => {

@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { serverConfig, serverConfig } from "../../../axiosConfig";
 import auth from "../../routing/auth";
 import PrimeProgramCourseCard from "../components/PrimeProgramCourseCard";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 function OurCourse() {
     const [courses, setCourses] = useState([]);

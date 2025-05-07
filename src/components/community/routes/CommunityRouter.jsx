@@ -22,12 +22,11 @@ import TalropEdtechHelmet from "../../general/helpers/TalropEdtechHelmet";
 import CommunityProfile from "../pages/CommunityProfile";
 import ProfileSectionSkeleton from "../components/ProfileSectionSkeleton";
 import UnfollowModal from "../modals/UnfollowModal";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 function CommunityRouter() {
-  const { user_data, updateUserData } = useAuthStore();
-  const access_token = user_data?.access_token;
-  const divMainClass = user_data?.divMainClass;
+  const { loginData, setLoginData } = useUserStore();
+  const access_token = loginData?.accessToken;
   const location = useLocation();
   const isFeedRoute = location.pathname.includes('/feed');
 
@@ -99,38 +98,6 @@ function CommunityRouter() {
     };
   }, []);
 
-  // useEffect(() => {
-  //   const fetchMyLrngsCardsData = async () => {
-  //     setIsLoading(true);
-  //     try {
-  //       const { data } = await serverConfig.get(
-  //         "/learn/nano-degree-my-learning-progress/",
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${access_token}`,
-  //           },
-  //         }
-  //       );
-
-  //       let { data: datas, status_code } = data;
-
-  //       if (status_code !== 6000) {
-  //         setMyLearningData([]);
-  //         setIsLoading(false);
-  //         setMLstatus_code(status_code);
-  //       } else {
-  //         setMyLearningData(datas);
-  //         setIsLoading(false);
-  //         setMLstatus_code(status_code);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching Mylearnings data:", error);
-  //     }
-  //   };
-
-  //   fetchMyLrngsCardsData();
-  // }, []);
-
   const ProfileCardSkeleton = () => (
     <Container>
       <SkeletonWrapper>
@@ -150,7 +117,7 @@ function CommunityRouter() {
   console.log(location.pathname.match(SinglePageRouteRegex), "single page====");
 
   if (!access_token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/?action=login" replace />;
   }
 
   return (

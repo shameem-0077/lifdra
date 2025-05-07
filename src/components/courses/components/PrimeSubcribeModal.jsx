@@ -8,7 +8,7 @@ import Loader from "../../../../../assets/lotties/prime-progrmmes/voucherLoader.
 import Lottie from "react-lottie";
 import tickIcon from "../../../../../assets/images/prime-explore/tick.svg";
 import closeIcon from "../../../../../assets/images/prime-explore/close.svg";
-import { useAuthStore } from "../../../../../store/authStore";
+import useUserStore from "../../../../../store/authStore";
 
 function PrimeSubcribeModal(props) {
 	const { primeProgramState, primeProgramDispatch } =

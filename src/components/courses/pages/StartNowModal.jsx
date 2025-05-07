@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useAuthStore } from "../../../../store/authStore";
+import useUserStore from "../../../../store/authStore";
 import { serverConfig } from "../../../../axiosConfig";
 import { useNavigate } from "react-router-dom";
 import loader from "../../../../assets/lotties/modal/buttonloader.json";

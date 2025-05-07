@@ -3,7 +3,7 @@ import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PreviewModal from "./PreviewModal";
 import { serverConfig } from "../../../../axiosConfig";
-import { useAuthStore } from "../../../../store/authStore";
+import useUserStore from "../../../../store/authStore";
 import { numberWithCommas, secondsTohm } from "../../../general/helpers/functions";
 import Loader from "../../includes/techschooling/general/loaders/Loader";
 import BuynowModal from "./BuynowModal";

@@ -13,7 +13,7 @@ import SubscriptionBanner from "./SubscriptionBanner";
 import PrimeSubcribeModal from "../../web/explore-pages/prime-program/Modals/PrimeSubcribeModal";
 import { useNavigate, useLocation } from "react-router-dom";
 import queryString from "query-string";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 // import Header from "../../general/Header";
 

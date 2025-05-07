@@ -3,7 +3,7 @@ import { useHistory, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { serverConfig } from "../../../../axiosConfig";
 import LessonBars from "./LessonBars";
-import { useAuthStore } from "../../../../store/authStore";
+import useUserStore from "../../../../store/authStore";
 import Loader from "../../includes/techschooling/general/loaders/Loader";
 import VideoPlayer from "../../../applications/video-player/src/VideoPlayer";
 import CertificateModal from "../techschooling/learning/CertificateModal";

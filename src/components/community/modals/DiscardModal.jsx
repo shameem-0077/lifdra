@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 import styled from "styled-components";
 import RequestLoader from "../../authentications/components/RequestLoader";
 
@@ -11,8 +11,6 @@ function DiscardModal({
   onDeleteSuccess,
   setModal,
 }) {
-  const { user_data } = useAuthStore();
-  const { access_token } = user_data;
   const [isLoading, setLoading] = useState(false);
 
   const handleClose = () => {

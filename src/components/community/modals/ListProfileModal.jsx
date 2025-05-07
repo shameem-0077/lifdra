@@ -11,7 +11,7 @@ import { serverConfig } from "../../../axiosConfig";
 import SearchComponent from "../components/SearchComponent";
 import UserFollowComponent from "../components/UserFollowComponent";
 import UserFollowSkeletonLoader from "../../general/skeltons/UserFollowSkeletonLoader";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 const ENDPOINTS = {
   following: "api/v1/users/list-following/",
@@ -80,11 +80,11 @@ const ListProfileModal = React.memo(
     setActiveTab,
     activeTab,
   }) => {
-    const { user_data } = useAuthStore();
+    const { loginData } = useUserStore();
     const listSectionRef = useRef(null);
 
     const { userDetails, isLoading, pagination, fetchUsers, setSearchTerm } =
-      useUserList(activeTab, user_data?.access_token, username);
+      useUserList(activeTab, loginData?.accessToken, username);
 
     const debouncedSearch = useMemo(
       () =>

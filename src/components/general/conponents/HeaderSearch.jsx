@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 import SearchModal from "../modals/SearchModal";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { serverConfig } from "../../../axiosConfig";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 const HeaderSearch = ({
   setGlobalSearch,
@@ -17,8 +17,8 @@ const HeaderSearch = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user_data } = useAuthStore();
-  const { access_token } = user_data;
+  const { loginData } = useUserStore();
+  const { accessToken } = loginData;
   const [isLoading, setLoading] = useState(false);
   const [isError, setError] = useState(false);
   const [searchData, setSearchData] = useState([]);
@@ -83,7 +83,7 @@ const HeaderSearch = ({
         `/general/global-search/?q=${globalSearch}`,
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       );

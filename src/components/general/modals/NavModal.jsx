@@ -6,7 +6,7 @@ import { useNavigate, NavLink } from "react-router-dom";
 import { serverConfig } from "../../../axiosConfig";
 import { doc, getDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 const NavModal = ({
   setShowModal,
@@ -16,7 +16,7 @@ const NavModal = ({
 }) => {
   const modalRef = useRef(null);
   const navigate = useNavigate();
-  const { user_data, user_profile } = useAuthStore();
+  const { loginData, setLoginData } = useUserStore();
 
   const menuItems = [
     {
@@ -203,7 +203,7 @@ const NavModal = ({
           <div style={{ display: "flex" }} onClick={handleRouteChange}>
             {renderPhoto()}
             <Name className="g-medium">
-              {user_profile?.name ? "  Me " : "User"}
+              {loginData?.name ? "  Me " : "User"}
             </Name>
           </div>
 

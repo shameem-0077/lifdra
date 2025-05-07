@@ -1,14 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 function LoginJoinButton() {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuthStore();
+  const { loginData, setLoginData } = useUserStore();
 
   const handleClick = () => {
-    if (isAuthenticated) {
+    if (loginData?.accessToken) {
       navigate("/feed/");
     } else {
       navigate("/?action=login");
@@ -17,7 +17,7 @@ function LoginJoinButton() {
 
   return (
     <Button onClick={handleClick}>
-      {isAuthenticated ? "Go to Feed" : "Login / Join"}
+      {loginData?.accessToken ? "Go to Feed" : "Login / Join"}
     </Button>
   );
 }

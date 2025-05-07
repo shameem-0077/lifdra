@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import auth from "../../routing/auth";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 function CourseLibary({ isSteyp }) {
 	const location = useLocation();

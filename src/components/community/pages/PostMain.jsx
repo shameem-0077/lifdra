@@ -19,7 +19,7 @@ import {
 import CommentDelModal from "../modals/CommentDelModal";
 import PostProcessing from "../components/PostProcessing";
 import CommunitySuggetionCard from "./CommunitySuggetionCard";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 function PostMain({
   toast,
@@ -30,7 +30,7 @@ function PostMain({
   const { username } = useParams();
   const { slug } = useParams();
   const location = useLocation();
-  const { user_data, user_profile } = useAuthStore();
+  const { loginData } = useUserStore();
 
   const [selected, setSelected] = useState("trending");
   const [postIds, setPostIds] = useState([]);
@@ -78,7 +78,7 @@ function PostMain({
 
       const response = await serverConfig.post(`api/v1/posts/create/`, formData, {
         headers: {
-          Authorization: `Bearer ${user_data?.access_token}`,
+          Authorization: `Bearer ${loginData?.accessToken}`,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -128,7 +128,7 @@ function PostMain({
           section: "posts",
           page,
           profile_id:
-            user_profile?.user_id == userProfileDetails?.user_id
+            loginData?.userId == userProfileDetails?.user_id
               ? null
               : userProfileDetails?.user_id,
         };
@@ -136,7 +136,7 @@ function PostMain({
 
       const response = await serverConfig.get(url, {
         headers: {
-          Authorization: `Bearer ${user_data?.access_token}`,
+          Authorization: `Bearer ${loginData?.accessToken}`,
         },
         params,
       });
@@ -162,7 +162,7 @@ function PostMain({
       setInitialLoading(false);
       setLoading(false);
     }
-  }, [user_data?.access_token, location, selected, page, username, user_profile, userProfileDetails]);
+  }, [loginData?.accessToken, location, selected, page, username, loginData, userProfileDetails]);
 
   useEffect(() => {
     setPostData([]);
@@ -315,7 +315,7 @@ function PostMain({
                     ? "No posts available at the moment. Start by following people you may know!"
                     : location.pathname.match(SavedRouteRegex)
                     ? "You have no saved posts."
-                    : username == user_profile?.username
+                    : username == loginData?.username
                     ? "You have no posts."
                     : "There aren't any posts here yet"
                 }

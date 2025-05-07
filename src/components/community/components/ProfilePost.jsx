@@ -7,7 +7,7 @@ import plus from "../../../assets/images/profile-screen/plus.svg";
 import ProfilePostSliderSkeleton from "./ProfilePostSliderSkeleton";
 import CommunityNoDataFound from "./CommunityNoDataFound";
 import { toast } from "react-toastify";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 function ProfilePost({ userId }) {
   const navigate = useNavigate();

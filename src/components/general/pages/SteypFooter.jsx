@@ -40,7 +40,7 @@ export default function Footer({ isTos, executeScroll }) {
           <span
             className="address g-regular"
             style={{
-              "max-width": " 600px",
+              maxWidth: "600px",
               fontSize: "14px",
               lineHeight: "26px",
             }}

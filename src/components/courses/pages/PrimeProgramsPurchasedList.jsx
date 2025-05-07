@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import PrimeProgramsPurchaseCard from "./PrimeProgramsPurchaseCard";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../../../store/authStore";
+import useUserStore from "../../../../store/authStore";
 import { serverConfig } from "../../../../axiosConfig";
 import Loader from "../../includes/techschooling/general/loaders/Loader";
 import Pagination from "../../../general/helpers/Pagination";

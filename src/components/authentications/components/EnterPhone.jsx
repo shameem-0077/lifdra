@@ -5,7 +5,6 @@ import { Link, useHistory, useLocation } from "react-router-dom";
 import FlagDropDown from "./FlagDropDown";
 import TermsService from "./TermsService";
 import CountrySelector from "./CountrySelector";
-import { useAuthStore } from "../../../store/authStore";
 import { serverConfig } from "../../../axiosConfig";
 import RequestLoader from "./RequestLoader";
 import ColorLogo from "./ColorLogo";

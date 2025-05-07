@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useAuthStore } from "../../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 import PaymentStatusModal from "./PaymentStatusModal";
-import loader from "../../../../assets/lotties/modal/buttonloader.json";
-import applyLoader from "../../../../assets/lotties/prime-progrmmes/voucherLoader.json";
+import loader from "../../../assets/lotties/modal/buttonloader.json";
+import applyLoader from "../../../assets/lotties/prime-progrmmes/voucherLoader.json";
 import Lottie from "react-lottie";
-import { serverConfig } from "../../../../axiosConfig";
+import { serverConfig } from "../../../axiosConfig";
 import queryString from "query-string";
-import SignupLoader from "../../includes/techschooling/general/loaders/SignupLoader";
+import SignupLoader from "../../general/loaders/SignupLoader";
 import VoucherModal from "./VoucherModal";
 import { useParams } from "react-router-dom";
 
 const BuynowModal = (props) => {
-    const { user_data } = useAuthStore();
+    const { loginData } = useUserStore();
     const [isUsedPurchasedCoins, setIsUsedPurchasedCoins] = useState(false);
 
     const [show, setShow] = useState(false);
@@ -69,12 +69,12 @@ const BuynowModal = (props) => {
     };
 
     useEffect(() => {
-        const { access_token } = user_data;
+        const { accessToken } = loginData;
         const fetchData = async () => {
             await serverConfig
                 .get(`learning/course/${courseId}/`, {
                     headers: {
-                        Authorization: `Bearer ${access_token}`,
+                        Authorization: `Bearer ${accessToken}`,
                     },
                 })
                 .then((response) => {
@@ -117,7 +117,7 @@ const BuynowModal = (props) => {
     const voucherValidation = () => {
         setApplyLoading(true);
         setError(false);
-        let access_token = user_data.access_token;
+        let accessToken = loginData.accessToken;
         serverConfig
             .post(
                 `coupons/validate-coupon/${courseId}/`,
@@ -125,7 +125,7 @@ const BuynowModal = (props) => {
                     coupon_code: voucherCode,
                 },
                 {
-                    headers: { Authorization: `Bearer ${access_token}` },
+                    headers: { Authorization: `Bearer ${accessToken}` },
                 }
             )
             .then((res) => {
@@ -395,13 +395,13 @@ const BuynowModal = (props) => {
                                     </PurchaseTitle>
                                     <FloatingIcons
                                         status={
-                                            user_data.total_purchased_coins ===
+                                            loginData.total_purchased_coins ===
                                             0
                                                 ? "active"
                                                 : "not"
                                         }
                                         onClick={() => {
-                                            user_data.total_purchased_coins >
+                                            loginData.total_purchased_coins >
                                             0
                                                 ? setIsUsedPurchasedCoins(!isUsedPurchasedCoins)
                                                 : handleToggle();
@@ -411,7 +411,7 @@ const BuynowModal = (props) => {
                                             <Circle
                                                 status={
                                                     isUsedPurchasedCoins &&
-                                                    user_data.total_purchased_coins >
+                                                    loginData.total_purchased_coins >
                                                         0
                                                         ? "active"
                                                         : "not"
@@ -420,7 +420,7 @@ const BuynowModal = (props) => {
                                             <Span
                                                 status={
                                                     isUsedPurchasedCoins &&
-                                                    user_data.total_purchased_coins >
+                                                    loginData.total_purchased_coins >
                                                         0
                                                         ? "active"
                                                         : "not"
@@ -441,7 +441,7 @@ const BuynowModal = (props) => {
                                             />
                                             <Coin>
                                                 {
-                                                    user_data.total_purchased_coins
+                                                    loginData.total_purchased_coins
                                                 }
                                             </Coin>
                                         </Coins>
@@ -469,7 +469,7 @@ const BuynowModal = (props) => {
                 </Container>
                 {!isLoading &&
                     (isUsedPurchasedCoins &&
-                    user_data.total_purchased_coins > 0 ? (
+                    loginData.total_purchased_coins > 0 ? (
                         <Button
                             className="anim-fade"
                             onClick={() => {

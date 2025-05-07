@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { serverConfig } from "../../../axiosConfig";
 import ButtonLoader from "../../general/loaders/ButtonLoader";
 import RequestLoader from "../../authentications/components/RequestLoader";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 function UnfollowModal({
   openModal,
@@ -14,7 +14,7 @@ function UnfollowModal({
   setIsFollow,
   isFollow,
 }) {
-  const { user_data } = useAuthStore();
+  const { loginData } = useUserStore();
   const [isLoading, setLoading] = useState(false);
 
   const handleClose = () => {
@@ -28,7 +28,7 @@ function UnfollowModal({
         {},
         {
           headers: {
-            Authorization: `Bearer ${user_data?.access_token}`,
+            Authorization: `Bearer ${loginData?.accessToken}`,
           },
         }
       );

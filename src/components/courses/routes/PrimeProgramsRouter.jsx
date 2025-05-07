@@ -6,24 +6,23 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 import "../../../assets/css/Style.css";
-import RouteLoading from "../../../general/conponents/RouteLoading";
+import RouteLoading from "../../general/conponents/RouteLoading";
 
-import Nav from "../../learn/screens/prime-programs/Nav";
-import { PrivateRoute } from "../../routing/PrivateRoute";
-import NewBuyNowModal from "../../learn/screens/prime-programs/NewBuyNowModal";
-import PrimeSubcribeModal from "../../web/explore-pages/prime-program/Modals/PrimeSubcribeModal";
+import Nav from "../pages/Nav";
+import NewBuyNowModal from "../pages/BuynowModal";
+import PrimeSubcribeModal from "../pages/PrimeSubcribeModal";
 import queryString from "query-string";
 import TalropEdtechHelmet from "../../general/helpers/TalropEdtechHelmet";
 import Sidebar from "../../general/conponents/Sidebar";
 const PrimeProgramsPurchasedList = lazy(() =>
-  import("../../learn/screens/prime-programs/PrimeProgramsPurchasedList")
+  import("../pages/PrimeProgramsPurchasedList")
 );
 
 function PrimeProgramsRouter() {
-  const { user_data, updateUserData } = useAuthStore();
-  const divMainClass = user_data?.divMainClass;
+  const { loginData } = useUserStore();
+  const divMainClass = loginData?.divMainClass;
   const location = useLocation();
   const [action, setAction] = useState("");
   const [days, setDays] = useState("");
@@ -44,10 +43,6 @@ function PrimeProgramsRouter() {
     setAction(action);
     setDays(d);
   }, [location.search]);
-
-  useEffect(() => {
-    updateUserData({ active_menu: "prime-programs" });
-  }, [updateUserData]);
 
   return (
     <>
@@ -72,9 +67,7 @@ function PrimeProgramsRouter() {
             <Route
               path="/prime-programs/courses/purchased/"
               element={
-                <PrivateRoute>
                   <PrimeProgramsPurchasedList />
-                </PrivateRoute>
               }
             />
           </Routes>

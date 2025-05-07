@@ -11,13 +11,13 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { Timestamp, setDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db, auth as firebaseAuth } from "../../../firebase";
 import { signInWithCustomToken } from "firebase/auth";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 function LoginWithOTPModal(props) {
   const navigate = useNavigate();
   const location = useLocation();
   const recaptchaRef = useRef(null);
-  const { user_data, updateUserData, updateUserProfile } = useAuthStore();
+  const { loginData, setLoginData, logout } = useUserStore();
   const [error, setError] = useState(false);
   const [error_message, setErrorMessage] = useState("");
   const [isLoading, setLoading] = useState(false);

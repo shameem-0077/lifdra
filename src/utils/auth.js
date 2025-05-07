@@ -1,8 +1,8 @@
-import { useAuthStore } from '../store/authStore';
+import useUserStore from '../store/userStore';
 
 // Create a function to get the store state
 const getAuthState = () => {
-  return useAuthStore.getState();
+  return useUserStore.getState();
 };
 
 const auth = {
@@ -11,8 +11,8 @@ const auth = {
    * @returns {boolean} True if user is authenticated, false otherwise
    */
   isAuthenticated: () => {
-    const { user_data, is_verified } = getAuthState();
-    return Boolean(user_data?.access_token && is_verified);
+    const { user_data } = getAuthState();
+    return Boolean(user_data?.access_token);
   },
 
   /**

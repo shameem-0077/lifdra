@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, useEffect } from "react";
 import { connect } from "react-redux";
 import "../../../assets/css/Style.css";
-import RouteLoading from "../../../general/conponents/RouteLoading";
+import RouteLoading from "../../general/conponents/RouteLoading";
 
 import { Route, Switch } from "react-router-dom";
 import { PrivateRoute } from "../../routing/PrivateRoute";

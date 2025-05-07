@@ -1,198 +1,198 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import styled from "styled-components";
-
-import { Link, useNavigate } from "react-router-dom";
-import TermsService from "../TermsService";
-import { connect, useSelector } from "react-redux";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import queryString from "query-string";
 import { serverConfig } from "../../../../axiosConfig";
 import auth from "../../../routing/auth";
 import RequestLoader from "../RequestLoader";
 import ColorLogo from "../ColorLogo";
 import TalropEdtechHelmet from "../../../general/helpers/TalropEdtechHelmet";
+import TermsService from "../TermsService";
 
-// Function used to update values from redux react
-function mapDispatchtoProps(dispatch) {
-  return {
-    updateUserData: (user_data) =>
-      dispatch({
-        type: "UPDATE_USER_DATA",
-        user_data: user_data,
-      }),
-  };
-}
-
-// Function used to get values from redux react
-function mapStatetoProps(state) {
-  return {
-    user_data: state.user_data,
-    nextPath: state.nextPath,
-  };
-}
-
-const LoginEnterPassword = (props) => {
+const LoginEnterPassword = () => {
   const navigate = useNavigate();
-  const [error, setError] = useState(false);
-  const [error_message, setErrorMessage] = useState("");
-  const [isLoading, setLoading] = useState(false);
-  const [hide, setHide] = useState(true);
-  const [password, setPassword] = useState("");
+  const location = useLocation();
+  const { user_data, updateUserData } = useAuthStore();
+  const navigationTimeoutRef = useRef(null);
+  const isNavigatingRef = useRef(false);
 
-  const handlePasswordShow = () => {
-    setHide(!hide);
-  };
-  const [nextPath, setNextPath] = useState("");
+  const [formState, setFormState] = useState({
+    password: "",
+    error: { show: false, message: "" },
+    isLoading: false,
+    hide: true,
+    nextPath: ""
+  });
 
   useEffect(() => {
-    let { search } = props.location;
+    const { search } = location;
     const values = queryString.parse(search);
-    setNextPath(values.next);
+    setFormState(prev => ({ ...prev, nextPath: values.next }));
+  }, [location]);
+
+  // Cleanup navigation timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (navigationTimeoutRef.current) {
+        clearTimeout(navigationTimeoutRef.current);
+      }
+    };
   }, []);
 
-  //Preventing "Enter" key function
-  const handleKeyDown = (e) => {
+  const handlePasswordShow = useCallback(() => {
+    setFormState(prev => ({ ...prev, hide: !prev.hide }));
+  }, []);
+
+  const handleKeyDown = useCallback((e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      onSubmit();
+      handleSubmit();
     }
-  };
+  }, []);
 
-  //access_token and refresh_token will be saved in the redux store
-  const setUserDetails = async (data) => {
-    let promise = new Promise((res, rej) => {
-      let user_data = {
-        access_token: data.response.access_token,
-        refresh_token: data.response.refresh_token,
-        name: data.name,
-        is_verified: true,
-        is_premium_user: data.is_premium_user,
-        has_active_subscription: data.has_active_subscription,
-      };
-      props.updateUserData(user_data);
-      setTimeout(() => {
-        res("Success");
-      }, 1000);
-    });
-    let result = await promise;
-    return result;
-  };
+  const setUserDetails = useCallback(async (data) => {
+    const userData = {
+      access_token: data.response.access_token,
+      refresh_token: data.response.refresh_token,
+      name: data.name,
+      is_verified: true,
+      is_premium_user: data.is_premium_user,
+      has_active_subscription: data.has_active_subscription,
+    };
+    
+    updateUserData(userData);
+    return "Success";
+  }, [updateUserData]);
 
-  const onSubmit = (e) => {
+  const safeNavigate = useCallback((path) => {
+    if (isNavigatingRef.current) return;
+    
+    isNavigatingRef.current = true;
+    
+    // Clear any existing timeout
+    if (navigationTimeoutRef.current) {
+      clearTimeout(navigationTimeoutRef.current);
+    }
+
+    // Set a new timeout for navigation
+    navigationTimeoutRef.current = setTimeout(() => {
+      navigate(path);
+      isNavigatingRef.current = false;
+    }, 100);
+  }, [navigate]);
+
+  const handleSubmit = useCallback(async (e) => {
     if (e) {
       e.preventDefault();
     }
-    //Phone number is taken as user data from redux store
-    let { user_data } = props;
-    if (password) {
-      //After submission of userdata loading will starts.
-      setLoading(true);
-      //password, service and phone is passed to the url
-      serverConfig
-        .post("/api/v1/users/login/verify/", {
-          password: password,
-          service: "learn",
-          phone: user_data.phone,
-          country: user_data.selectedCountry.web_code,
-        })
-        .then((response) => {
-          //From response.data the message and status_code  will be taken.
-          const { status_code, message } = response.data;
-          if (status_code === 6000) {
-            //When status code reads true it will redirect to the next page.
-            auth.login(() => {
-              return "Success";
-            });
 
-            setUserDetails(response.data).then((resp) => {
-              setLoading(false);
-              if (nextPath) {
-                navigate(nextPath);
-              } else {
-                navigate("/feed/");
-              }
-            });
-          } else if (status_code === 6001) {
-            //When status is invalid error message will be saved in setState.
-            setLoading(false);
-            setError(true);
-            setErrorMessage(message);
-          }
-        })
-        .catch((error) => {
-          //Saved error message will be shown.
-          setLoading(false);
-          setError(true);
-          setErrorMessage("An error occurred, please try again later");
-        });
-    } else {
-      setError(true);
-      setErrorMessage("This field cannot be left blank");
+    if (isNavigatingRef.current) return;
+
+    const { password } = formState;
+
+    if (!password) {
+      setFormState(prev => ({
+        ...prev,
+        error: { show: true, message: "This field cannot be left blank" }
+      }));
+      return;
     }
-  };
 
-  const loginWithOtp = () => {
-    let { user_data } = props;
-    setLoading(true);
-    //Country, service and phone is passed to the url
-    serverConfig
-      .post("/api/v1/users/login/enter/otp/", {
+    setFormState(prev => ({ ...prev, isLoading: true }));
+
+    try {
+      const response = await serverConfig.post("/api/v1/users/login/verify/", {
+        password,
+        service: "learn",
+        phone: user_data.phone,
+        country: user_data.selectedCountry.web_code,
+      });
+
+      const { status_code, message } = response.data;
+
+      if (status_code === 6000) {
+        await auth.login(() => "Success");
+        await setUserDetails(response.data);
+        
+        setFormState(prev => ({ ...prev, isLoading: false }));
+        safeNavigate(formState.nextPath || "/feed/");
+      } else if (status_code === 6001) {
+        setFormState(prev => ({
+          ...prev,
+          isLoading: false,
+          error: { show: true, message }
+        }));
+      }
+    } catch (error) {
+      setFormState(prev => ({
+        ...prev,
+        isLoading: false,
+        error: { show: true, message: "An error occurred, please try again later" }
+      }));
+    }
+  }, [formState, user_data, safeNavigate, setUserDetails]);
+
+  const handleLoginWithOTP = useCallback(async () => {
+    if (isNavigatingRef.current) return;
+
+    setFormState(prev => ({ ...prev, isLoading: true }));
+
+    try {
+      const response = await serverConfig.post("/api/v1/users/login/enter/otp/", {
         country: user_data.selectedCountry.web_code,
         service: "learn",
         phone: user_data.phone,
-      })
-      .then((response) => {
-        //From response.data the message and status_code  will be taken.
-        const { status_code, message } = response.data;
-        if (status_code === 6000) {
-          setLoading(false);
-          navigate(`/auth/login/verify-otp/${nextPath ? `?next=${nextPath}` : ""}`);
-          //When status code reads true it will redirect to the next page.
-        } else if (status_code === 6001) {
-          //When status is invalid error message will be saved in setState.
-          setLoading(false);
-          setError(true);
-          setErrorMessage(message);
-        }
-      })
-      .catch((error) => {
-        //Saved error message will be shown.
-        setLoading(false);
-        setError(true);
-        setErrorMessage("An error occurred, please try again later");
       });
-  };
+
+      const { status_code, message } = response.data;
+
+      if (status_code === 6000) {
+        setFormState(prev => ({ ...prev, isLoading: false }));
+        safeNavigate(`/auth/login/verify-otp/${formState.nextPath ? `?next=${formState.nextPath}` : ""}`);
+      } else if (status_code === 6001) {
+        setFormState(prev => ({
+          ...prev,
+          isLoading: false,
+          error: { show: true, message }
+        }));
+      }
+    } catch (error) {
+      setFormState(prev => ({
+        ...prev,
+        isLoading: false,
+        error: { show: true, message: "An error occurred, please try again later" }
+      }));
+    }
+  }, [user_data, safeNavigate, formState.nextPath]);
+
+  const { hide, error, isLoading } = formState;
 
   return (
     <Container>
       <Logo
-        alt=""
-        src={
-          "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/logo-vertical-white.png"
-        }
-      ></Logo>
+        alt="Talrop Logo"
+        src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/logo-vertical-white.png"
+      />
 
       <TalropEdtechHelmet title="Enter password" />
       <ColorLogo />
       <Content>
         <Shape
-          src={
-            "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/shape.svg"
-          }
-          alt=""
+          src="https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/shape.svg"
+          alt="Decorative shape"
         />
-        <Title className="g-medium">Password </Title>
+        <Title className="g-medium">Password</Title>
         <Description className="g-medium">
           Enter your password for this account
         </Description>
         <InputContainer
-          style={{ marginBottom: 0, borderColor: error && "#f46565" }}
+          style={{ marginBottom: 0, borderColor: error.show && "#f46565" }}
         >
           <Icon
-            alt=""
-            src={
-              hide
-                ? "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/lock.svg"
-                : "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/unlock.svg"
+            alt={hide ? "Lock icon" : "Unlock icon"}
+            src={hide
+              ? "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/lock.svg"
+              : "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/unlock.svg"
             }
           />
           <InputField
@@ -203,29 +203,43 @@ const LoginEnterPassword = (props) => {
             placeholder="Enter a password"
             onKeyDown={handleKeyDown}
             onChange={(e) => {
-              setPassword(e.target.value);
-              setError(false);
+              setFormState(prev => ({
+                ...prev,
+                password: e.target.value,
+                error: { show: false, message: "" }
+              }));
             }}
-            value={password}
+            value={formState.password}
+            aria-label="Password"
           />
           <Icon
             onClick={handlePasswordShow}
             style={{ cursor: "pointer" }}
-            src={
-              hide
-                ? "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/hide.svg"
-                : "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/eye.svg"
+            src={hide
+              ? "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/hide.svg"
+              : "https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/eye.svg"
             }
-            alt=""
+            alt={hide ? "Show password" : "Hide password"}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handlePasswordShow();
+              }
+            }}
           />
         </InputContainer>
 
-        <BottomRow style={{ justifyContent: error && "space-between" }}>
-          {error && <ErrorText className="g-medium">{error_message}</ErrorText>}
+        <BottomRow style={{ justifyContent: error.show && "space-between" }}>
+          {error.show && (
+            <ErrorText className="g-medium" role="alert">
+              {error.message}
+            </ErrorText>
+          )}
           <RowItem
             onClick={(e) => {
               e.preventDefault();
-              loginWithOtp();
+              handleLoginWithOTP();
             }}
             to="/auth/login/verify-otp/"
             className="g-medium"
@@ -236,10 +250,10 @@ const LoginEnterPassword = (props) => {
       </Content>
 
       <BottomButton
-        onClick={onSubmit}
-        // to="/tech-schooling/"
-        to="/feed/"
+        onClick={handleSubmit}
         className="g-medium white"
+        disabled={isLoading || isNavigatingRef.current}
+        aria-busy={isLoading}
       >
         {isLoading ? <RequestLoader /> : "Login"}
       </BottomButton>
@@ -252,7 +266,7 @@ const LoginEnterPassword = (props) => {
   );
 };
 
-export default connect(mapStatetoProps, mapDispatchtoProps)(LoginEnterPassword);
+export default LoginEnterPassword;
 
 const Container = styled.div`
   background: url("https://s3.ap-south-1.amazonaws.com/talrop.com-react-assets-bucket/assets/images/auth/decorator.svg");

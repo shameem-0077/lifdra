@@ -1,8 +1,8 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import primeImage from "../../../../assets/images/new-dashboard/prime.svg";
-import supportImage from "../../../../assets/images/new-dashboard/support.svg";
+import primeImage from "../../../assets/images/new-dashboard/prime.svg";
+import supportImage from "../../../assets/images/new-dashboard/support.svg";
 
 const Sidebar = () => {
   const location = useLocation();

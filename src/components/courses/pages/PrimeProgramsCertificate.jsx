@@ -6,7 +6,7 @@ import { serverConfig } from "../../../../axiosConfig";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getDateStr } from "../../../general/helpers/functions";
 import TalropEdtechHelmet from "../../../general/helpers/TalropEdtechHelmet";
-import { useAuthStore } from "../../../../store/authStore";
+import useUserStore from "../../../../store/authStore";
 import SignupLoader from "../../includes/techschooling/general/loaders/SignupLoader";
 
 const PrimeProgramsCertificate = () => {

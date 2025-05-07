@@ -4,7 +4,7 @@ import TermsService from "../components/TermsService";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import RequestLoader from "../components/RequestLoader";
 import { serverConfig } from "../../../axiosConfig";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/userStore";
 
 function SetPasswordModal() {
   const navigate = useNavigate();

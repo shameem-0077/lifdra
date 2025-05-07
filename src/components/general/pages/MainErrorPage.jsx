@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { useAuthStore } from "../../../store/authStore";
+import useUserStore from "../../../store/authStore";
 // import errorImage from "../../assets/images/PaymentDashboard";
 
 function MainErrorPage() {

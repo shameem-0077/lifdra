@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useAuthStore } from "../../../../store/authStore";
-import { serverConfig } from "../../../../axiosConfig";
+import useUserStore from "../../../store/userStore";
+import { serverConfig } from "../../../axiosConfig";
 import { useNavigate } from "react-router-dom";
-import loader from "../../../../assets/lotties/modal/buttonloader.json";
+import loader from "../../../assets/lotties/modal/buttonloader.json";
 import Lottie from "react-lottie";
 
 const PrimeSubcribeModal = (props) => {
-    const { user_data, updateUserData } = useAuthStore();
+    const { loginData, updateUserData } = useUserStore();
     const navigate = useNavigate();
     const [isButtonLoading, setButtonLoading] = useState(false);
     const [date, setDate] = useState(false);
@@ -32,22 +32,18 @@ const PrimeSubcribeModal = (props) => {
 
     const handleSubscribe = () => {
         setButtonLoading(true);
-        let access_token = user_data.access_token;
+        let accessToken = loginData.accessToken;
         serverConfig
             .post(
                 `learning/prime-subscription/`,
                 {},
                 {
-                    headers: { Authorization: `Bearer ${access_token}` },
+                    headers: { Authorization: `Bearer ${accessToken}` },
                 }
             )
             .then((res) => {
                 let { status_code, data } = res.data;
                 if (status_code === 6000) {
-                    updateUserData({
-                        ...user_data,
-                        is_prime_subscribed: true,
-                    });
                     props.setShow(false);
                     props.closeModal();
                     navigate("/learn/prime-programs");

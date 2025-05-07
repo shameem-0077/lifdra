@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import { useAuthStore } from "../../../store/authStore";
 
 export default function OtpIssue({ isNotMarginNeed, message }) {
     const { user_data } = useAuthStore();
